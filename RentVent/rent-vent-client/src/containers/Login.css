@@ -1,0 +1,20 @@
+@media all and (min-width: 480px) {
+  .Login {
+    padding: 60px 0;
+  }
+
+  .Login form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
+
+  .social-buttons {
+  	margin: 0 auto;
+    max-width: 320px;
+  }
+
+  .social-buttons button{
+  	display: block;
+  	margin: 5% auto;
+  }
+}
