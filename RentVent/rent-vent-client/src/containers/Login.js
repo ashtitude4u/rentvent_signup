@@ -47,8 +47,8 @@ export default class Login extends Component {
       this.setState({ isLoading: false });
 
       // dummy login for testing purpose
-      this.props.userHasAuthenticated(true);
-      this.props.history.push("/");
+      // this.props.userHasAuthenticated(true);
+      // this.props.history.push("/");
     }
   }
 
@@ -67,6 +67,18 @@ export default class Login extends Component {
         onFailure: err => reject(err)
       })
     );
+
+  // return new Promise((resolve, reject) =>
+  //     user.authenticateUser(authenticationDetails, null, (err, result) => {
+  //       if (err) {
+  //         reject(err);
+  //         return;
+  //       }
+
+  //       resolve(result.user);
+  //     })
+  //   );
+
   }
 
   render() {

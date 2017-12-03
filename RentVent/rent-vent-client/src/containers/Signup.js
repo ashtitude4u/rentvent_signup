@@ -9,6 +9,7 @@ import LoaderButton from "../components/LoaderButton";
 import "./Signup.css";
 import { AuthenticationDetails, CognitoUserPool } from "amazon-cognito-identity-js";
 import config from "../config";
+// import { AWS } from 'aws-sdk-js';
 
 export default class Signup extends Component {
   constructor(props) {
@@ -19,6 +20,9 @@ export default class Signup extends Component {
       email: "",
       password: "",
       confirmPassword: "",
+      name: "",
+      familyName: "",
+      givenName: "",
       confirmationCode: "",
       newUser: null
     };
@@ -46,9 +50,8 @@ export default class Signup extends Component {
     event.preventDefault();
 
     this.setState({ isLoading: true });
-
     try {
-      const newUser = await this.signup(this.state.email, this.state.password);
+      const newUser = await this.signup(this.state.email, this.state.password, this.state.name, this.state.familyName, this.state.givenName);
       this.setState({
         newUser: newUser
       });
@@ -69,7 +72,10 @@ export default class Signup extends Component {
       await this.authenticate(
         this.state.newUser,
         this.state.email,
-        this.state.password
+        this.state.password,
+        this.state.name,
+        this.state.familyName,
+        this.state.givenName
       );
 
       this.props.userHasAuthenticated(true);
@@ -80,14 +86,32 @@ export default class Signup extends Component {
     }
   }
 
-  signup(email, password) {
+  signup(email, password, name, familyName, givenName) {
+
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
       ClientId: config.cognito.APP_CLIENT_ID
     });
 
+
+
+  var userAttributes = [ 
+      { 
+         "Name": "name",
+         "Value": name
+      },
+      {
+         "Name": "given_name",
+         "Value": givenName
+      },
+      {
+         "Name": "family_name",
+         "Value": familyName
+      }
+   ];
+
     return new Promise((resolve, reject) =>
-      userPool.signUp(email, password, [], null, (err, result) => {
+      userPool.signUp(email, password, userAttributes, null, (err, result) => {
         if (err) {
           reject(err);
           return;
@@ -162,6 +186,33 @@ export default class Signup extends Component {
             value={this.state.email}
             onChange={this.handleChange}
           />
+        <FormGroup controlId="name" bsSize="large">
+          <ControlLabel>Name</ControlLabel>
+          <FormControl
+            autoFocus
+            type="text"
+            value={this.state.name}
+            onChange={this.handleChange}
+          />
+        </FormGroup>
+          <FormGroup controlId="familyName" bsSize="large">
+          <ControlLabel>Family Name</ControlLabel>
+          <FormControl
+            autoFocus
+            type="text"
+            value={this.state.familyName}
+            onChange={this.handleChange}
+          />
+        </FormGroup>
+        <FormGroup controlId="givenName" bsSize="large">
+          <ControlLabel>Given Name</ControlLabel>
+          <FormControl
+            autoFocus
+            type="text"
+            value={this.state.givenName}
+            onChange={this.handleChange}
+          />
+        </FormGroup>
         </FormGroup>
         <FormGroup controlId="password" bsSize="large">
           <ControlLabel>Password</ControlLabel>
