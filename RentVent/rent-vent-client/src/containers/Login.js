@@ -52,7 +52,7 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
     // Obtain AWS credentials
     AWS.config.credentials.get(function(data){
         // Access AWS resources here.
-        alert("ash in");
+
     });
 
     //  event.preventDefault();
@@ -85,7 +85,54 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
     event.preventDefault();
     this.setState({ isLoading: true });
     try {
-      await this.login(this.state.email, this.state.password);
+      await this.login(this.state.email, this.state.password).then(result => { 
+
+        //POTENTIAL: Region needs to be set if not already set previously elsewhere.
+             AWS.config.region = config.cognito.REGION;
+
+             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                 IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
+                 AccountId: '651094143027',
+                 Logins : {
+                     // Change the key below according to the specific region your user pool is in.
+                     'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                 }
+             });
+             
+             var params = {
+                IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
+                AccountId: '651094143027',
+                Logins: {
+                     'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                 /* '<IdentityProviderName>': ... */
+                 }
+               };
+
+               var cognitoID = new AWS.CognitoIdentity();
+
+               cognitoID.getId(params, function(err, data) {
+                 if (err) console.log(err, err.stack); // an error occurred
+                 else     
+                 {
+                                   console.log(data);           // successful response
+
+                   var params2 = {
+                     IdentityId: data.IdentityId, /* required */
+                     Logins: {
+                     'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                       /* '<IdentityProviderName>': ... */
+                     }
+                   };
+                   cognitoID.getCredentialsForIdentity(params2, function(err, data) {
+                     if (err) console.log(err, err.stack); // an error occurred
+                     else     console.log(data);           // successful response
+                   });
+                 }
+               });
+
+      });
+
+
       this.props.userHasAuthenticated(true);
       this.props.history.push("/");
     } catch (e) {
@@ -109,7 +156,7 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
 
     return new Promise((resolve, reject) =>
       user.authenticateUser(authenticationDetails, {
-        onSuccess: result => resolve(),
+        onSuccess: result => resolve(result),
         onFailure: err => reject(err)
       })
     );

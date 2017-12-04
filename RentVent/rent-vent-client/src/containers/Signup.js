@@ -67,7 +67,6 @@ export default class Signup extends Component {
 
     this.setState({ isLoading: true });
 
-var result = "ash";
     try {
       await this.confirm(this.state.newUser, this.state.confirmationCode);
 
