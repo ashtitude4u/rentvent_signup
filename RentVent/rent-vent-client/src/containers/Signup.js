@@ -9,7 +9,7 @@ import LoaderButton from "../components/LoaderButton";
 import "./Signup.css";
 import { AuthenticationDetails, CognitoUserPool } from "amazon-cognito-identity-js";
 import config from "../config";
-// import { AWS } from 'aws-sdk-js';
+import AWS from "aws-sdk";
 
 export default class Signup extends Component {
   constructor(props) {
@@ -67,8 +67,11 @@ export default class Signup extends Component {
 
     this.setState({ isLoading: true });
 
+var result = "ash";
     try {
       await this.confirm(this.state.newUser, this.state.confirmationCode);
+
+
       await this.authenticate(
         this.state.newUser,
         this.state.email,
@@ -76,7 +79,72 @@ export default class Signup extends Component {
         this.state.name,
         this.state.familyName,
         this.state.givenName
-      );
+      ).then(result => {
+       //POTENTIAL: Region needs to be set if not already set previously elsewhere.
+            AWS.config.region = config.cognito.REGION;
+
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
+                AccountId: '651094143027',
+                Logins : {
+                    // Change the key below according to the specific region your user pool is in.
+                    'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                }
+            });
+            
+            var params = {
+               IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
+               AccountId: '651094143027',
+               Logins: {
+                    'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                /* '<IdentityProviderName>': ... */
+                }
+              };
+
+              var cognitoID = new AWS.CognitoIdentity();
+
+              cognitoID.getId(params, function(err, data) {
+                if (err) console.log(err, err.stack); // an error occurred
+                else     
+                {
+                                  console.log(data);           // successful response
+
+                  var params2 = {
+                    IdentityId: data.IdentityId, /* required */
+                    Logins: {
+                    'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                      /* '<IdentityProviderName>': ... */
+                    }
+                  };
+                  cognitoID.getCredentialsForIdentity(params2, function(err, data) {
+                    if (err) console.log(err, err.stack); // an error occurred
+                    else     console.log(data);           // successful response
+                  });
+                }
+              });
+
+//             AWS.config.credentials = new AWS.WebIdentityCredentials({
+//    RoleArn: 'arn:aws:iam::651094143027:role/testcognitoRole',
+//    // ProviderId: 'cognito-identity.amazonaws.com', // this is null for Google
+//    WebIdentityToken: result.getIdToken().getJwtToken()
+// });
+
+
+
+            //refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
+            // AWS.config.credentials.refresh((error) => {
+            //     if (error) {
+            //          console.error(error);
+            //     } else {
+            //          // Instantiate aws sdk service objects now that the credentials have been updated.
+            //          // example: var s3 = new AWS.S3();
+            //          console.log('Successfully logged!');
+            //     }
+            // });
+
+      });
+
+ 
 
       this.props.userHasAuthenticated(true);
       this.props.history.push("/");
@@ -92,6 +160,8 @@ export default class Signup extends Component {
       UserPoolId: config.cognito.USER_POOL_ID,
       ClientId: config.cognito.APP_CLIENT_ID
     });
+
+
 
 
 
@@ -143,11 +213,12 @@ export default class Signup extends Component {
 
     return new Promise((resolve, reject) =>
       user.authenticateUser(authenticationDetails, {
-        onSuccess: result => resolve(),
+        onSuccess: result => resolve(result),
         onFailure: err => reject(err)
       })
     );
   }
+
 
   renderConfirmationForm() {
     return (

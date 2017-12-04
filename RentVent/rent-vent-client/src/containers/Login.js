@@ -5,6 +5,8 @@ import SocialButton from "../components/SocialButton";
 import config from "../config";
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
 import "./Login.css";
+import AWS from "aws-sdk";
+// import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 export default class Login extends Component {
   constructor(props) {
@@ -22,11 +24,55 @@ export default class Login extends Component {
   }
 
   handleSocialLogin = (user) => {
-    console.log(user)
+    console.log(user.token.accessToken);
+
+AWS.config.credentials = new AWS.WebIdentityCredentials({
+   RoleArn: 'arn:aws:iam::651094143027:role/testFBRole',
+   ProviderId: 'graph.facebook.com', // this is null for Google
+   WebIdentityToken: user.token.accessToken
+});
+
+  // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+  //     IdentityPoolId: config.cognito.IDENTITY_POOL_ID,
+  //     RoleArn: 'arn:aws:iam::651094143027:role/testFBRole',
+  //     Logins: {
+  //       'graph.facebook.com': user.token.accessToken
+  //     }
+  //   });
+
+    // Add the Facebook access token to the Cognito credentials login map.
+    // var  cc  = new CognitoIdentityServiceProvider({
+    //   IdentityPoolId: "us-east-2_VBkSGcAr4",
+    //   Logins: {
+    //     'graph.facebook.com': user.token.accessToken
+    //   }
+    // });
+    AWS.config.region = 'us-east-2';
+
+    // Obtain AWS credentials
+    AWS.config.credentials.get(function(data){
+        // Access AWS resources here.
+        alert("ash in");
+    });
+
+    //  event.preventDefault();
+    // this.setState({ isLoading: true });
+    // try {
+    //   await this.login(this.state.email, this.state.password);
+    //   this.props.userHasAuthenticated(true);
+    //   this.props.history.push("/");
+    // } catch (e) {
+    //   alert(e);
+    //   this.setState({ isLoading: false });
+
+    //   // dummy login for testing purpose
+    //   // this.props.userHasAuthenticated(true);
+    //   // this.props.history.push("/");
+    // }
   }
 
   handleSocialLoginFailure = (err) => {
-    console.error(err)
+    console.error(err);
   }
 
   handleChange = event => {
