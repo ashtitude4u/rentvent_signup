@@ -84,18 +84,18 @@ export default class Signup extends Component {
 
             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                 IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
-                AccountId: '651094143027',
+                AccountId: '337562365152',
                 Logins : {
                     // Change the key below according to the specific region your user pool is in.
-                    'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                     'cognito-idp.us-east-1.amazonaws.com/us-east-1_PdeTltNLI' : result.getIdToken().getJwtToken()
                 }
             });
             
             var params = {
                IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
-               AccountId: '651094143027',
+               AccountId: '337562365152',
                Logins: {
-                    'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                     'cognito-idp.us-east-1.amazonaws.com/us-east-1_PdeTltNLI' : result.getIdToken().getJwtToken()
                 /* '<IdentityProviderName>': ... */
                 }
               };
@@ -111,7 +111,7 @@ export default class Signup extends Component {
                   var params2 = {
                     IdentityId: data.IdentityId, /* required */
                     Logins: {
-                    'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                     'cognito-idp.us-east-1.amazonaws.com/us-east-1_PdeTltNLI' : result.getIdToken().getJwtToken()
                       /* '<IdentityProviderName>': ... */
                     }
                   };
@@ -123,7 +123,7 @@ export default class Signup extends Component {
               });
 
 //             AWS.config.credentials = new AWS.WebIdentityCredentials({
-//    RoleArn: 'arn:aws:iam::651094143027:role/testcognitoRole',
+//    RoleArn: 'arn:aws:iam::337562365152:role/testcognitoRole',
 //    // ProviderId: 'cognito-identity.amazonaws.com', // this is null for Google
 //    WebIdentityToken: result.getIdToken().getJwtToken()
 // });

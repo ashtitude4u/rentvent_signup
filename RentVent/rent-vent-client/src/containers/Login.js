@@ -27,27 +27,13 @@ export default class Login extends Component {
     console.log(user.token.accessToken);
 
 AWS.config.credentials = new AWS.WebIdentityCredentials({
-   RoleArn: 'arn:aws:iam::651094143027:role/testFBRole',
+   RoleArn: 'arn:aws:iam::337562365152:role/fbRole_nonProd',
    ProviderId: 'graph.facebook.com', // this is null for Google
    WebIdentityToken: user.token.accessToken
 });
 
-  // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  //     IdentityPoolId: config.cognito.IDENTITY_POOL_ID,
-  //     RoleArn: 'arn:aws:iam::651094143027:role/testFBRole',
-  //     Logins: {
-  //       'graph.facebook.com': user.token.accessToken
-  //     }
-  //   });
 
-    // Add the Facebook access token to the Cognito credentials login map.
-    // var  cc  = new CognitoIdentityServiceProvider({
-    //   IdentityPoolId: "us-east-2_VBkSGcAr4",
-    //   Logins: {
-    //     'graph.facebook.com': user.token.accessToken
-    //   }
-    // });
-    AWS.config.region = 'us-east-2';
+    AWS.config.region = 'us-east-1';
 
     // Obtain AWS credentials
     AWS.config.credentials.get(function(data){
@@ -55,20 +41,54 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
 
     });
 
-    //  event.preventDefault();
-    // this.setState({ isLoading: true });
-    // try {
-    //   await this.login(this.state.email, this.state.password);
-    //   this.props.userHasAuthenticated(true);
-    //   this.props.history.push("/");
-    // } catch (e) {
-    //   alert(e);
-    //   this.setState({ isLoading: false });
 
-    //   // dummy login for testing purpose
-    //   // this.props.userHasAuthenticated(true);
-    //   // this.props.history.push("/");
-    // }
+
+    //POTENTIAL: Region needs to be set if not already set previously elsewhere.
+             AWS.config.region = config.cognito.REGION;
+
+             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                 IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
+                 AccountId: '337562365152',
+                 Logins : {
+                     // Change the key below according to the specific region your user pool is in.
+                     'graph.facebook.com' : user.token.accessToken
+                 }
+             });
+             
+             var params = {
+                IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
+                AccountId: '337562365152',
+                Logins: {
+                     'graph.facebook.com' : user.token.accessToken
+                 /* '<IdentityProviderName>': ... */
+                 }
+               };
+
+               var cognitoID = new AWS.CognitoIdentity();
+
+               cognitoID.getId(params, function(err, data) {
+                 if (err) console.log(err, err.stack); // an error occurred
+                 else     
+                 {
+                                   console.log(data);           // successful response
+
+                   // var params2 = {
+                   //   IdentityId: data.IdentityId, /* required */
+                   //   Logins: {
+                   //   'graph.facebook.com/us-east-2_VBkSGcAr4' : user.token.accessToken
+                   //     /* '<IdentityProviderName>': ... */
+                   //   }
+                   // };
+                   // cognitoID.getCredentialsForIdentity(params2, function(err, data) {
+                   //   if (err) console.log(err, err.stack); // an error occurred
+                   //   else     console.log(data);           // successful response
+                   // });
+                 }
+               });
+
+
+
+
   }
 
   handleSocialLoginFailure = (err) => {
@@ -92,18 +112,18 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
 
              AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                  IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
-                 AccountId: '651094143027',
+                 AccountId: '337562365152',
                  Logins : {
                      // Change the key below according to the specific region your user pool is in.
-                     'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                     'cognito-idp.us-east-1.amazonaws.com/us-east-1_PdeTltNLI' : result.getIdToken().getJwtToken()
                  }
              });
              
              var params = {
                 IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
-                AccountId: '651094143027',
+                AccountId: '337562365152',
                 Logins: {
-                     'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                     'cognito-idp.us-east-1.amazonaws.com/us-east-1_PdeTltNLI' : result.getIdToken().getJwtToken()
                  /* '<IdentityProviderName>': ... */
                  }
                };
@@ -119,7 +139,7 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
                    var params2 = {
                      IdentityId: data.IdentityId, /* required */
                      Logins: {
-                     'cognito-idp.us-east-2.amazonaws.com/us-east-2_VBkSGcAr4' : result.getIdToken().getJwtToken()
+                     'cognito-idp.us-east-1.amazonaws.com/us-east-1_PdeTltNLI' : result.getIdToken().getJwtToken()
                        /* '<IdentityProviderName>': ... */
                      }
                    };
