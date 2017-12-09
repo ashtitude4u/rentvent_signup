@@ -107,6 +107,8 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
                  {
                                    console.log(data);           // successful response
 
+                                   
+
                    // var params2 = {
                    //   IdentityId: data.IdentityId, /* required */
                    //   Logins: {
@@ -122,7 +124,8 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
                });
 
 
-
+this.props.userHasAuthenticated(true);
+                                  this.props.history.push("/home");
 
   }
 
@@ -189,7 +192,7 @@ AWS.config.credentials = new AWS.WebIdentityCredentials({
 
 
       this.props.userHasAuthenticated(true);
-      this.props.history.push("/");
+      this.props.history.push("/home");
     } catch (e) {
       alert(e);
       this.setState({ isLoading: false });

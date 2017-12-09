@@ -4,17 +4,28 @@
   "private": true,
   "dependencies": {
     "amazon-cognito-identity-js": "^1.23.0",
+    "jquery": "^3.2.1",
+    "popper.js": "^1.12.9",
     "react": "^16.1.0",
     "react-bootstrap": "^0.31.5",
     "react-dom": "^16.1.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
-    "react-social-login": "^3.4.1"
+    "react-social-login": "^3.4.1",
+    "uuid": "^3.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "handler.js",
+  "devDependencies": {
+    "aws-sdk": "^2.161.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

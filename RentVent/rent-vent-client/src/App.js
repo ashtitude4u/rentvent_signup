@@ -23,7 +23,7 @@ class App extends Component {
   handleLogout = event => {
     signOutUser();
     this.userHasAuthenticated(false);
-    this.props.history.push("/login");
+    this.props.history.push("/");
   }
 
   async componentDidMount() {
@@ -50,9 +50,6 @@ class App extends Component {
       <div className="App container">
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
-            <Navbar.Brand>
-              <Link to="/">Home</Link>
-            </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>
@@ -63,7 +60,7 @@ class App extends Component {
                     <RouteNavItem key={1} href="/signup">
                       Signup
                     </RouteNavItem>,
-                    <RouteNavItem key={2} href="/login">
+                    <RouteNavItem key={2} href="/">
                       Login
                     </RouteNavItem>
                   ]}
