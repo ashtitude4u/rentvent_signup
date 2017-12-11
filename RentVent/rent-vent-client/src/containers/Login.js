@@ -23,110 +23,93 @@ export default class Login extends Component {
     return this.state.email.length > 0 && this.state.password.length > 0;
   }
 
+  navigateToHomeScreen(self) {
+    self.props.userHasAuthenticated(true);
+    self.props.history.push("/home");
+  }
+
   handleSocialLogin = (user) => {
-    // facebook login token
-      // console.log(user.token.accessToken);
-      // google login token
-      console.log(user.token.idToken);
-    
-
-    //facebook credentials
-// AWS.config.credentials = new AWS.WebIdentityCredentials({
-//    RoleArn: 'arn:aws:iam::337562365152:role/fbRole_nonProd',
-//    ProviderId: 'graph.facebook.com', // this is null for Google
-//    WebIdentityToken: user.token.accessToken
-// });
-
-//google credentials
-AWS.config.credentials = new AWS.WebIdentityCredentials({
-   RoleArn: 'arn:aws:iam::337562365152:role/googleRole_nonProd',
-   ProviderId: null, // this is null for Google
-   WebIdentityToken: user.token.idToken
-});
-
+      var userToken;
+      var socialLoginType;
+      if(user.token.idToken){
+               userToken = user.token.idToken;
+               socialLoginType = "google";
+            } else {
+              userToken = user.token.accessToken;
+               socialLoginType = "fb";
+            }
 
     AWS.config.region = 'us-east-1';
+    var params;
+    if(socialLoginType == "fb"){
+        AWS.config.credentials = new AWS.WebIdentityCredentials({
+        RoleArn: 'arn:aws:iam::337562365152:role/fbRole_nonProd',
+        ProviderId: 'graph.facebook.com', 
+        WebIdentityToken: userToken
+    });
+
+   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                 IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
+                 AccountId: '337562365152',
+                 Logins : {
+                     'graph.facebook.com' : userToken
+                 }
+             });
+    params = {
+                IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
+                AccountId: '337562365152',
+                Logins: {
+                     'graph.facebook.com' : userToken
+                 }
+               };
+
+    } else {
+        AWS.config.credentials = new AWS.WebIdentityCredentials({
+        RoleArn: 'arn:aws:iam::337562365152:role/googleRole_nonProd',
+        ProviderId: null, 
+        WebIdentityToken: userToken
+    });
+
+   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                 IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
+                 AccountId: '337562365152',
+                 Logins : {
+                     'accounts.google.com' : userToken
+                 }
+             });
+
+  params = {
+                IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
+                AccountId: '337562365152',
+                Logins: {
+                     'accounts.google.com' : userToken
+                 }
+               };
+        }
 
     // Obtain AWS credentials
     AWS.config.credentials.get(function(data){
         // Access AWS resources here.
-
+        console.log(data);
     });
 
-
-
-    //POTENTIAL: Region needs to be set if not already set previously elsewhere.
              AWS.config.region = config.cognito.REGION;
-
-
-            //facebook
-            // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-            //     IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
-            //     AccountId: '337562365152',
-            //     Logins : {
-            //         // Change the key below according to the specific region your user pool is in.
-            //         'graph.facebook.com' : user.token.accessToken
-            //     }
-            // });
-
-            // google
-             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                 IdentityPoolId : config.cognito.IDENTITY_POOL_ID, // your identity pool id here
-                 AccountId: '337562365152',
-                 Logins : {
-                     // Change the key below according to the specific region your user pool is in.
-                     'accounts.google.com' : user.token.idToken
-                 }
-             });
-
-             // facebook
-             // var params = {
-             //    IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
-             //    AccountId: '337562365152',
-             //    Logins: {
-             //         'graph.facebook.com' : user.token.accessToken
-             //     /* '<IdentityProviderName>': ... */
-             //     }
-             //   };
-             
-             //google
-             var params = {
-                IdentityPoolId: config.cognito.IDENTITY_POOL_ID, /* required */
-                AccountId: '337562365152',
-                Logins: {
-                     'accounts.google.com' : user.token.idToken
-                 /* '<IdentityProviderName>': ... */
-                 }
-               };
-
+              var self = this;
                var cognitoID = new AWS.CognitoIdentity();
-
+              var homeScreenNavigate = this.navigateToHomeScreen;
                cognitoID.getId(params, function(err, data) {
-                 if (err) console.log(err, err.stack); // an error occurred
-                 else     
-                 {
-                                   console.log(data);           // successful response
-
-                                   
-
-                   // var params2 = {
-                   //   IdentityId: data.IdentityId, /* required */
-                   //   Logins: {
-                   //   'graph.facebook.com/us-east-2_VBkSGcAr4' : user.token.idToken
-                   //     /* '<IdentityProviderName>': ... */
-                   //   }
-                   // };
-                   // cognitoID.getCredentialsForIdentity(params2, function(err, data) {
-                   //   if (err) console.log(err, err.stack); // an error occurred
-                   //   else     console.log(data);           // successful response
-                   // });
+                 if (err) {
+                      console.log(err, err.stack); // an error occurred
+                 }
+                 else {
+                      console.log(data);           // successful response
+                      homeScreenNavigate(self);
                  }
                });
 
+                      
 
-this.props.userHasAuthenticated(true);
-                                  this.props.history.push("/home");
-
+        
   }
 
   handleSocialLoginFailure = (err) => {
