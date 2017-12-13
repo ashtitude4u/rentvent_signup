@@ -6,6 +6,8 @@ import config from "../config";
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
 import "./Login.css";
 import AWS from "aws-sdk";
+import {Landlord} from '../models/Landlord';
+
 // import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 export default class Login extends Component {
@@ -24,6 +26,34 @@ export default class Login extends Component {
   }
 
   navigateToHomeScreen(self) {
+
+    // test api
+      var landlord = new Landlord;
+    // getToken() {
+       const GATEWAY_URL = ['https://t3d8pqk8bk.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/Mike/moNtagano'];
+       fetch(GATEWAY_URL, {
+           method: 'GET',
+           mode: 'cors'
+       })
+           .then((response) => {
+               return response.json();
+           })
+           .then((json) => {
+               console.log('new token received')
+               // this.setState({ accessToken: json.done.json.access_token });
+               // this.search();
+               if(json){
+                  if(json.Items.length > 0) {
+                      landlord.firstName = json.Items[0].L_First_Name ? json.Items[0].L_First_Name : "";
+                      landlord.lastName = json.Items[0].L_Last_Name ? json.Items[0].L_Last_Name : "";;
+                  }
+               }
+           })
+           .catch(err => console.log('There was an error:' + err))
+
+   // }
+
+
     self.props.userHasAuthenticated(true);
     self.props.history.push("/home");
   }

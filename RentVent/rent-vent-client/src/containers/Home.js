@@ -16,6 +16,35 @@ import profileImage2 from '../img/8.jpg';
 import profileImage3 from '../img/9.jpg';
 
 export default class Home extends Component {
+   constructor(props) {
+    super(props);
+
+    this.reviewTab = ["nav-link active"];
+    this.reviewContent = ["tab-pane active"];
+
+    this.additionalInfoTab = ["nav-link"];
+    this.additionalInfoContent = ["tab-pane"];
+  }
+
+  reviewTabSelected(option) {
+    // e.preventDefault();
+    // alert(option);
+
+    if(option == "review"){
+      this.reviewTab = ["nav-link active"];
+      this.reviewContent = ["tab-pane active"];
+      this.additionalInfoTab = ["nav-link"];
+      this.additionalInfoContent = ["tab-pane"];
+    } else {
+      this.reviewTab = ["nav-link"];
+      this.reviewContent = ["tab-pane"];
+
+      this.additionalInfoTab = ["nav-link active"];
+      this.additionalInfoContent = ["tab-pane active"];
+    }
+    
+  }
+
   render() {
     return (
 
@@ -68,12 +97,12 @@ export default class Home extends Component {
             </div>
 
             <ul class="nav rv-tabs mg-t-40">
-              <li class="nav-item"><a href="#propReviews" data-toggle="tab" class="nav-link active">Reviews (86)</a></li>
-              <li class="nav-item"><a href="#propAdInfo" data-toggle="tab" class="nav-link">Landlord Additional Info</a></li>
+              <li class="nav-item" onClick={this.reviewTabSelected.bind(this, "review")}><a href="#" data-toggle="tab" class="nav-link" className={this.reviewTab.join('' )}>Reviews (86)</a></li>
+              <li class="nav-item" onClick={this.reviewTabSelected.bind(this, "additionalInfo")}><a href="#" data-toggle="tab" class="nav-link" className={this.additionalInfoTab.join('' )}>Landlord Additional Info</a></li>
             </ul>
 
             <div class="tab-content">
-              <div id="propReviews" class="tab-pane active">
+              <div id="propReviews" class="tab-pane" className={this.reviewContent.join('' )}>
                 <div class="media-list">
                   <div class="media pd-y-30  bd-b">
                     <img src={profileImage1} class="wd-60 rounded-circle" alt="" />
@@ -144,7 +173,7 @@ export default class Home extends Component {
                   </div>
                 </div>
               </div>
-              <div id="propAdInfo" class="tab-pane">
+              <div id="propAdInfo" class="tab-pane" className={this.additionalInfoContent.join('' )}>
                 <div class="mg-t-30">
                   <div class="row">
                     <div class="col-6">
