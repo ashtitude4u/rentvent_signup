@@ -17,4 +17,8 @@
   	display: block;
   	margin: 5% auto;
   }
+ 
 }
+.hidden {
+    visibility: hidden;
+  }

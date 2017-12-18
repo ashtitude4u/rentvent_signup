@@ -2,11 +2,16 @@ import React, { Component } from "react";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import SocialButton from "../components/SocialButton";
+import SocialButton2 from "../components/SocialButton2";
 import config from "../config";
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
 import "./Login.css";
+import "./rentvent.css";
+
 import AWS from "aws-sdk";
 import {Landlord} from '../models/Landlord';
+import "../libs/font-awesome/css/font-awesome.css";
+import "../libs/Ionicons/css/ionicons.css";
 
 // import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
@@ -247,54 +252,121 @@ export default class Login extends Component {
 
   render() {
     return (
-      <div className="Login">
-        <form onSubmit={this.handleSubmit}>
+
+      <div class="signin-wrapper">
+      <div class="signin-box">
+        <div class="signin-logo">
+          <div class="signin-icon">
+            <i class="icon ion-ios-home"></i>
+          </div>
+          <h2 class="signin-logo-text">rentvent</h2>
+        </div>
+        <h4 class="signin-title">Sign in to continue</h4>
+
+  <form>
           <FormGroup controlId="email" bsSize="large">
-            <ControlLabel>Email</ControlLabel>
             <FormControl
               autoFocus
               type="email"
               value={this.state.email}
               onChange={this.handleChange}
+              placeholder="Enter your email"
             />
           </FormGroup>
           <FormGroup controlId="password" bsSize="large">
-            <ControlLabel>Password</ControlLabel>
             <FormControl
               value={this.state.password}
               onChange={this.handleChange}
               type="password"
+              placeholder="Enter your password"
             />
           </FormGroup>
-          <LoaderButton
-            block
-            bsSize="large"
-            disabled={!this.validateForm()}
-            type="submit"
-            isLoading={this.state.isLoading}
-            text="Login"
-            loadingText="Logging in…"
-          />
         </form>
-        <div className="social-buttons">
+
+        <div class="form-group d-flex align-items-center justify-content-between hidden">
+          <label class="ckbox ckbox-success mg-b-0">
+            <input type="checkbox" /><span>Remember me</span>
+          </label>
+          <a href="">Forgot password?</a>
+        </div>
+
+        <button class="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.validateForm()}>Sign In</button>
+
+        <div class="signwith"><span>or signin with</span></div>
+         <div class="row row-xs signin-social">
+
         <SocialButton
                 provider='facebook'
                 appId={config.facebook.APP_ID}
                 onLoginSuccess={this.handleSocialLogin}
                 onLoginFailure={this.handleSocialLoginFailure}
+                className="fb-button"
               >
                 Login with Facebook
         </SocialButton>
-        <SocialButton
+        <SocialButton2
                 provider='google'
                 appId={config.google.APP_ID}
                 onLoginSuccess={this.handleSocialLogin}
                 onLoginFailure={this.handleSocialLoginFailure}
               >
                 Login with Google
-        </SocialButton>
+        </SocialButton2>
+</div>
+        <div class="signin-footer">
+          Not yet a member? <a href="/signup">Sign Up</a>
         </div>
       </div>
+    </div>
+
+      // <div className="Login">
+      //   <form onSubmit={this.handleSubmit}>
+      //     <FormGroup controlId="email" bsSize="large">
+      //       <ControlLabel>Email</ControlLabel>
+      //       <FormControl
+      //         autoFocus
+      //         type="email"
+      //         value={this.state.email}
+      //         onChange={this.handleChange}
+      //       />
+      //     </FormGroup>
+      //     <FormGroup controlId="password" bsSize="large">
+      //       <ControlLabel>Password</ControlLabel>
+      //       <FormControl
+      //         value={this.state.password}
+      //         onChange={this.handleChange}
+      //         type="password"
+      //       />
+      //     </FormGroup>
+      //     <LoaderButton
+      //       block
+      //       bsSize="large"
+      //       disabled={!this.validateForm()}
+      //       type="submit"
+      //       isLoading={this.state.isLoading}
+      //       text="Login"
+      //       loadingText="Logging in…"
+      //     />
+      //   </form>
+      //   <div className="social-buttons">
+      //   <SocialButton
+      //           provider='facebook'
+      //           appId={config.facebook.APP_ID}
+      //           onLoginSuccess={this.handleSocialLogin}
+      //           onLoginFailure={this.handleSocialLoginFailure}
+      //         >
+      //           Login with Facebook
+      //   </SocialButton>
+      //   <SocialButton
+      //           provider='google'
+      //           appId={config.google.APP_ID}
+      //           onLoginSuccess={this.handleSocialLogin}
+      //           onLoginFailure={this.handleSocialLoginFailure}
+      //         >
+      //           Login with Google
+      //   </SocialButton>
+      //   </div>
+      // </div>
     );
   }
 }

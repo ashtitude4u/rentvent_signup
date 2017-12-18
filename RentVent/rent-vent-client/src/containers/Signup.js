@@ -10,6 +10,9 @@ import "./Signup.css";
 import { AuthenticationDetails, CognitoUserPool } from "amazon-cognito-identity-js";
 import config from "../config";
 import AWS from "aws-sdk";
+import "../libs/font-awesome/css/font-awesome.css";
+import "../libs/Ionicons/css/ionicons.css";
+import "./rentvent.css";
 
 export default class Signup extends Component {
   constructor(props) {
@@ -19,7 +22,6 @@ export default class Signup extends Component {
       isLoading: false,
       email: "",
       password: "",
-      confirmPassword: "",
       name: "",
       familyName: "",
       givenName: "",
@@ -31,8 +33,7 @@ export default class Signup extends Component {
   validateForm() {
     return (
       this.state.email.length > 0 &&
-      this.state.password.length > 0 &&
-      this.state.password === this.state.confirmPassword
+      this.state.password.length > 0
     );
   }
 
@@ -47,6 +48,7 @@ export default class Signup extends Component {
   }
 
   handleSubmit = async event => {
+    this.state.name = this.state.givenName + " " + this.state.familyName;
     event.preventDefault();
 
     this.setState({ isLoading: true });
@@ -221,7 +223,18 @@ export default class Signup extends Component {
 
   renderConfirmationForm() {
     return (
-      <form onSubmit={this.handleConfirmationSubmit}>
+
+    <div class="signin-wrapper">
+      <div class="signup-box">
+        <div class="signin-logo">
+          <div class="signin-icon">
+            <i class="icon ion-ios-home"></i>
+          </div>
+          <h2 class="signin-logo-text">rentvent</h2>
+        </div>
+        <h4 class="signin-title signin-title-verify">Verify your email address</h4>
+        <p class="mg-b-25">We now need to verify your email address. A verification code has been sent to <span class="tx-primary">{this.state.email}</span> to verify your email address. Please enter the confirmation code.</p>
+
         <FormGroup controlId="confirmationCode" bsSize="large">
           <ControlLabel>Confirmation Code</ControlLabel>
           <FormControl
@@ -230,86 +243,163 @@ export default class Signup extends Component {
             value={this.state.confirmationCode}
             onChange={this.handleChange}
           />
-          <HelpBlock>Please check your email for the code.</HelpBlock>
         </FormGroup>
-        <LoaderButton
-          block
-          bsSize="large"
-          disabled={!this.validateConfirmationForm()}
-          type="submit"
-          isLoading={this.state.isLoading}
-          text="Verify"
-          loadingText="Verifying…"
-        />
-      </form>
+      
+        <a href="javascript:void(0)" class="btn btn-primary btn-block mg-b-15" onClick={this.handleConfirmationSubmit} disabled={!this.state.confirmationCode}>Verify Code</a>
+        <a href="/" class="btn bg-gray-300 bd-0 btn-block">Go back to Signin</a>
+      </div>
+    </div>
     );
   }
 
   renderForm() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <FormGroup controlId="email" bsSize="large">
-          <ControlLabel>Email</ControlLabel>
-          <FormControl
-            autoFocus
-            type="email"
-            value={this.state.email}
-            onChange={this.handleChange}
-          />
-        <FormGroup controlId="name" bsSize="large">
-          <ControlLabel>Name</ControlLabel>
-          <FormControl
-            autoFocus
-            type="text"
-            value={this.state.name}
-            onChange={this.handleChange}
-          />
-        </FormGroup>
-          <FormGroup controlId="familyName" bsSize="large">
-          <ControlLabel>Family Name</ControlLabel>
-          <FormControl
-            autoFocus
-            type="text"
-            value={this.state.familyName}
-            onChange={this.handleChange}
-          />
-        </FormGroup>
-        <FormGroup controlId="givenName" bsSize="large">
-          <ControlLabel>Given Name</ControlLabel>
-          <FormControl
-            autoFocus
-            type="text"
-            value={this.state.givenName}
-            onChange={this.handleChange}
-          />
-        </FormGroup>
-        </FormGroup>
-        <FormGroup controlId="password" bsSize="large">
-          <ControlLabel>Password</ControlLabel>
-          <FormControl
-            value={this.state.password}
-            onChange={this.handleChange}
-            type="password"
-          />
-        </FormGroup>
-        <FormGroup controlId="confirmPassword" bsSize="large">
-          <ControlLabel>Confirm Password</ControlLabel>
-          <FormControl
-            value={this.state.confirmPassword}
-            onChange={this.handleChange}
-            type="password"
-          />
-        </FormGroup>
-        <LoaderButton
-          block
-          bsSize="large"
-          disabled={!this.validateForm()}
-          type="submit"
-          isLoading={this.state.isLoading}
-          text="Signup"
-          loadingText="Signing up…"
-        />
-      </form>
+
+    <div class="signin-wrapper">
+      <div class="signup-box">
+        <div class="signin-logo">
+          <div class="signin-icon">
+            <i class="icon ion-ios-home"></i>
+          </div>
+          <h2 class="signin-logo-text">rentvent</h2>
+        </div>
+        <h4 class="signin-title">Create your own account</h4>
+
+        <div class="form-group">
+          <div class="row row-xs">
+
+            <div class="col-sm input-div">
+            <FormGroup controlId="givenName" bsSize="large">
+            <FormControl
+              autoFocus
+              type="text"
+              value={this.state.givenName}
+              onChange={this.handleChange}
+              placeholder="Enter your First Name"
+            />
+            </FormGroup>
+            </div>
+
+            <div class="col-sm input-div mg-t-15 mg-sm-t-0">
+            <FormGroup controlId="familyName" bsSize="large">
+            <FormControl
+              type="text"
+              value={this.state.familyName}
+              onChange={this.handleChange}
+              placeholder="Enter your Last Name"
+            />
+            </FormGroup>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="row row-xs">
+
+            <div class="col-sm input-div">
+            <FormGroup controlId="email" bsSize="large">
+            <FormControl
+              type="email"
+              value={this.state.email}
+              onChange={this.handleChange}
+              placeholder="Enter your email"
+            />
+            </FormGroup>
+            </div>
+
+          <div class="col-sm input-div mg-t-15 mg-sm-t-0">
+            <FormGroup controlId="password" bsSize="large">
+            <FormControl
+              value={this.state.password}
+              onChange={this.handleChange}
+              type="password"
+              placeholder="Enter your password"
+            />
+            </FormGroup>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group mg-y-25">
+          <img src="../img/recaptcha.png" alt="" />
+        </div>
+
+        <button class="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.validateForm()}>Create Account</button>
+
+        <div class="signin-footer">
+          Already have an account? <a href="/">Sign In</a>
+        </div>
+      </div>
+    </div>
+
+
+      // <form onSubmit={this.handleSubmit}>
+      //   <FormGroup controlId="email" bsSize="large">
+      //     <ControlLabel>Email</ControlLabel>
+      //     <FormControl
+      //       autoFocus
+      //       type="email"
+      //       value={this.state.email}
+      //       onChange={this.handleChange}
+      //     />
+      //   <FormGroup controlId="name" bsSize="large">
+      //     <ControlLabel>Name</ControlLabel>
+      //     <FormControl
+      //       autoFocus
+      //       type="text"
+      //       value={this.state.name}
+      //       onChange={this.handleChange}
+      //     />
+      //   </FormGroup>
+      //     <FormGroup controlId="familyName" bsSize="large">
+      //     <ControlLabel>Family Name</ControlLabel>
+      //     <FormControl
+      //       autoFocus
+      //       type="text"
+      //       value={this.state.familyName}
+      //       onChange={this.handleChange}
+      //     />
+      //   </FormGroup>
+      //   <FormGroup controlId="givenName" bsSize="large">
+      //     <ControlLabel>Given Name</ControlLabel>
+      //     <FormControl
+      //       autoFocus
+      //       type="text"
+      //       value={this.state.givenName}
+      //       onChange={this.handleChange}
+      //     />
+      //   </FormGroup>
+      //   </FormGroup>
+      //   <FormGroup controlId="password" bsSize="large">
+      //     <ControlLabel>Password</ControlLabel>
+      //     <FormControl
+      //       value={this.state.password}
+      //       onChange={this.handleChange}
+      //       type="password"
+      //     />
+      //   </FormGroup>
+      //   <FormGroup controlId="confirmPassword" bsSize="large">
+      //     <ControlLabel>Confirm Password</ControlLabel>
+      //     <FormControl
+      //       value={this.state.confirmPassword}
+      //       onChange={this.handleChange}
+      //       type="password"
+      //     />
+      //   </FormGroup>
+      //   <LoaderButton
+      //     block
+      //     bsSize="large"
+      //     disabled={!this.validateForm()}
+      //     type="submit"
+      //     isLoading={this.state.isLoading}
+      //     text="Signup"
+      //     loadingText="Signing up…"
+      //   />
+      // </form>
+
+
     );
   }
 

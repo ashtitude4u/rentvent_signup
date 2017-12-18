@@ -4,7 +4,6 @@ import "jquery";
 import "./Home.css";
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
-import "../libs/font-awesome/css/font-awesome.css";
 import houseImage1 from '../img/1.jpg';
 import houseImage2 from '../img/2.jpg';
 import houseImage3 from '../img/3.jpg';
@@ -14,16 +13,26 @@ import houseImage6 from '../img/6.jpg';
 import profileImage1 from '../img/7.jpg';
 import profileImage2 from '../img/8.jpg';
 import profileImage3 from '../img/9.jpg';
+import { signOutUser } from "../libs/awsLib";
 
 export default class Home extends Component {
    constructor(props) {
     super(props);
 
+    this.state = {
+      isAuthenticated: false,
+      isAuthenticating: true
+    };
+    
     this.reviewTab = ["nav-link active"];
     this.reviewContent = ["tab-pane active"];
 
     this.additionalInfoTab = ["nav-link"];
     this.additionalInfoContent = ["tab-pane"];
+  }
+
+  userHasAuthenticated = authenticated => {
+    this.setState({ isAuthenticated: authenticated });
   }
 
   reviewTabSelected(option) {
@@ -45,6 +54,12 @@ export default class Home extends Component {
     
   }
 
+  handleLogout = event => {
+    signOutUser();
+    this.userHasAuthenticated(false);
+    this.props.history.push("/");
+  }
+
   render() {
     return (
 
@@ -55,7 +70,21 @@ export default class Home extends Component {
       //     <p>RentVent - Landlords review app</p>
       //   </div>
       // </div>
-
+    <div>
+      <div class="headerpanel">
+      <div class="container">
+        <div class="headerpanel-left">
+          <div class="logo"><i class="icon ion-ios-home"></i></div>
+          <h4>RentVent</h4>
+        </div>
+        <div class="headerpanel-right">
+          <ul class="nav flex-row">
+            <li class="nav-item"><a href="/home" class="nav-link active">Home</a></li>
+            <li class="nav-item"><a href="javascript:void(0)" onClick={this.handleLogout} class="nav-link">Sign Out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
       <div class="bg-gray-100 pd-y-50">
       <div class="container">
@@ -267,7 +296,7 @@ export default class Home extends Component {
         </div>
       </div>
     </div>
-
+    </div>
     );
   }
 }
