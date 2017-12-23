@@ -12,7 +12,6 @@ import config from "../config";
 import AWS from "aws-sdk";
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
-import "./rentvent.css";
 
 export default class Signup extends Component {
   constructor(props) {

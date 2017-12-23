@@ -19,6 +19,7 @@ import { signOutUser } from "../libs/awsLib";
 export default class Home extends Component {
    constructor(props) {
     super(props);
+    console.log(props);
 
     this.state = {
       isAuthenticated: false,

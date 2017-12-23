@@ -14,6 +14,8 @@ class App extends Component {
       isAuthenticated: false,
       isAuthenticating: true
     };
+
+    this.landlordObject = [];
   }
 
   userHasAuthenticated = authenticated => {
@@ -39,10 +41,16 @@ class App extends Component {
     this.setState({ isAuthenticating: false });
   }
 
+  myCallback = (dataFromChild) => {
+      this.landlordObject = dataFromChild;
+    }
+
   render() {
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
-      userHasAuthenticated: this.userHasAuthenticated
+      userHasAuthenticated: this.userHasAuthenticated,
+      landlordName: this.landlordObject,
+      myCallback: this.myCallback
     };
 
     return (

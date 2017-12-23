@@ -5,7 +5,10 @@ import "./Home.css";
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
+import "react-datepicker/dist/react-datepicker.css";
 import { signOutUser } from "../libs/awsLib";
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 export default class Questionnaire2 extends Component {
    constructor(props) {
@@ -13,16 +16,60 @@ export default class Questionnaire2 extends Component {
 
     this.state = {
       isAuthenticated: false,
-      isAuthenticating: true
+      isAuthenticating: true,
+      moveInDate: moment(),
+      moveOutDate:moment(),
+      leaseDate:moment(),
+      securityDepositDate:moment()
     };
 
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
+    this.repairStarRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+    this.conditionStarRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+    this.responsiveStarRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
 
+  }
+
+  handleMoveInDateChange = date => {
+  	this.setState({ moveInDate:date })
+  }
+
+  handleMoveOutDateChange = date => {
+  	this.setState({ moveOutDate:date })
+  }
+
+  handleLeaseDateChange = date => {
+  	this.setState({ leaseDate:date })
+  }
+
+  handleSecurityDepositDateDateChange = date => {
+  	this.setState({ securityDepositDate:date })
   }
 
   userHasAuthenticated = authenticated => {
     this.setState({ isAuthenticated: authenticated });
+  }
+
+  responsiveStarSelected(index){
+    this.responsiveStarRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+      for(var i=0; i<=index; i++) {
+        this.responsiveStarRatingArray[i]=["icon ion-star filled"];
+      }
+  }
+
+  repairStarSelected(index){
+    this.repairStarRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+      for(var i=0; i<=index; i++) {
+        this.repairStarRatingArray[i]=["icon ion-star filled"];
+      }
+  }
+
+  conditionStarSelected(index){
+    this.conditionStarRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+      for(var i=0; i<=index; i++) {
+        this.conditionStarRatingArray[i]=["icon ion-star filled"];
+      }
   }
 
   handleLogout = event => {
@@ -94,6 +141,10 @@ export default class Questionnaire2 extends Component {
     	                  <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
     	                  <input type="text" class="form-control" placeholder="Choose date" />
     	                </div>
+							<DatePicker
+          						onChange={this.handleMoveInDateChange}
+          						selected={this.state.moveInDate}
+        					/>	
     	              </div>
     	            </div>
     	            <div class="col">
@@ -103,40 +154,44 @@ export default class Questionnaire2 extends Component {
     	                  <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
     	                  <input type="text" class="form-control" placeholder="Choose date" />
     	                </div>
+    	                <DatePicker
+          						onChange={this.handleMoveOutDateChange}
+          						selected={this.state.moveOutDate}
+        					/>	
     	              </div>
     	            </div>
     	          </div>
     	          <div class="form-group">
     	            <label>How responsive was your landlord to your inquiries?</label>
     	            <div class="lh-5 tx-24">
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	            </div>
+                    <a href="#" onClick={this.responsiveStarSelected.bind(this,0)}><i className={this.responsiveStarRatingArray[0].join('' )}></i></a>
+                    <a href="#" onClick={this.responsiveStarSelected.bind(this,1)}><i className={this.responsiveStarRatingArray[1].join('' )}></i></a>
+                    <a href="#" onClick={this.responsiveStarSelected.bind(this,2)}><i className={this.responsiveStarRatingArray[2].join('' )}></i></a>
+                    <a href="#" onClick={this.responsiveStarSelected.bind(this,3)}><i className={this.responsiveStarRatingArray[3].join('' )}></i></a>
+                    <a href="#" onClick={this.responsiveStarSelected.bind(this,4)}><i className={this.responsiveStarRatingArray[4].join('' )}></i></a>
+                  </div>
     	          </div>
 
     	          <div class="form-group">
     	            <label>Did your landlord respond to repair requests in a timely manner?</label>
     	            <div class="lh-5 tx-24">
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	            </div>
+                    <a href="#" onClick={this.repairStarSelected.bind(this,0)}><i className={this.repairStarRatingArray[0].join('' )}></i></a>
+                    <a href="#" onClick={this.repairStarSelected.bind(this,1)}><i className={this.repairStarRatingArray[1].join('' )}></i></a>
+                    <a href="#" onClick={this.repairStarSelected.bind(this,2)}><i className={this.repairStarRatingArray[2].join('' )}></i></a>
+                    <a href="#" onClick={this.repairStarSelected.bind(this,3)}><i className={this.repairStarRatingArray[3].join('' )}></i></a>
+                    <a href="#" onClick={this.repairStarSelected.bind(this,4)}><i className={this.repairStarRatingArray[4].join('' )}></i></a>
+                  </div>
     	          </div>
 
     	          <div class="form-group">
     	            <label>What was the condition of the property compared to the listing?</label>
     	            <div class="lh-5 tx-24">
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	              <i class="icon ion-star"></i>
-    	            </div>
+                    <a href="#" onClick={this.conditionStarSelected.bind(this,0)}><i className={this.conditionStarRatingArray[0].join('' )}></i></a>
+                    <a href="#" onClick={this.conditionStarSelected.bind(this,1)}><i className={this.conditionStarRatingArray[1].join('' )}></i></a>
+                    <a href="#" onClick={this.conditionStarSelected.bind(this,2)}><i className={this.conditionStarRatingArray[2].join('' )}></i></a>
+                    <a href="#" onClick={this.conditionStarSelected.bind(this,3)}><i className={this.conditionStarRatingArray[3].join('' )}></i></a>
+                    <a href="#" onClick={this.conditionStarSelected.bind(this,4)}><i className={this.conditionStarRatingArray[4].join('' )}></i></a>
+                  </div>
     	          </div>
 
     	          <div class="form-group">
@@ -169,6 +224,10 @@ export default class Questionnaire2 extends Component {
     	              <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
     	              <input type="text" class="form-control" placeholder="Choose date" />
     	            </div>
+    	            <DatePicker
+          						onChange={this.handleSecurityDepositDateDateChange}
+          						selected={this.state.securityDepositDate}
+        					/>	
     	          </div>
 
     	          <div class="form-group">
@@ -196,6 +255,10 @@ export default class Questionnaire2 extends Component {
     	              <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
     	              <input type="text" class="form-control" placeholder="Choose date" />
     	            </div>
+						<DatePicker
+          						onChange={this.handleLeaseDateChange}
+          						selected={this.state.leaseDate}
+        					/>
     	          </div>
 
     	          <div class="form-group">

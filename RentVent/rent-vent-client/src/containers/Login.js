@@ -6,7 +6,6 @@ import SocialButton2 from "../components/SocialButton2";
 import config from "../config";
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
 import "./Login.css";
-import "./rentvent.css";
 
 import AWS from "aws-sdk";
 import {Landlord} from '../models/Landlord';
@@ -24,6 +23,7 @@ export default class Login extends Component {
       email: "",
       password: ""
     };
+    this.myProps = props;
   }
 
   validateForm() {
@@ -35,7 +35,7 @@ export default class Login extends Component {
     // test api
       var landlord = new Landlord;
     // getToken() {
-       const GATEWAY_URL = ['https://t3d8pqk8bk.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/Mike/moNtagano'];
+       const GATEWAY_URL = ['https://t3d8pqk8bk.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/Arya/Stark'];
        fetch(GATEWAY_URL, {
            method: 'GET',
            mode: 'cors'
@@ -49,8 +49,31 @@ export default class Login extends Component {
                // this.search();
                if(json){
                   if(json.Items.length > 0) {
-                      landlord.firstName = json.Items[0].L_First_Name ? json.Items[0].L_First_Name : "";
-                      landlord.lastName = json.Items[0].L_Last_Name ? json.Items[0].L_Last_Name : "";;
+                      var landlordObj = json.Items[0];
+                      landlord.firstName = landlordObj.L_First_Name ? landlordObj.L_First_Name : "";
+                      landlord.lastName = landlordObj.L_Last_Name ? landlordObj.L_Last_Name : "";
+                      landlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
+                      landlord.addressLine2 = landlordObj.L_Address_Line2 ? landlordObj.L_Address_Line2 : "";
+                      landlord.approval = landlordObj.L_Approval ? landlordObj.L_Approval : "";
+                      landlord.avgApproval = landlordObj.L_Avg_Approval ? landlordObj.L_Avg_Approval : "";
+                      landlord.avgRating = landlordObj.L_Avg_Rating ? landlordObj.L_Avg_Rating : "";
+                      landlord.avgResponsiveness = landlordObj.L_Avg_Responsiveness ? landlordObj.L_Avg_Responsiveness : "";
+                      landlord.city = landlordObj.L_City ? landlordObj.L_City : "";
+                      landlord.country = landlordObj.L_Country ? landlordObj.L_Country : "";
+                      landlord.county = landlordObj.L_County ? landlordObj.L_County : "";
+                      landlord.inquiries = landlordObj.L_Inquiries ? landlordObj.L_Inquiries : "";
+                      landlord.phone = landlordObj.L_Phone ? landlordObj.L_Phone : "";
+                      landlord.rating = landlordObj.L_Rating ? landlordObj.L_Rating : "";
+                      landlord.recommend = landlordObj.L_Recommend ? landlordObj.L_Recommend : "";
+                      landlord.repair = landlordObj.L_Repair ? landlordObj.L_Repair : "";
+                      landlord.repairRequests = landlordObj.L_Repair_Requests ? landlordObj.L_Repair_Requests : "";
+                      landlord.state = landlordObj.L_State ? landlordObj.L_State : "";
+                      landlord.title = landlordObj.L_Title ? landlordObj.L_Title : "";
+                      landlord.zipCode = landlordObj.L_Zipcode ? landlordObj.L_Zipcode : "";
+                      landlord.landlordId = landlordObj.landlord_id ? landlordObj.landlord_id : "";
+                      self.myProps.myCallback(landlord);
+                      self.props.userHasAuthenticated(true);
+                      self.props.history.push("/home");
                   }
                }
            })
@@ -59,8 +82,7 @@ export default class Login extends Component {
    // }
 
 
-    self.props.userHasAuthenticated(true);
-    self.props.history.push("/home");
+    
   }
 
   handleSocialLogin = (user) => {
@@ -302,7 +324,7 @@ export default class Login extends Component {
                 onLoginFailure={this.handleSocialLoginFailure}
                 className="fb-button"
               >
-                Login with Facebook
+                Facebook
         </SocialButton>
         <SocialButton2
                 provider='google'
@@ -310,7 +332,7 @@ export default class Login extends Component {
                 onLoginSuccess={this.handleSocialLogin}
                 onLoginFailure={this.handleSocialLoginFailure}
               >
-                Login with Google
+                Google
         </SocialButton2>
 </div>
         <div class="signin-footer">

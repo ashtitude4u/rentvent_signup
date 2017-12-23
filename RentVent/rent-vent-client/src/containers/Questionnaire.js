@@ -13,12 +13,44 @@ export default class Questionnaire extends Component {
 
     this.state = {
       isAuthenticated: false,
-      isAuthenticating: true
+      isAuthenticating: true,
+      file: '',
+      imagePreviewUrl: ''
     };
 
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
 
+    this.starRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+
+  }
+
+  handleImageUploaded(e) {
+    e.preventDefault();
+    // TODO: do something with -> this.state.file
+    console.log('handle uploading-', this.state.file);
+  }
+
+
+  handleImageChange(e) {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      this.setState({
+        file: file,
+        imagePreviewUrl: reader.result
+      });
+    }
+        reader.readAsDataURL(file)
+  }
+  starSelected(index){
+    this.starRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+      for(var i=0; i<=index; i++) {
+        this.starRatingArray[i]=["icon ion-star filled"];
+      }
   }
 
   userHasAuthenticated = authenticated => {
@@ -47,6 +79,15 @@ export default class Questionnaire extends Component {
   }
 
   render() {
+
+    let {imagePreviewUrl} = this.state;
+    let $imagePreview = null;
+    if (imagePreviewUrl) {
+      $imagePreview = (<img src={imagePreviewUrl} />);
+    } else {
+      $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+    }
+
     return (
       <div>
 
@@ -106,11 +147,11 @@ export default class Questionnaire extends Component {
                 <div class="form-group">
                   <label>How was your overall experience working with this landlord?</label>
                   <div class="lh-5 tx-24">
-                    <i class="icon ion-star"></i>
-                    <i class="icon ion-star"></i>
-                    <i class="icon ion-star"></i>
-                    <i class="icon ion-star"></i>
-                    <i class="icon ion-star"></i>
+                    <a href="#" onClick={this.starSelected.bind(this,0)}><i className={this.starRatingArray[0].join('' )}></i></a>
+                    <a href="#" onClick={this.starSelected.bind(this,1)}><i className={this.starRatingArray[1].join('' )}></i></a>
+                    <a href="#" onClick={this.starSelected.bind(this,2)}><i className={this.starRatingArray[2].join('' )}></i></a>
+                    <a href="#" onClick={this.starSelected.bind(this,3)}><i className={this.starRatingArray[3].join('' )}></i></a>
+                    <a href="#" onClick={this.starSelected.bind(this,4)}><i className={this.starRatingArray[4].join('' )}></i></a>
                   </div>
                 </div>
 
@@ -165,6 +206,17 @@ export default class Questionnaire extends Component {
                 <div class="form-group">
                   <label class="d-block mg-b-15">Do you have photos to share? (optional)</label>
                   <a href="" class="btn btn-secondary">Add a Photo</a>
+                </div>
+
+                 <div className="previewComponent">
+                    <form onSubmit={(e)=>this.handleImageUploaded(e)}>
+                    <input className="fileInput" 
+                      type="file" 
+                      onChange={(e)=>this.handleImageChange(e)} />
+                    </form>
+                  <div className="imgPreview">
+                    {$imagePreview}
+                  </div>
                 </div>
 
                 <hr />
