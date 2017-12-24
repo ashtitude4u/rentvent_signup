@@ -49,7 +49,7 @@ class App extends Component {
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
       userHasAuthenticated: this.userHasAuthenticated,
-      landlordName: this.landlordObject,
+      landlordObject: this.landlordObject,
       myCallback: this.myCallback
     };
 

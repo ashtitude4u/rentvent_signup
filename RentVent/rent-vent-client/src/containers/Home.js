@@ -11,6 +11,7 @@ export default class Home extends Component {
    constructor(props) {
     super(props);
     console.log(props);
+    this.landlordObj = props.landlordObject;
 
     this.state = {
       isAuthenticated: false,
@@ -61,11 +62,11 @@ export default class Home extends Component {
           <div class="logo"><i class="icon ion-ios-home"></i></div>
           <h4>rentvent</h4>
         </div>
-        <a href="#" class="headerpanel-navicon" onClick={this.menuSelected.bind(this)}><i class="icon ion-navicon-round"></i></a>
+        <a href="" class="headerpanel-navicon" onClick={this.menuSelected.bind(this)}><i class="icon ion-navicon-round"></i></a>
         <div class="headerpanel-right d-none d-lg-block" className={this.headerpanelClass.join('' )}>
           <ul class="nav">
             <li class="nav-item"><a href="/home" class="nav-link active">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link" onClick={this.handleLogout}>Logout</a></li>
+            <li class="nav-item"><a href="" class="nav-link" onClick={this.handleLogout}>Logout</a></li>
           </ul>
         </div>
       </div>
@@ -75,9 +76,9 @@ export default class Home extends Component {
       <div class="container">
         <nav aria-label="breadcrumb" role="navigation">
           <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Landlords</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Teresa Auyeung's Profile</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Landlords</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{this.landlordObj.firstName + " " + this.landlordObj.lastName}'s Profile</li>
           </ol>
         </nav>
         <div class="row">
@@ -85,7 +86,7 @@ export default class Home extends Component {
             <div class="profile-head">
               <div class="profile-head-left">
                 <div class="d-sm-flex align-items-start">
-                  <h2 class="tx-gray-900 tx-light">Teresa Auyeung</h2>
+                  <h2 class="tx-gray-900 tx-light">{this.landlordObj.firstName + " " + this.landlordObj.lastName}</h2>
                   <div class="d-flex align-items-center mg-sm-l-20">
                     <div class="lh-5 tx-24">
                       <i class="icon ion-star tx-primary"></i>
@@ -97,7 +98,8 @@ export default class Home extends Component {
                     <span class="mg-l-10 tx-16">4.3</span>
                   </div>
                 </div>
-                <p class="mg-b-0">2051 Norwalk Ave., Los Angeles CA, 90041</p>
+                <p class="mg-b-0">{this.landlordObj.addressLine1 + ", " + this.landlordObj.addressLine2 + ", " + this.landlordObj.city + ", " + this.landlordObj.state
+                  +", " + this.landlordObj.zipCode}</p>
               </div>
               <a href="/questionnaire" class="btn btn-primary mg-t-20 mg-md-t-0"><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
@@ -105,7 +107,7 @@ export default class Home extends Component {
             <div class="d-flex mg-y-30">
               <div>
                 <p class="mg-b-10">Phone Number</p>
-                <h6 class="tx-lato tx-bold tx-14 tx-gray-800 mg-b-0">(543) 427-4901</h6>
+                <h6 class="tx-lato tx-bold tx-14 tx-gray-800 mg-b-0">{this.landlordObj.phone}</h6>
               </div>
               <div class="mg-l-25 bd-l pd-l-25">
                 <p class="mg-b-10">Approval Rate</p>
@@ -113,7 +115,7 @@ export default class Home extends Component {
               </div>
             </div>
 
-            <p>Hi, my name is Teresa, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa... <a href="">Read more</a></p>
+            <p>Hi, my name is {this.landlordObj.firstName}, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa... <a href="javascript:void(0)">Read more</a></p>
 
             <hr class="mg-y-25" />
 
@@ -173,7 +175,7 @@ export default class Home extends Component {
                 <div class="d-sm-flex justify-content-between mg-b-20 mg-sm-b-0">
                   <div>
                     <h6 class="tx-gray-800 tx-14 mg-b-5">A Renter <span class="tx-gray-600 tx-normal mg-l-2">in Vancouver, WA</span></h6>
-                    <p>October 20, 2017 <a href="" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
+                    <p>October 20, 2017 <a href="javascript:void(0)" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
                   </div>
                   <div class="tx-sm-right">
                     <p class="mg-b-0">Rating</p>
@@ -212,7 +214,7 @@ export default class Home extends Component {
                 <div class="d-sm-flex justify-content-between mg-b-20 mg-sm-b-0">
                   <div>
                     <h6 class="tx-gray-800 tx-14 mg-b-5">A Renter <span class="tx-gray-600 tx-normal mg-l-2">in San Francisco, CA</span></h6>
-                    <p>November 18, 2017 <a href="" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
+                    <p>November 18, 2017 <a href="javascript:void(0)" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
                   </div>
                   <div class="tx-sm-right">
                     <p class="mg-b-0">Rating</p>
@@ -251,7 +253,7 @@ export default class Home extends Component {
               </div>
             </div>
 
-            <a href="" class="btn btn-loadreviews">Load More Reviews</a>
+            <a href="javascript:void(0)" class="btn btn-loadreviews">Load More Reviews</a>
 
 
           </div>
@@ -272,7 +274,7 @@ export default class Home extends Component {
                 <i class="icon ion-star tx-primary"></i>
                 <i class="icon ion-star"></i>
                 <i class="icon ion-star"></i>
-                <a href="" class="mg-l-5 tx-13">28 Reviews</a>
+                <a href="javascript:void(0)" class="mg-l-5 tx-13">28 Reviews</a>
               </div>
             </div>
 
@@ -290,13 +292,13 @@ export default class Home extends Component {
                 <i class="icon ion-star tx-primary"></i>
                 <i class="icon ion-star tx-primary"></i>
                 <i class="icon ion-star tx-primary"></i>
-                <a href="" class="mg-l-5 tx-13">12 Reviews</a>
+                <a href="javascript:void(0)" class="mg-l-5 tx-13">12 Reviews</a>
               </div>
             </div>
 
             <div class="mg-t-20 bd pd-25 tx-center">
               <p class="mg-b-5 tx-gray-800 tx-medium">Do you own or manage this property?</p>
-              <a href="">Claim Your Profile</a>
+              <a href="javascript:void(0)">Claim Your Profile</a>
             </div>
 
           </div>

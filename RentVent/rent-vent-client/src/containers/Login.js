@@ -34,8 +34,8 @@ export default class Login extends Component {
 
     // test api
       var landlord = new Landlord;
-    // getToken() {
-       const GATEWAY_URL = ['https://t3d8pqk8bk.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/Arya/Stark'];
+      try{
+       const GATEWAY_URL = ['https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/arya/stark'];
        fetch(GATEWAY_URL, {
            method: 'GET',
            mode: 'cors'
@@ -44,7 +44,7 @@ export default class Login extends Component {
                return response.json();
            })
            .then((json) => {
-               console.log('new token received')
+               console.log('Landlord data received '+JSON.stringify(json));
                // this.setState({ accessToken: json.done.json.access_token });
                // this.search();
                if(json){
@@ -77,8 +77,14 @@ export default class Login extends Component {
                   }
                }
            })
-           .catch(err => console.log('There was an error:' + err))
-
+           .catch((err) => {console.log('There was an error:' + err);alert("Landlord error");})
+         } catch (e) {
+            console.log('There was an error:'+e); 
+            alert("Landlord error");
+      // dummy login for testing purpose
+      // this.props.userHasAuthenticated(true);
+      // this.props.history.push("/");
+    }
    // }
 
 
@@ -232,7 +238,8 @@ export default class Login extends Component {
 
 
       this.props.userHasAuthenticated(true);
-      this.props.history.push("/home");
+      this.navigateToHomeScreen(this);
+      // this.props.history.push("/home");
     } catch (e) {
       alert(e);
       this.setState({ isLoading: false });
