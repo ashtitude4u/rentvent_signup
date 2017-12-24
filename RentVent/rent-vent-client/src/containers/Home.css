@@ -20,6 +20,22 @@
   width: 100px;
   height: 100px;
 }
+
+.react-datepicker-wrapper input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 0.65rem 0.75rem;
+    font-size: 16px;
+    line-height: 1.25;
+}
+
+.write-review-form .input-group-addon{
+    padding: 0.65rem 2.1rem 0.65rem 1.5rem;
+}
+
+.write-review-form .ion-calendar {
+    font-size: 1.4rem;
+}
 /* --------------------------------------------------- */
 /* ############### GOOGLE FONTS IMPORT ############### */
 /* --------------------------------------------------- */

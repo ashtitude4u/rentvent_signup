@@ -139,12 +139,11 @@ export default class Questionnaire2 extends Component {
     	                <label>What was your move in date?</label>
     	                <div class="input-group wd-200">
     	                  <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
-    	                  <input type="text" class="form-control" placeholder="Choose date" />
-    	                </div>
-							<DatePicker
+    	                  <DatePicker
           						onChange={this.handleMoveInDateChange}
           						selected={this.state.moveInDate}
         					/>	
+    	                </div>
     	              </div>
     	            </div>
     	            <div class="col">
@@ -152,12 +151,12 @@ export default class Questionnaire2 extends Component {
     	                <label>What was your move out date?</label>
     	                <div class="input-group wd-200">
     	                  <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
-    	                  <input type="text" class="form-control" placeholder="Choose date" />
-    	                </div>
-    	                <DatePicker
+    	                  	<DatePicker
           						onChange={this.handleMoveOutDateChange}
           						selected={this.state.moveOutDate}
-        					/>	
+        					/>
+    	                </div>
+    	                
     	              </div>
     	            </div>
     	          </div>
@@ -222,12 +221,11 @@ export default class Questionnaire2 extends Component {
     	            <label>What date did you receive your security deposit back?</label>
     	            <div class="input-group wd-200">
     	              <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
-    	              <input type="text" class="form-control" placeholder="Choose date" />
-    	            </div>
-    	            <DatePicker
+						<DatePicker
           						onChange={this.handleSecurityDepositDateDateChange}
           						selected={this.state.securityDepositDate}
         					/>	
+    	            </div>
     	          </div>
 
     	          <div class="form-group">
@@ -253,12 +251,12 @@ export default class Questionnaire2 extends Component {
     	            <label>What date does your lease expire?</label>
     	            <div class="input-group wd-200">
     	              <span class="input-group-addon tx-gray-600"><i class="icon ion-calendar"></i></span>
-    	              <input type="text" class="form-control" placeholder="Choose date" />
-    	            </div>
-						<DatePicker
+    	              	<DatePicker
           						onChange={this.handleLeaseDateChange}
           						selected={this.state.leaseDate}
         					/>
+    	            </div>
+						
     	          </div>
 
     	          <div class="form-group">

@@ -5,15 +5,6 @@ import "./Home.css";
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
-import houseImage1 from '../img/1.jpg';
-import houseImage2 from '../img/2.jpg';
-import houseImage3 from '../img/3.jpg';
-import houseImage4 from '../img/4.jpg';
-import houseImage5 from '../img/5.jpg';
-import houseImage6 from '../img/6.jpg';
-import profileImage1 from '../img/7.jpg';
-import profileImage2 from '../img/8.jpg';
-import profileImage3 from '../img/9.jpg';
 import { signOutUser } from "../libs/awsLib";
 
 export default class Home extends Component {
@@ -28,6 +19,17 @@ export default class Home extends Component {
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
+
+    this.houseImage1 = "https://s3.amazonaws.com/rentvent-web/1.jpg";
+    this.houseImage2 = "https://s3.amazonaws.com/rentvent-web/2.jpg";
+    this.houseImage3 = "https://s3.amazonaws.com/rentvent-web/3.jpg";
+    this.houseImage4 = "https://s3.amazonaws.com/rentvent-web/4.jpg";
+    this.houseImage5 = "https://s3.amazonaws.com/rentvent-web/5.jpg";
+    this.houseImage6 = "https://s3.amazonaws.com/rentvent-web/6.jpg";
+    this.profileImage1 = "https://s3.amazonaws.com/rentvent-web/7.jpg";
+    this.profileImage2 = "https://s3.amazonaws.com/rentvent-web/8.jpg";
+    this.profileImage3 = "https://s3.amazonaws.com/rentvent-web/9.jpg";
+
   }
 
   userHasAuthenticated = authenticated => {
@@ -63,7 +65,6 @@ export default class Home extends Component {
         <div class="headerpanel-right d-none d-lg-block" className={this.headerpanelClass.join('' )}>
           <ul class="nav">
             <li class="nav-item"><a href="/home" class="nav-link active">Home</a></li>
-            <li class="nav-item"><a href="/questionnaire" class="nav-link">Questionnaire</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onClick={this.handleLogout}>Logout</a></li>
           </ul>
         </div>
@@ -98,7 +99,7 @@ export default class Home extends Component {
                 </div>
                 <p class="mg-b-0">2051 Norwalk Ave., Los Angeles CA, 90041</p>
               </div>
-              <a href="write-review.html" class="btn btn-primary mg-t-20 mg-md-t-0"><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
+              <a href="/questionnaire" class="btn btn-primary mg-t-20 mg-md-t-0"><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
 
             <div class="d-flex mg-y-30">
@@ -259,9 +260,9 @@ export default class Home extends Component {
 
             <div class="bd pd-20 bg-white mg-b-30">
               <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src="../img/1.jpg" alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src="../img/2.jpg" alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src="../img/3.jpg" alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
               <h6 class="tx-15 tx-primary">Amazing Sea View</h6>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
@@ -277,9 +278,9 @@ export default class Home extends Component {
 
             <div class="bd pd-20 bg-white mg-b-30">
               <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src="../img/4.jpg" alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src="../img/5.jpg" alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src="../img/6.jpg" alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage4} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage5} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage6} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
               <h6 class="tx-15 tx-primary">Elegant 2 Bedroom House</h6>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>

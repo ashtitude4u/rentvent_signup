@@ -85,7 +85,7 @@ export default class Questionnaire extends Component {
     if (imagePreviewUrl) {
       $imagePreview = (<img src={imagePreviewUrl} />);
     } else {
-      $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+      // $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
     }
 
     return (
@@ -205,7 +205,6 @@ export default class Questionnaire extends Component {
 
                 <div class="form-group">
                   <label class="d-block mg-b-15">Do you have photos to share? (optional)</label>
-                  <a href="" class="btn btn-secondary">Add a Photo</a>
                 </div>
 
                  <div className="previewComponent">
