@@ -63,6 +63,26 @@ export default class Signup extends Component {
     this.setState({ isLoading: false });
   }
 
+  handleKeyPress = (event) => {
+    if(event.key == 'Enter'){
+      if(this.validateForm()){
+        this.handleSubmit(event);
+      }
+    }
+  }
+
+  handleConfirmKeyPress = (event) => {
+    if(event.key == 'Enter'){
+      if(this.state.confirmationCode){
+        this.handleConfirmationSubmit(event);
+      }
+    }
+  }
+
+  handleBacktoLogin = event => {
+    this.props.history.push("/");
+  }
+
   handleConfirmationSubmit = async event => {
     event.preventDefault();
 
@@ -241,11 +261,12 @@ export default class Signup extends Component {
             type="tel"
             value={this.state.confirmationCode}
             onChange={this.handleChange}
+            onKeyPress={this.handleConfirmKeyPress}
           />
         </FormGroup>
       
         <a href="javascript:void(0)" class="btn btn-primary btn-block mg-b-15" onClick={this.handleConfirmationSubmit} disabled={!this.state.confirmationCode}>Verify Code</a>
-        <a href="/" class="btn bg-gray-300 bd-0 btn-block">Go back to Signin</a>
+        <a href="#" class="btn bg-gray-300 bd-0 btn-block" onClick={this.handleBacktoLogin}>Go back to Signin</a>
       </div>
     </div>
     );
@@ -314,6 +335,7 @@ export default class Signup extends Component {
               onChange={this.handleChange}
               type="password"
               placeholder="Enter your password"
+              onKeyPress={this.handleKeyPress}
             />
             </FormGroup>
             </div>
@@ -328,76 +350,10 @@ export default class Signup extends Component {
         <button class="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.validateForm()}>Create Account</button>
 
         <div class="signin-footer">
-          Already have an account? <a href="/">Sign In</a>
+          Already have an account? <a href="#" onClick={this.handleBacktoLogin}>Sign In</a>
         </div>
       </div>
     </div>
-
-
-      // <form onSubmit={this.handleSubmit}>
-      //   <FormGroup controlId="email" bsSize="large">
-      //     <ControlLabel>Email</ControlLabel>
-      //     <FormControl
-      //       autoFocus
-      //       type="email"
-      //       value={this.state.email}
-      //       onChange={this.handleChange}
-      //     />
-      //   <FormGroup controlId="name" bsSize="large">
-      //     <ControlLabel>Name</ControlLabel>
-      //     <FormControl
-      //       autoFocus
-      //       type="text"
-      //       value={this.state.name}
-      //       onChange={this.handleChange}
-      //     />
-      //   </FormGroup>
-      //     <FormGroup controlId="familyName" bsSize="large">
-      //     <ControlLabel>Family Name</ControlLabel>
-      //     <FormControl
-      //       autoFocus
-      //       type="text"
-      //       value={this.state.familyName}
-      //       onChange={this.handleChange}
-      //     />
-      //   </FormGroup>
-      //   <FormGroup controlId="givenName" bsSize="large">
-      //     <ControlLabel>Given Name</ControlLabel>
-      //     <FormControl
-      //       autoFocus
-      //       type="text"
-      //       value={this.state.givenName}
-      //       onChange={this.handleChange}
-      //     />
-      //   </FormGroup>
-      //   </FormGroup>
-      //   <FormGroup controlId="password" bsSize="large">
-      //     <ControlLabel>Password</ControlLabel>
-      //     <FormControl
-      //       value={this.state.password}
-      //       onChange={this.handleChange}
-      //       type="password"
-      //     />
-      //   </FormGroup>
-      //   <FormGroup controlId="confirmPassword" bsSize="large">
-      //     <ControlLabel>Confirm Password</ControlLabel>
-      //     <FormControl
-      //       value={this.state.confirmPassword}
-      //       onChange={this.handleChange}
-      //       type="password"
-      //     />
-      //   </FormGroup>
-      //   <LoaderButton
-      //     block
-      //     bsSize="large"
-      //     disabled={!this.validateForm()}
-      //     type="submit"
-      //     isLoading={this.state.isLoading}
-      //     text="Signup"
-      //     loadingText="Signing up…"
-      //   />
-      // </form>
-
 
     );
   }

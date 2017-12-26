@@ -9,7 +9,7 @@ import "./Login.css";
 import ReactGA from 'react-ga';
 
 import AWS from "aws-sdk";
-import {Landlord} from '../models/Landlord';
+import {LandlordModel} from '../models/LandlordModel';
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
 
@@ -42,10 +42,14 @@ export default class Login extends Component {
     return this.state.email.length > 0 && this.state.password.length > 0;
   }
 
+  handleSignup = event => {
+    this.props.history.push("/signup");
+  }
+
   navigateToHomeScreen(self) {
 
     // test api
-      var landlord = new Landlord;
+      var landlord = new LandlordModel;
       try{
        const GATEWAY_URL = ['https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/arya/stark'];
        fetch(GATEWAY_URL, {
@@ -101,6 +105,14 @@ export default class Login extends Component {
 
 
     
+  }
+
+  handleKeyPress = (event) => {
+    if(event.key == 'Enter'){
+      if(this.validateForm()){
+        this.handleSubmit(event);
+      }
+    }
   }
 
   handleSocialLogin = (user) => {
@@ -320,6 +332,7 @@ export default class Login extends Component {
               onChange={this.handleChange}
               type="password"
               placeholder="Enter your password"
+              onKeyPress={this.handleKeyPress}
             />
           </FormGroup>
         </form>
@@ -355,7 +368,7 @@ export default class Login extends Component {
         </SocialButton2>
 </div>
         <div class="signin-footer">
-          Not yet a member? <a href="/signup">Sign Up</a>
+          Not yet a member? <a href="#" onClick={this.handleSignup}>Sign Up</a>
         </div>
       </div>
     </div>

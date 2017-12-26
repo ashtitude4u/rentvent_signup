@@ -70,7 +70,7 @@ export default class Home extends Component {
         <div class="headerpanel-right d-none d-lg-block" className={this.headerpanelClass.join('' )}>
           <ul class="nav">
             <li class="nav-item"><a href="javascript:void(0)" class="nav-link active">Home</a></li>
-            <li class="nav-item"><a href="" class="nav-link ash" onClick={this.handleLogout}>Logout</a></li>
+            <li class="nav-item"><a href="#" class="nav-link ash" onClick={this.handleLogout}>Logout</a></li>
           </ul>
         </div>
       </div>
@@ -112,10 +112,6 @@ export default class Home extends Component {
               <div>
                 <p class="mg-b-10">Phone Number</p>
                 <h6 class="tx-lato tx-bold tx-14 tx-gray-800 mg-b-0">{this.landlordObj.phone}</h6>
-              </div>
-              <div class="mg-l-25 bd-l pd-l-25">
-                <p class="mg-b-10">Approval Rate</p>
-                <h6 class="tx-14 mg-b-0 tx-lato"><span class="tx-success">92%</span> <span class="tx-gray-500">(99/109)</span></h6>
               </div>
             </div>
 
@@ -193,8 +189,6 @@ export default class Home extends Component {
                   </div>
                 </div>
 
-                <h6 class="tx-gray-800 mg-b-20">Amazing Landlord!</h6>
-
                 <label class="tx-bold tx-uppercase tx-12 tx-primary">Pros</label>
                 <p>Fantastic spot!! We loved our stay here. Beautiful space with room for several people, amazing views from the patio! Our host was friendly and helpful. Couldn't be happier.</p>
 
@@ -202,14 +196,6 @@ export default class Home extends Component {
                   <div class="col-sm">
                     <p class="mg-b-5">Approve Landlord?</p>
                     <p class="tx-success mg-b-0">Yes</p>
-                  </div>
-                  <div class="col-sm mg-t-20 mg-sm-t-0">
-                    <p class="mg-b-5">Recommend Property?</p>
-                    <p class="tx-success mg-b-0">Yes</p>
-                  </div>
-                  <div class="col-sm mg-t-20 mg-sm-t-0">
-                    <p class="mg-b-5">Security deposit returned</p>
-                    <p class="tx-lato tx-gray-800 mg-b-0">$200</p>
                   </div>
                 </div>
               </div>
@@ -245,20 +231,9 @@ export default class Home extends Component {
                     <p class="mg-b-5">Approve Landlord?</p>
                     <p class="tx-success mg-b-0">Yes</p>
                   </div>
-                  <div class="col-sm mg-t-20 mg-sm-t-0">
-                    <p class="mg-b-5">Recommend Property?</p>
-                    <p class="tx-danger mg-b-0">No</p>
-                  </div>
-                  <div class="col-sm mg-t-20 mg-sm-t-0">
-                    <p class="mg-b-5">Security deposit returned</p>
-                    <p class="tx-lato tx-gray-800 mg-b-0">$110</p>
-                  </div>
                 </div>
               </div>
             </div>
-
-            <a href="javascript:void(0)" class="btn btn-loadreviews">Load More Reviews</a>
-
 
           </div>
           <div class="col-lg-4 mg-t-40 mg-lg-t-0">
@@ -278,7 +253,6 @@ export default class Home extends Component {
                 <i class="icon ion-star tx-primary"></i>
                 <i class="icon ion-star"></i>
                 <i class="icon ion-star"></i>
-                <a href="javascript:void(0)" class="mg-l-5 tx-13">28 Reviews</a>
               </div>
             </div>
 
@@ -288,7 +262,6 @@ export default class Home extends Component {
                 <div class="col ht-100 pd-x-1-force"><img src={this.houseImage5} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
                 <div class="col ht-100 pd-l-1-force"><img src={this.houseImage6} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
-              <h6 class="tx-15 tx-primary">Elegant 2 Bedroom House</h6>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
               <div class="lh-5 tx-14">
                 <i class="icon ion-star tx-primary"></i>
@@ -296,7 +269,6 @@ export default class Home extends Component {
                 <i class="icon ion-star tx-primary"></i>
                 <i class="icon ion-star tx-primary"></i>
                 <i class="icon ion-star tx-primary"></i>
-                <a href="javascript:void(0)" class="mg-l-5 tx-13">12 Reviews</a>
               </div>
             </div>
 

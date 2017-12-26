@@ -20,6 +20,7 @@ export default class Questionnaire1 extends Component {
 
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
+    this.starOptionSelected = false;
 
     this.starRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
 
@@ -31,6 +32,9 @@ export default class Questionnaire1 extends Component {
     console.log('handle uploading-', this.state.file);
   }
 
+  validateForm() {
+    return this.starOptionSelected;
+  }
 
   handleImageChange(e) {
     e.preventDefault();
@@ -47,6 +51,7 @@ export default class Questionnaire1 extends Component {
         reader.readAsDataURL(file)
   }
   starSelected(index){
+    this.starOptionSelected = true;
     this.starRatingArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
       for(var i=0; i<=index; i++) {
         this.starRatingArray[i]=["icon ion-star filled"];
@@ -79,7 +84,11 @@ export default class Questionnaire1 extends Component {
   }
 
   moreDetails = event => {
-    this.props.history.push("/questionnaire2");
+    if(this.validateForm()){
+      this.props.history.push("/questionnaire2");
+    } else {
+      alert("Please complete all fields");
+    }
   }
 
   render() {
