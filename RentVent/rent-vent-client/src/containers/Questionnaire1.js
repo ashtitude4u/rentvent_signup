@@ -7,7 +7,7 @@ import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
 
-export default class Questionnaire extends Component {
+export default class Questionnaire1 extends Component {
    constructor(props) {
     super(props);
 
@@ -74,6 +74,10 @@ export default class Questionnaire extends Component {
     this.props.history.push("/");
   }
 
+  navigateToHomeScreen = event => {
+    this.props.history.push("/home");
+  }
+
   moreDetails = event => {
     this.props.history.push("/questionnaire2");
   }
@@ -100,7 +104,7 @@ export default class Questionnaire extends Component {
         <a href="#" class="headerpanel-navicon" onClick={this.menuSelected.bind(this)}><i class="icon ion-navicon-round"></i></a>
         <div class="headerpanel-right d-none d-lg-block" className={this.headerpanelClass.join('' )}>
           <ul class="nav">
-            <li class="nav-item"><a href="/home" class="nav-link active">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link active" onClick={this.navigateToHomeScreen}>Home</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onClick={this.handleLogout}>Logout</a></li>
           </ul>
         </div>
@@ -111,7 +115,7 @@ export default class Questionnaire extends Component {
         <div class="container">
           <nav aria-label="breadcrumb" role="navigation">
             <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#" onClick={this.navigateToHomeScreen}>Home</a></li>
               <li class="breadcrumb-item"><a href="#">Landlords</a></li>
               <li class="breadcrumb-item active" aria-current="page">Teresa Auyeung's Profile</li>
             </ol>

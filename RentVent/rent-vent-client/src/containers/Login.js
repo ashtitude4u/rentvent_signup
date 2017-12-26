@@ -6,6 +6,7 @@ import SocialButton2 from "../components/SocialButton2";
 import config from "../config";
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
 import "./Login.css";
+import ReactGA from 'react-ga';
 
 import AWS from "aws-sdk";
 import {Landlord} from '../models/Landlord';
@@ -24,6 +25,17 @@ export default class Login extends Component {
       password: ""
     };
     this.myProps = props;
+
+    ReactGA.initialize('UA-111517732-1', {
+      debug: true,
+      titleCase: false,
+      gaOptions: {
+        userId: 123
+      }
+    });
+    ReactGA.set({ userId: 123 });
+
+
   }
 
   validateForm() {

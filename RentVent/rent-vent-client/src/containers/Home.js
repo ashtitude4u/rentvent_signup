@@ -52,6 +52,10 @@ export default class Home extends Component {
     this.props.history.push("/");
   }
 
+  handleReview = event => {
+    this.props.history.push("/questionnaire1");
+  }
+
   render() {
     return (
   <div>
@@ -62,11 +66,11 @@ export default class Home extends Component {
           <div class="logo"><i class="icon ion-ios-home"></i></div>
           <h4>rentvent</h4>
         </div>
-        <a href="" class="headerpanel-navicon" onClick={this.menuSelected.bind(this)}><i class="icon ion-navicon-round"></i></a>
+        <a href="#" class="headerpanel-navicon" onClick={this.menuSelected.bind(this)}><i class="icon ion-navicon-round"></i></a>
         <div class="headerpanel-right d-none d-lg-block" className={this.headerpanelClass.join('' )}>
           <ul class="nav">
-            <li class="nav-item"><a href="/home" class="nav-link active">Home</a></li>
-            <li class="nav-item"><a href="" class="nav-link" onClick={this.handleLogout}>Logout</a></li>
+            <li class="nav-item"><a href="javascript:void(0)" class="nav-link active">Home</a></li>
+            <li class="nav-item"><a href="" class="nav-link ash" onClick={this.handleLogout}>Logout</a></li>
           </ul>
         </div>
       </div>
@@ -101,7 +105,7 @@ export default class Home extends Component {
                 <p class="mg-b-0">{this.landlordObj.addressLine1 + ", " + this.landlordObj.addressLine2 + ", " + this.landlordObj.city + ", " + this.landlordObj.state
                   +", " + this.landlordObj.zipCode}</p>
               </div>
-              <a href="/questionnaire" class="btn btn-primary mg-t-20 mg-md-t-0"><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
+              <a href="#" class="btn btn-primary mg-t-20 mg-md-t-0" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
 
             <div class="d-flex mg-y-30">
