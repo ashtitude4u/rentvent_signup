@@ -6,7 +6,7 @@ export default {
     REGION: "us-east-1"
   },
   google:{
-  	APP_ID:"406063358513-jt292cara3sq1e5kcmo49dkn6oem6a4t.apps.googleusercontent.com"
+  	APP_ID:"99107107233-07vbkclu74ljtpma607p024q2n0i4f1d.apps.googleusercontent.com"
   },
   facebook:{
   	APP_ID:"1777119195915239"
