@@ -14,6 +14,16 @@ export default class Questionnaire2 extends Component {
    constructor(props) {
     super(props);
 
+    this.showMe = false;
+    this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
+
+    if(!this.landlordObj){
+      this.showMe = false;
+      this.props.history.push("/");
+    } else {
+      this.showMe = true;
+    }
+
     this.state = {
       isAuthenticated: false,
       isAuthenticating: true,
@@ -74,6 +84,7 @@ export default class Questionnaire2 extends Component {
 
   handleLogout = event => {
     signOutUser();
+    sessionStorage.setItem('landlordObject', null);
     this.userHasAuthenticated(false);
     this.props.history.push("/");
   }
@@ -93,8 +104,14 @@ export default class Questionnaire2 extends Component {
     this.headerOption = !this.headerOption;
   }
 
+	componentDidMount () {
+  		window.scrollTo(0, 0)
+	}
+	
   render() {
     return (
+
+    	this.showMe ? 
     	<div>
 
     <div class="headerpanel">
@@ -405,6 +422,7 @@ export default class Questionnaire2 extends Component {
     	</div>
 
     	</div>
+    	: null
     );
   }
 }

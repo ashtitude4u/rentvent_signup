@@ -11,12 +11,22 @@ export default class Home extends Component {
    constructor(props) {
     super(props);
     console.log(props);
-    this.landlordObj = props.landlordObject;
+    // this.landlordObj = props.landlordObject;
+    this.showMe = false;
+    this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
+
+    if(!this.landlordObj){
+      this.showMe = false;
+      this.props.history.push("/");
+    } else {
+      this.showMe = true;
+    }
 
     this.state = {
       isAuthenticated: false,
       isAuthenticating: true
     };
+    
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
@@ -48,6 +58,7 @@ export default class Home extends Component {
 
   handleLogout = event => {
     signOutUser();
+    sessionStorage.setItem('landlordObject', null);
     this.userHasAuthenticated(false);
     this.props.history.push("/");
   }
@@ -58,6 +69,8 @@ export default class Home extends Component {
 
   render() {
     return (
+
+      this.showMe ? 
   <div>
 
     <div class="headerpanel">
@@ -282,7 +295,7 @@ export default class Home extends Component {
       </div>
     </div>
     </div>
-
+    : null
     );
   }
 }

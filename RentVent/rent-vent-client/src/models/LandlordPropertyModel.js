@@ -1,5 +1,5 @@
 export class LandlordPropertyModel {
-  constructor(lpid,,lplid,lppid,lpStartDate,lpEndDate,lpHomeException,lpCreatedBy,lpUpdatedBy,lpCreatedOn,lpUpdatedOn) {
+  constructor(lpid,lplid,lppid,lpStartDate,lpEndDate,lpHomeException,lpCreatedBy,lpUpdatedBy,lpCreatedOn,lpUpdatedOn) {
     this.lpid = lpid;
     this.lplid = lplid;
     this.lppid = lppid;
