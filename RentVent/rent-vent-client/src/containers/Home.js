@@ -6,6 +6,7 @@ import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
+import ReactGA from 'react-ga';
 
 export default class Home extends Component {
    constructor(props) {
@@ -14,6 +15,23 @@ export default class Home extends Component {
     // this.landlordObj = props.landlordObject;
     this.showMe = false;
     this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
+    this.landlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+
+    for (var j = 0; j < this.landlordObj.landlordReviews.length; j++){
+          var item = this.landlordObj.landlordReviews[j];
+        for(var i = 0; i < item.lrDescription.length; i++){
+            if(item.lrDescription[i].LR_Type.toUpperCase() == "ADVICE"){
+                item.adviceObj = item.lrDescription[i];
+            } else if(item.lrDescription[i].LR_Type.toUpperCase() == "PRO"){
+                item.proObj = item.lrDescription[i];
+            } else if(item.lrDescription[i].LR_Type.toUpperCase() == "CON"){
+                item.conObj = item.lrDescription[i];
+            }
+        }
+    }
+    
+
+    this.landlordObj ? this.landlordObj.avgRating ? this.assignLandlordRatings(this.landlordObj.avgRating) : "" : "";
 
     if(!this.landlordObj){
       this.showMe = false;
@@ -26,7 +44,6 @@ export default class Home extends Component {
       isAuthenticated: false,
       isAuthenticating: true
     };
-    
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
@@ -43,6 +60,14 @@ export default class Home extends Component {
 
   }
 
+  assignLandlordRatings = rating => {
+    this.landlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+    var ratings = Math.round(rating);
+      for(var i=0; i<ratings; i++) {
+        this.landlordRatingStarArray[i]=["icon ion-star tx-primary"];
+      }
+  }
+
   userHasAuthenticated = authenticated => {
     this.setState({ isAuthenticated: authenticated });
   }
@@ -56,20 +81,100 @@ export default class Home extends Component {
     this.headerOption = !this.headerOption;
   }
 
+  revealDisputes() {
+    alert("Under development");
+  }
   handleLogout = event => {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
     this.userHasAuthenticated(false);
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Logout',
+        });
     this.props.history.push("/");
   }
 
   handleReview = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Questionnaire part 1',
+        });
     this.props.history.push("/questionnaire1");
   }
 
+  componentDidMount () {
+      window.scrollTo(0, 0)
+  }
+  
   render() {
-    return (
 
+     var listItems = this.landlordObj.landlordReviews.map(function(item) {
+      return (
+
+        <div class="pd-y-30 bd-b">
+                <div class="d-sm-flex justify-content-between mg-b-20 mg-sm-b-0">
+                  <div>
+                    <h6 class="tx-gray-800 tx-14 mg-b-5">A Renter <span class="tx-gray-600 tx-normal mg-l-2">in Vancouver, WA</span></h6>
+                    <p>{item.lrCreatedDate}<a href="javascript:void(0)" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
+                  </div>
+                  <div class="tx-sm-right">
+                    <p class="mg-b-0">Rating</p>
+                    <div class="lh-5 tx-16">
+                      <i class="icon ion-star tx-primary"></i>
+                      <i class="icon ion-star tx-primary"></i>
+                      <i class="icon ion-star tx-primary"></i>
+                      <i class="icon ion-star tx-primary"></i>
+                      <i class="icon ion-star tx-primary"></i>
+                    </div>
+                  </div>
+                </div>
+                {(() => {
+                        if (item.proObj) {
+                          return <div>
+                          <div>
+                          <label class="tx-bold tx-uppercase tx-12 tx-primary">Pros</label>
+                          <p>{item.proObj.description}</p>
+                          </div>
+                          </div>;
+                         } 
+                      })()}
+
+                      {(() => {
+                        if (item.adviceObj) {
+                          return <div>
+                          <div>
+                          <label class="tx-bold tx-uppercase tx-12 tx-primary">Advice</label>
+                          <p>{item.adviceObj.description}</p>
+                          </div>
+                          </div>;
+
+                         }  
+                      })()}
+
+                      {(() => {
+                        if (item.conObj) {
+                          return <div>
+                          <div>
+                          <label class="tx-bold tx-uppercase tx-12 tx-primary">Cons</label>
+                          <p>{item.conObj.description}</p>
+                          </div>
+                          </div>;
+                         }
+                      })()}
+                <div class="row row-xs">
+                  <div class="col-sm">
+                    <p class="mg-b-5">Approve Landlord?</p>
+                    <p class="tx-success mg-b-0">Yes</p>
+                  </div>
+                </div>
+              </div>
+
+        : null
+      );
+    });
+
+    return (
       this.showMe ? 
   <div>
 
@@ -104,15 +209,16 @@ export default class Home extends Component {
               <div class="profile-head-left">
                 <div class="d-sm-flex align-items-start">
                   <h2 class="tx-gray-900 tx-light">{this.landlordObj.firstName + " " + this.landlordObj.lastName}</h2>
+                         
                   <div class="d-flex align-items-center mg-sm-l-20">
                     <div class="lh-5 tx-24">
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star"></i>
-                    </div>
-                    <span class="mg-l-10 tx-16">4.3</span>
+                      <i className={this.landlordRatingStarArray[0].join('' )}></i>
+                      <i className={this.landlordRatingStarArray[1].join('' )}></i>
+                      <i className={this.landlordRatingStarArray[2].join('' )}></i>
+                      <i className={this.landlordRatingStarArray[3].join('' )}></i>
+                      <i className={this.landlordRatingStarArray[4].join('' )}></i>
+                    </div> 
+                    <span class="mg-l-10 tx-16">{this.landlordObj.avgRating}</span>
                   </div>
                 </div>
                 <p class="mg-b-0">{this.landlordObj.addressLine1 + ", " + this.landlordObj.addressLine2 + ", " + this.landlordObj.city + ", " + this.landlordObj.state
@@ -128,50 +234,21 @@ export default class Home extends Component {
               </div>
             </div>
 
-            <p>Hi, my name is {this.landlordObj.firstName}, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa... <a href="javascript:void(0)">Read more</a></p>
+            <p>Hi, my name is {this.landlordObj.firstName}... <a href="javascript:void(0)">Read more</a></p>
 
             <hr class="mg-y-25" />
 
             <div class="row">
               <div class="col-lg-6">
-                <p class="mg-b-10">Period of ownership by landlord</p>
-                <p class="mg-b-5 d-flex justify-content-between">
-                  <span class="tx-medium tx-gray-700">Teresa Auyeung</span>
-                  <span>8/28/2015 to present</span>
-                </p>
-                <p class="mg-b-0 d-flex justify-content-between">
-                  <span class="tx-medium tx-gray-700">Annette Bernardino</span>
-                  <span>06/2012 - 8/28/2015</span>
-                </p>
 
                 <p class="mg-b-5 mg-t-30">Legal disputes history</p>
-                <p class="tx-gray-800 mg-b-0">No evidence of legal disputes reported.</p>
+                <a href="#" class="btn btn-primary mg-t-20 mg-md-t-0" onClick={this.revealDisputes}>Reveal Disputes</a>
 
-                <p class="mg-b-5 mg-t-30">Utility costs for this property per month on average.</p>
-                <p class="tx-gray-800 mg-b-0 tx-lato">$184</p>
-
-                <p class="mg-b-5 mg-t-30">Authorized improvements on this property since</p>
-                <p class="tx-gray-800 mg-b-0 tx-lato">October 07, 2015</p>
-              </div>
-
-              <div class="col-lg-5 mg-l-auto mg-t-25 mg-lg-t-0">
-                <p class="mg-b-5">Landlord's profit margin</p>
-                <p class="tx-gray-800 mg-b-0 tx-lato">$450</p>
-
-                <p class="mg-b-5 mg-t-30">Property taxes paid per year</p>
-                <p class="tx-gray-800 mg-b-0 tx-lato">$9187</p>
-
-                <p class="mg-b-5 mg-t-30">Owners monthly mortgage</p>
-                <p class="tx-gray-800 mg-b-0 tx-lato">$3570</p>
               </div>
             </div>
 
-            <h6 class="section-label mg-t-50 mg-b-15">Reviews (86)</h6>
             <div class="review-header">
-              <div class="input-form-group">
-                <input type="search" class="form-control" placeholder="Search within the reviews" />
-                <button class="btn btn-primary"><i class="fa fa-search"></i></button>
-              </div>
+                 <h6 class="section-label mg-t-25 mg-b-15">Reviews (86)</h6>
               <div class="mg-t-15 mg-sm-t-0">
                 <span>Sort by</span>
                 <select class="select2">
@@ -184,68 +261,8 @@ export default class Home extends Component {
             </div>
 
             <div class="media-list">
-              <div class="pd-y-30 bd-b">
-                <div class="d-sm-flex justify-content-between mg-b-20 mg-sm-b-0">
-                  <div>
-                    <h6 class="tx-gray-800 tx-14 mg-b-5">A Renter <span class="tx-gray-600 tx-normal mg-l-2">in Vancouver, WA</span></h6>
-                    <p>October 20, 2017 <a href="javascript:void(0)" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
-                  </div>
-                  <div class="tx-sm-right">
-                    <p class="mg-b-0">Rating</p>
-                    <div class="lh-5 tx-16">
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                    </div>
-                  </div>
-                </div>
+                                         {listItems}
 
-                <label class="tx-bold tx-uppercase tx-12 tx-primary">Pros</label>
-                <p>Fantastic spot!! We loved our stay here. Beautiful space with room for several people, amazing views from the patio! Our host was friendly and helpful. Couldn't be happier.</p>
-
-                <div class="row row-xs">
-                  <div class="col-sm">
-                    <p class="mg-b-5">Approve Landlord?</p>
-                    <p class="tx-success mg-b-0">Yes</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pd-y-30 bd-b">
-                <div class="d-sm-flex justify-content-between mg-b-20 mg-sm-b-0">
-                  <div>
-                    <h6 class="tx-gray-800 tx-14 mg-b-5">A Renter <span class="tx-gray-600 tx-normal mg-l-2">in San Francisco, CA</span></h6>
-                    <p>November 18, 2017 <a href="javascript:void(0)" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
-                  </div>
-                  <div class="tx-sm-right">
-                    <p class="mg-b-0">Rating</p>
-                    <div class="lh-5 tx-16">
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star"></i>
-                      <i class="icon ion-star"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <h6 class="tx-gray-800 mg-b-20">Wonderful landlord and the space is amazing</h6>
-
-                <label class="tx-bold tx-uppercase tx-12 tx-primary">Pros</label>
-                <p>Fantastic spot!! We loved our stay here. Beautiful space with room for several people, amazing views from the patio! Our host was friendly and helpful. Couldn't be happier.</p>
-
-                <label class="tx-bold tx-uppercase tx-12 tx-primary">Cons</label>
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis</p>
-
-                <div class="row row-xs">
-                  <div class="col-sm">
-                    <p class="mg-b-5">Approve Landlord?</p>
-                    <p class="tx-success mg-b-0">Yes</p>
-                  </div>
-                </div>
-              </div>
             </div>
 
           </div>
@@ -258,15 +275,7 @@ export default class Home extends Component {
                 <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
                 <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
-              <h6 class="tx-15 tx-primary">Amazing Sea View</h6>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
-              <div class="lh-5 tx-14">
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star"></i>
-                <i class="icon ion-star"></i>
-              </div>
             </div>
 
             <div class="bd pd-20 bg-white mg-b-30">
@@ -276,13 +285,6 @@ export default class Home extends Component {
                 <div class="col ht-100 pd-l-1-force"><img src={this.houseImage6} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
-              <div class="lh-5 tx-14">
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star tx-primary"></i>
-                <i class="icon ion-star tx-primary"></i>
-              </div>
             </div>
 
             <div class="mg-t-20 bd pd-25 tx-center">

@@ -13,13 +13,10 @@ import {LandlordModel} from '../models/LandlordModel';
 import {ComplaintsModel} from '../models/ComplaintsModel';
 import {DisputesModel} from '../models/DisputesModel';
 import {PropertyModel} from '../models/PropertyModel';
-import {LandlordPropertyModel} from '../models/LandlordPropertyModel';
 import {LandlordReviewModel} from '../models/LandlordReviewModel';
 
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
-
-// import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 export default class Login extends Component {
   constructor(props) {
@@ -34,14 +31,6 @@ export default class Login extends Component {
 
     sessionStorage.setItem('landlordObject', null);
 
-    // ReactGA.initialize('UA-111517732-1', {
-    //   debug: true,
-    //   titleCase: false,
-    //   gaOptions: {
-    //     userId: 123
-    //   }
-    // });
-
     ReactGA.initialize('UA-111517732-2');
     ReactGA.pageview(window.location.pathname + window.location.search);
     ReactGA.set({ userId: 123 });
@@ -54,6 +43,10 @@ export default class Login extends Component {
   }
 
   handleSignup = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Sign Up',
+        });
     this.props.history.push("/signup");
   }
 
@@ -63,6 +56,24 @@ export default class Login extends Component {
       var landlord = new LandlordModel;
       try{
        const GATEWAY_URL = ['https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/arya/stark'];
+
+       // https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/Complaints/1
+      
+       // https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/questionnaire/Q_City/jersey
+
+       //https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/rental/2aabb070-eb52-11e7-a6ce-ffd14481a735
+
+       // https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/arya/stark
+
+
+       // https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/questionnaire
+
+
+
+//https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/rental/2aabb070-eb52-11e7-a6ce-ffd14481a735
+       // https://w82vygua3l.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/1
+
+
        fetch(GATEWAY_URL, {
            method: 'GET',
            mode: 'cors'
@@ -118,25 +129,21 @@ export default class Login extends Component {
                       }
                     }
 
-                      // var propertiesObj = landlordObj.L_Properties ? landlordObj.L_Properties : "";
-                      // if(propertiesObj){
-                      //     landlord.landlordProperties = [];
-                      //   for(var i=0; i< propertiesObj.length; i++){
-                      //     landlord.landlordProperties[i] = new LandlordPropertyModel;
-                      //     var propChildObj = propertiesObj[i];
-                      //     landlord.landlordProperties[i]. = new PropertyModel;
-
-                                                    
-
-                      //     landlord.landlordProperties[i].pAdd1 = propChildObj ? propChildObj.P_Address_Line1 : "";
-                      //     landlord.landlordProperties[i].pAdd2 = propChildObj ? propChildObj.P_Address_Line2 : "";
-                      //     landlord.landlordProperties[i].pCity = propChildObj ? propChildObj.P_City : "";
-                      //     landlord.landlordProperties[i].pid = propChildObj ? propChildObj.P_ID : "";
-                      //     landlord.landlordProperties[i].pPhotos = propChildObj ? propChildObj.P_Photos : "";
-                      //     landlord.landlordProperties[i].pState = propChildObj ? propChildObj.P_State : "";
-                      //     landlord.landlordProperties[i].pZip = propChildObj ? propChildObj.P_Zipcode : "";
-                      //   }
-                      // }
+                      var propertiesObj = landlordObj.L_Properties ? landlordObj.L_Properties : "";
+                      if(propertiesObj){
+                          landlord.landlordProperties = [];
+                        for(var i=0; i< propertiesObj.length; i++){
+                          landlord.landlordProperties[i] = new PropertyModel;
+                          var propChildObj = propertiesObj[i];
+                          landlord.landlordProperties[i].pAdd1 = propChildObj ? propChildObj.P_Address_Line1 : "";
+                          landlord.landlordProperties[i].pAdd2 = propChildObj ? propChildObj.P_Address_Line2 : "";
+                          landlord.landlordProperties[i].pCity = propChildObj ? propChildObj.P_City : "";
+                          landlord.landlordProperties[i].pid = propChildObj ? propChildObj.P_ID : "";
+                          landlord.landlordProperties[i].pPhotos = propChildObj ? propChildObj.P_Photos : "";
+                          landlord.landlordProperties[i].pState = propChildObj ? propChildObj.P_State : "";
+                          landlord.landlordProperties[i].pZip = propChildObj ? propChildObj.P_Zipcode : "";
+                        }
+                      }
                       
                       var reviewsObj = landlordObj.L_Reviews ? landlordObj.L_Reviews : "";
                       if(reviewsObj){
@@ -153,6 +160,10 @@ export default class Login extends Component {
                       sessionStorage.setItem('landlordObject', JSON.stringify(landlord));
                       self.myProps.myCallback(landlord);
                       self.props.userHasAuthenticated(true);
+                      ReactGA.event({
+                              category: 'Navigation',
+                              action: 'Home',
+                          });
                       self.props.history.push("/home");
                   }
                }
@@ -185,9 +196,17 @@ export default class Login extends Component {
       if(user.token.idToken){
                userToken = user.token.idToken;
                socialLoginType = "google";
+               ReactGA.event({
+                category: 'Social Login',
+                action: 'Google',
+              });
             } else {
               userToken = user.token.accessToken;
                socialLoginType = "fb";
+               ReactGA.event({
+                category: 'Social Login',
+                action: 'Facebook',
+              });
             }
 
     AWS.config.region = 'us-east-1';
@@ -274,6 +293,10 @@ export default class Login extends Component {
   }
 
   handleSubmit = async event => {
+     ReactGA.event({
+                category: 'Normal Login',
+                action: 'Login',
+              });
     event.preventDefault();
     this.setState({ isLoading: true });
     try {

@@ -6,6 +6,7 @@ import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
+import ReactGA from 'react-ga';
 
 export default class Questionnaire1 extends Component {
    constructor(props) {
@@ -87,21 +88,37 @@ export default class Questionnaire1 extends Component {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
     this.userHasAuthenticated(false);
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Logout',
+        });
     this.props.history.push("/");
   }
 
   navigateToHomeScreen = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Home Screen',
+        });
     this.props.history.push("/home");
   }
 
   moreDetails = event => {
     if(this.validateForm()){
+      ReactGA.event({
+            category: 'Navigation',
+            action: 'Questionnaire part 2',
+        });
       this.props.history.push("/questionnaire2");
     } else {
       alert("Please complete all fields");
     }
   }
 
+  componentDidMount () {
+      window.scrollTo(0, 0)
+  }
+  
   render() {
 
     let {imagePreviewUrl} = this.state;

@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { signOutUser } from "../libs/awsLib";
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import ReactGA from 'react-ga';
 
 export default class Questionnaire2 extends Component {
    constructor(props) {
@@ -86,10 +87,18 @@ export default class Questionnaire2 extends Component {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
     this.userHasAuthenticated(false);
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Logout',
+        });
     this.props.history.push("/");
   }
 
   navigateToHomeScreen = event => {
+  	ReactGA.event({
+            category: 'Navigation',
+            action: 'Home',
+        });
     this.props.history.push("/home");
   }
 
@@ -107,7 +116,7 @@ export default class Questionnaire2 extends Component {
 	componentDidMount () {
   		window.scrollTo(0, 0)
 	}
-	
+
   render() {
     return (
 
