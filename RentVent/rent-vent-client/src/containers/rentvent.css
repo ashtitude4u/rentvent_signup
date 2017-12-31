@@ -4567,6 +4567,24 @@ p {
   margin-left: 1px;
 }
 
+.btn-group {
+  display: flex;
+  align-items: center;
+}
+.btn-group .btn {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.btn-group .btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group .btn + .btn {
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 .headerpanel {
   background-color: #fff;
   border-bottom: 1px solid #dee2e6;
@@ -4860,6 +4878,7 @@ p {
   width: 30px;
   height: 32px;
   background-color: #ced4da;
+  color: #fff;
   border-radius: 2px;
 }
 .landlord-rating-star .icon::before {
