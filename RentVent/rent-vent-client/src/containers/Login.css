@@ -22,3 +22,15 @@
 .hidden {
     visibility: hidden;
   }
+
+  .signin-footer-helper-links {
+    text-align: center;
+    max-width: 70%;
+    margin: 0 15%;
+  }
+  .signin-footer-helper-links a{
+    float: right;
+  }
+  .signin-footer-helper-links a:first-child{
+    float: left;
+  }

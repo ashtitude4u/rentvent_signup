@@ -182,6 +182,22 @@ export default class Login extends Component {
     
   }
 
+  handlePrivacyPolicy = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Privacy Policy',
+        });
+    this.props.history.push("/privacypolicy");
+  }
+
+  handleTermsofUse = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Terms of Use',
+        });
+    this.props.history.push("/termsofuse");
+  }
+
   handleKeyPress = (event) => {
     if(event.key == 'Enter'){
       if(this.validateForm()){
@@ -457,57 +473,14 @@ export default class Login extends Component {
         <div class="signin-footer">
           Not yet a member? <a href="#" onClick={this.handleSignup}>Sign Up</a>
         </div>
+        <br />
+        <div class="signin-footer-helper-links">
+           <a href="#" onClick={this.handlePrivacyPolicy}>Privacy Policy</a>
+            <a href="#" onClick={this.handleTermsofUse}>Terms of Use</a>
+        </div>
       </div>
     </div>
 
-      // <div className="Login">
-      //   <form onSubmit={this.handleSubmit}>
-      //     <FormGroup controlId="email" bsSize="large">
-      //       <ControlLabel>Email</ControlLabel>
-      //       <FormControl
-      //         autoFocus
-      //         type="email"
-      //         value={this.state.email}
-      //         onChange={this.handleChange}
-      //       />
-      //     </FormGroup>
-      //     <FormGroup controlId="password" bsSize="large">
-      //       <ControlLabel>Password</ControlLabel>
-      //       <FormControl
-      //         value={this.state.password}
-      //         onChange={this.handleChange}
-      //         type="password"
-      //       />
-      //     </FormGroup>
-      //     <LoaderButton
-      //       block
-      //       bsSize="large"
-      //       disabled={!this.validateForm()}
-      //       type="submit"
-      //       isLoading={this.state.isLoading}
-      //       text="Login"
-      //       loadingText="Logging in…"
-      //     />
-      //   </form>
-      //   <div className="social-buttons">
-      //   <SocialButton
-      //           provider='facebook'
-      //           appId={config.facebook.APP_ID}
-      //           onLoginSuccess={this.handleSocialLogin}
-      //           onLoginFailure={this.handleSocialLoginFailure}
-      //         >
-      //           Login with Facebook
-      //   </SocialButton>
-      //   <SocialButton
-      //           provider='google'
-      //           appId={config.google.APP_ID}
-      //           onLoginSuccess={this.handleSocialLogin}
-      //           onLoginFailure={this.handleSocialLoginFailure}
-      //         >
-      //           Login with Google
-      //   </SocialButton>
-      //   </div>
-      // </div>
     );
   }
 }
