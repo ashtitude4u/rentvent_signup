@@ -34,7 +34,6 @@ export default class TermsofUse extends Component {
                   <Navbar.Brand>
                     <Link to="/">Back to Login</Link>
                   </Navbar.Brand>
-                  <Navbar.Toggle />
                 </Navbar.Header>
               </Navbar>
 
