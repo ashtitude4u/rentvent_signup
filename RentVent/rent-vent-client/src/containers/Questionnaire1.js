@@ -103,6 +103,14 @@ export default class Questionnaire1 extends Component {
     this.props.history.push("/home");
   }
 
+  navigateToLandLordScreen = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Landlord Screen',
+        });
+    this.props.history.push("/landlord");
+  }
+
   moreDetails = event => {
     if(this.validateForm()){
       ReactGA.event({
@@ -118,7 +126,7 @@ export default class Questionnaire1 extends Component {
   componentDidMount () {
       window.scrollTo(0, 0)
   }
-  
+
   render() {
 
     let {imagePreviewUrl} = this.state;
@@ -155,7 +163,7 @@ export default class Questionnaire1 extends Component {
           <nav aria-label="breadcrumb" role="navigation">
             <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
               <li class="breadcrumb-item"><a href="#" onClick={this.navigateToHomeScreen}>Home</a></li>
-              <li class="breadcrumb-item"><a href="#">Landlords</a></li>
+              <li class="breadcrumb-item"><a href="#" onClick={this.navigateToLandLordScreen}>Landlords</a></li>
               <li class="breadcrumb-item active" aria-current="page">Teresa Auyeung's Profile</li>
             </ol>
           </nav>

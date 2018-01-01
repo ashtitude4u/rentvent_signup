@@ -8,7 +8,7 @@ import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
 import ReactGA from 'react-ga';
 
-export default class Home extends Component {
+export default class Landlord extends Component {
    constructor(props) {
     super(props);
     console.log(props);
@@ -17,7 +17,8 @@ export default class Home extends Component {
     this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
     this.landlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
 
-    for (var j = 0; j < this.landlordObj.landlordReviews.length; j++){
+    if(this.landlordObj){
+      for (var j = 0; j < this.landlordObj.landlordReviews.length; j++){
           var item = this.landlordObj.landlordReviews[j];
         for(var i = 0; i < item.lrDescription.length; i++){
             if(item.lrDescription[i].LR_Type.toUpperCase() == "ADVICE"){
@@ -28,8 +29,10 @@ export default class Home extends Component {
                 item.conObj = item.lrDescription[i];
             }
         }
+      }
     }
-    
+
+    sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
 
     this.landlordObj ? this.landlordObj.avgRating ? this.assignLandlordRatings(this.landlordObj.avgRating) : "" : "";
 
@@ -84,6 +87,7 @@ export default class Home extends Component {
   revealDisputes() {
     alert("Under development");
   }
+
   handleLogout = event => {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
@@ -93,6 +97,22 @@ export default class Home extends Component {
             action: 'Logout',
         });
     this.props.history.push("/");
+  }
+
+  navigateToHomeScreen = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Home',
+        });
+    this.props.history.push("/home");
+  }
+  
+  navigateToPropertyScreen = event => {
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Property',
+        });
+    this.props.history.push("/property");
   }
 
   handleReview = event => {
@@ -106,9 +126,9 @@ export default class Home extends Component {
   componentDidMount () {
       window.scrollTo(0, 0)
   }
-  
-  render() {
 
+  render() {
+    if(this.landlordObj){
      var listItems = this.landlordObj.landlordReviews.map(function(item) {
       return (
 
@@ -173,7 +193,7 @@ export default class Home extends Component {
         : null
       );
     });
-
+}
     return (
       this.showMe ? 
   <div>
@@ -187,7 +207,7 @@ export default class Home extends Component {
         <a href="#" class="headerpanel-navicon" onClick={this.menuSelected.bind(this)}><i class="icon ion-navicon-round"></i></a>
         <div class="headerpanel-right d-none d-lg-block" className={this.headerpanelClass.join('' )}>
           <ul class="nav">
-            <li class="nav-item"><a href="javascript:void(0)" class="nav-link active">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link active" onClick={this.navigateToHomeScreen}>Home</a></li>
             <li class="nav-item"><a href="#" class="nav-link ash" onClick={this.handleLogout}>Logout</a></li>
           </ul>
         </div>
@@ -198,8 +218,8 @@ export default class Home extends Component {
       <div class="container">
         <nav aria-label="breadcrumb" role="navigation">
           <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Landlords</a></li>
+            <li class="breadcrumb-item"><a href="#" onClick={this.navigateToHomeScreen}>Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Landlord</a></li>
             <li class="breadcrumb-item active" aria-current="page">{this.landlordObj.firstName + " " + this.landlordObj.lastName}'s Profile</li>
           </ol>
         </nav>
@@ -269,7 +289,7 @@ export default class Home extends Component {
           <div class="col-lg-4 mg-t-40 mg-lg-t-0">
             <label class="tx-uppercase tx-medium tx-gray-700 mg-b-15">Owned Properties (2)</label>
 
-            <div class="bd pd-20 bg-white mg-b-30">
+            <div class="bd pd-20 bg-white mg-b-30 div-cursor-section" onClick={this.navigateToPropertyScreen}>
               <div class="row no-gutters mg-b-20">
                 <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
                 <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
@@ -278,7 +298,7 @@ export default class Home extends Component {
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
             </div>
 
-            <div class="bd pd-20 bg-white mg-b-30">
+            <div class="bd pd-20 bg-white mg-b-30 div-cursor-section" onClick={this.navigateToPropertyScreen}>
               <div class="row no-gutters mg-b-20">
                 <div class="col ht-100 pd-r-1-force"><img src={this.houseImage4} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
                 <div class="col ht-100 pd-x-1-force"><img src={this.houseImage5} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
