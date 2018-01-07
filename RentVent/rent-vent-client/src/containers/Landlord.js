@@ -11,13 +11,19 @@ import ReactGA from 'react-ga';
 export default class Landlord extends Component {
    constructor(props) {
     super(props);
-    console.log(props);
+    this.state = {
+      isAuthenticated: false,
+      isAuthenticating: true,
+      reviewSectionStyle: ["review-header"],
+      landlordPropertiesSectionStyle: [""],
+      phoneNumberSectionStyle: ['']
+    };
     // this.landlordObj = props.landlordObject;
     this.showMe = false;
     this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
     this.landlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
 
-    if(this.landlordObj){
+    if(this.landlordObj && this.landlordObj.landlordReviews){
       for (var j = 0; j < this.landlordObj.landlordReviews.length; j++){
           var item = this.landlordObj.landlordReviews[j];
         for(var i = 0; i < item.lrDescription.length; i++){
@@ -30,7 +36,18 @@ export default class Landlord extends Component {
             }
         }
       }
-    }
+    } else{
+       if(!this.landlordObj.landlordReviews){
+          this.state.reviewSectionStyle = ["review-header hide-review-section"];
+        }
+        if(!this.landlordObj.landlordProperties){
+          this.state.landlordPropertiesSectionStyle = ["hide-property-section"];
+        }
+        if(!this.landlordObj.phone){
+          this.state.phoneNumberSectionStyle = ["hide-phone-section"];
+        }
+
+    } 
 
     sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
 
@@ -43,10 +60,7 @@ export default class Landlord extends Component {
       this.showMe = true;
     }
 
-    this.state = {
-      isAuthenticated: false,
-      isAuthenticating: true
-    };
+    
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
@@ -128,7 +142,7 @@ export default class Landlord extends Component {
   }
 
   render() {
-    if(this.landlordObj){
+    if(this.landlordObj && this.landlordObj.landlordReviews){
      var listItems = this.landlordObj.landlordReviews.map(function(item) {
       return (
 
@@ -220,7 +234,7 @@ export default class Landlord extends Component {
           <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
             <li class="breadcrumb-item"><a href="#" onClick={this.navigateToHomeScreen}>Home</a></li>
             <li class="breadcrumb-item"><a href="javascript:void(0)">Landlord</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{this.landlordObj.firstName + " " + this.landlordObj.lastName}'s Profile</li>
+            <li class="breadcrumb-item active" aria-current="page">{this.landlordObj.fullName}'s Profile</li>
           </ol>
         </nav>
         <div class="row">
@@ -228,7 +242,7 @@ export default class Landlord extends Component {
             <div class="profile-head">
               <div class="profile-head-left">
                 <div class="d-sm-flex align-items-start">
-                  <h2 class="tx-gray-900 tx-light">{this.landlordObj.firstName + " " + this.landlordObj.lastName}</h2>
+                  <h2 class="tx-gray-900 tx-light">{this.landlordObj.fullName}</h2>
                          
                   <div class="d-flex align-items-center mg-sm-l-20">
                     <div class="lh-5 tx-24">
@@ -248,13 +262,13 @@ export default class Landlord extends Component {
             </div>
 
             <div class="d-flex mg-y-30">
-              <div>
+              <div className={this.state.phoneNumberSectionStyle.join('' )}>
                 <p class="mg-b-10">Phone Number</p>
                 <h6 class="tx-lato tx-bold tx-14 tx-gray-800 mg-b-0">{this.landlordObj.phone}</h6>
               </div>
             </div>
 
-            <p>Hi, my name is {this.landlordObj.firstName}... <a href="javascript:void(0)">Read more</a></p>
+            <p>Hi, my name is {this.landlordObj.fullName}... <a href="javascript:void(0)">Read more</a></p>
 
             <hr class="mg-y-25" />
 
@@ -267,7 +281,7 @@ export default class Landlord extends Component {
               </div>
             </div>
 
-            <div class="review-header">
+            <div class="review-header" className={this.state.reviewSectionStyle.join('' )}>
                  <h6 class="section-label mg-t-25 mg-b-15">Reviews (86)</h6>
               <div class="mg-t-15 mg-sm-t-0">
                 <span>Sort by</span>
@@ -286,23 +300,24 @@ export default class Landlord extends Component {
             </div>
 
           </div>
+          <div className={this.state.landlordPropertiesSectionStyle.join('' )}>
           <div class="col-lg-4 mg-t-40 mg-lg-t-0">
             <label class="tx-uppercase tx-medium tx-gray-700 mg-b-15">Owned Properties (2)</label>
 
             <div class="bd pd-20 bg-white mg-b-30 div-cursor-section" onClick={this.navigateToPropertyScreen}>
               <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="Image of Property" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="Image of Property" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="Image of Property" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
             </div>
 
             <div class="bd pd-20 bg-white mg-b-30 div-cursor-section" onClick={this.navigateToPropertyScreen}>
               <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage4} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage5} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage6} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage4} alt="Image of Property in Location CA" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage5} alt="Image of Property in Location CA" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage6} alt="Image of Property in Location CA" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
             </div>
@@ -312,6 +327,7 @@ export default class Landlord extends Component {
               <a href="javascript:void(0)">Claim Your Profile</a>
             </div>
 
+          </div>
           </div>
         </div>
       </div>

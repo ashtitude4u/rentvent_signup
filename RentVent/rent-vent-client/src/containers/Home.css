@@ -40,6 +40,19 @@
 .div-cursor-section {
   cursor: pointer;
 }
+
+.hide-review-section, .review-header.hide-review-section, .hide-property-section, .hide-phone-section {
+  display: none;
+}
+
+.btn-primary a,.btn-primary a:hover,.btn-primary a:link,
+.btn-primary a:visited,.btn-primary a:focus,.btn-primary a:active{
+  color: #ffffff;
+}
+
+.landlord-result-hidden {
+  display: none;
+}
 /* --------------------------------------------------- */
 /* ############### GOOGLE FONTS IMPORT ############### */
 /* --------------------------------------------------- */
@@ -6173,6 +6186,7 @@ p {
   height: 32px;
   background-color: #ced4da;
   border-radius: 2px;
+  color: #ffffff;
 }
 .landlord-rating-star .icon::before {
   margin-top: -1px;

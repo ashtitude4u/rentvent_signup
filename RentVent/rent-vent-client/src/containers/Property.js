@@ -134,15 +134,15 @@ export default class Property extends Component {
             <h2 class="tx-light tx-gray-800">Charming House Seaside View</h2>
             <p class="mg-b-25">548 Market St., San Francisco CA 94104</p>
 
-            <a href="javascript:void(0)"><img class="img-fluid" alt="" src={this.selectedPropertyImage} key={this.selectedPropertyImage.uri}/></a>
+            <a href="javascript:void(0)"><img class="img-fluid" alt="Image of Property" src={this.selectedPropertyImage} key={this.selectedPropertyImage.uri}/></a>
 
             <div class="row row-xs mg-t-10">
-              <div class="col-2" onClick={this.propertyImageSelected.bind(this,1)}><img src={this.propertyImagesArray[0]} class="img-fit-cover" alt="" /></div>
-              <div class="col-2"><img src={this.propertyImagesArray[1]} class="img-fit-cover" alt="" /></div>
-              <div class="col-2"><img src={this.propertyImagesArray[2]} class="img-fit-cover" alt="" /></div>
-              <div class="col-2"><img src={this.propertyImagesArray[3]} class="img-fit-cover" alt="" /></div>
-              <div class="col-2"><img src={this.propertyImagesArray[4]} class="img-fit-cover" alt="" /></div>
-              <div class="col-2"><img src={this.propertyImagesArray[5]} class="img-fit-cover" alt="" /></div>
+              <div class="col-2" onClick={this.propertyImageSelected.bind(this,1)}><img src={this.propertyImagesArray[0]} class="img-fit-cover" alt="Image 1 of Property" /></div>
+              <div class="col-2"><img src={this.propertyImagesArray[1]} class="img-fit-cover" alt="Image 2 of Property" /></div>
+              <div class="col-2"><img src={this.propertyImagesArray[2]} class="img-fit-cover" alt="Image 3 of Property" /></div>
+              <div class="col-2"><img src={this.propertyImagesArray[3]} class="img-fit-cover" alt="Image 4 of Property" /></div>
+              <div class="col-2"><img src={this.propertyImagesArray[4]} class="img-fit-cover" alt="Image 5 of Property" /></div>
+              <div class="col-2"><img src={this.propertyImagesArray[5]} class="img-fit-cover" alt="Image 6 of Property" /></div>
             </div>
 
             <div class="mg-y-25"></div>
@@ -220,9 +220,9 @@ export default class Property extends Component {
 
             <div class="bd pd-20 bg-white">
               <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="Image of reviewed Property" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="Image of reviewed Property" class="wd-100p ht-100p object-fit-cover" /></div>
+                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="Image of reviewed Property" class="wd-100p ht-100p object-fit-cover" /></div>
               </div>
               <h6 class="tx-15 tx-primary">Amazing Sea View</h6>
               <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>

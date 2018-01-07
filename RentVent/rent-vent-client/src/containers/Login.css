@@ -34,3 +34,15 @@
   .signin-footer-helper-links a:first-child{
     float: left;
   }
+
+  .sitemap-section {
+    clear: both;
+    margin-top: 10%;
+    text-align: center;
+  }
+  .sitemap-links-wrapper {
+    text-align: center;
+  }    
+  .support-wrapper {
+    text-align: center;
+  }
