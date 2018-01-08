@@ -25,7 +25,15 @@ export default class Landing extends Component {
    constructor(props) {
     super(props);
     // this.landlordObj = props.landlordObject;
-    this.showMe = true;
+    this.showMe = false;
+    this.userLoggedIn = JSON.parse(sessionStorage.getItem('userLoggedIn'));
+
+    if(!this.userLoggedIn){
+      this.showMe = false;
+      this.props.history.push("/");
+    } else {
+      this.showMe = true;
+    }
     this.myProps = props;
     // this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
 
@@ -69,6 +77,8 @@ export default class Landing extends Component {
     this.options = {
       onRowClick: this.landlordResultsRowSelected
     };
+        sessionStorage.setItem('userLoggedIn', 'true');
+
   }
 
   landlordResultsRowSelected = row =>{
@@ -123,6 +133,7 @@ export default class Landing extends Component {
   handleLogout = event => {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
+    sessionStorage.setItem('userLoggedIn', null);
     this.userHasAuthenticated(false);
     ReactGA.event({
             category: 'Navigation',

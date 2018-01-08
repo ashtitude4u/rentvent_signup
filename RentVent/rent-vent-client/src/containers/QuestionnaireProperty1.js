@@ -16,8 +16,9 @@ export default class QuestionnaireProperty1 extends Component {
 
     this.showMe = false;
     this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
+    this.userLoggedIn = JSON.parse(sessionStorage.getItem('userLoggedIn'));
 
-    if(!this.landlordObj){
+    if(!this.userLoggedIn){
       this.showMe = false;
       this.props.history.push("/");
     } else {
@@ -188,6 +189,7 @@ export default class QuestionnaireProperty1 extends Component {
   handleLogout = event => {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
+        sessionStorage.setItem('userLoggedIn', null);
     this.userHasAuthenticated(false);
     ReactGA.event({
             category: 'Navigation',

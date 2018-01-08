@@ -20,8 +20,8 @@ export default class Questionnaire2 extends Component {
 
     this.showMe = false;
     this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
-
-    if(!this.landlordObj){
+    this.userLoggedIn = JSON.parse(sessionStorage.getItem('userLoggedIn'));
+    if(!this.userLoggedIn){
       this.showMe = false;
       this.props.history.push("/");
     } else {
@@ -71,8 +71,11 @@ export default class Questionnaire2 extends Component {
     this.consQuestion = "What are some cons of working with this landlord?";
     this.landlordQuestionStyle = ["form-group"];
     this.propertyQuestionStyle = ["form-group hide-review-section"];
-    this.reviewTypeButtonSelected("landlord");
-
+    if(sessionStorage.getItem('reviewType') == "L"){
+      this.reviewTypeButtonSelected("landlord");
+    }else{
+      this.reviewTypeButtonSelected("property");
+    }
     this.PQuestionnaireObj = new PQuestionnaireModel;
     this.LQuestionnaireObj = new LQuestionnaireModel;
     this.questionnaireObj = this.LQuestionnaireObj;
@@ -377,12 +380,24 @@ export default class Questionnaire2 extends Component {
     this.headerOption = !this.headerOption;
   }
 
-  handleLogout = event => {
+  handleSubmitQuestionnaire = event =>{
     var jsonObj = this.formQuestionnaireObject();
 
     this.postQuestionnaireService(jsonObj);
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
+    this.userHasAuthenticated(false);
+    ReactGA.event({
+            category: 'Navigation',
+            action: 'Logout',
+        });
+    this.props.history.push("/");
+  }
+
+  handleLogout = event => {
+    signOutUser();
+    sessionStorage.setItem('landlordObject', null);
+        sessionStorage.setItem('userLoggedIn', null);
     this.userHasAuthenticated(false);
     ReactGA.event({
             category: 'Navigation',
@@ -557,16 +572,6 @@ export default class Questionnaire2 extends Component {
               <hr class="mg-y-25" />
 
               <div class="write-review-form">
-
-                <div class="form-group">
-                <label>Would you like to review a landlord's performance or the rental property?</label>
-                <div class="btn-group">
-                  <button class="btn btn-primary" className={this.landlordReviewButtonStyle.join('' )}><a href="#" 
-                   onClick={this.reviewTypeButtonSelected.bind(this,"landlord")}>Landlord</a></button>
-                  <button class="btn btn-primary" className={this.propertyReviewButtonStyle.join('' )}><a href="#" 
-                   href="#" onClick={this.reviewTypeButtonSelected.bind(this,"property")}>Property</a></button>
-                </div>
-              </div>
 
               <div class="form-group">
                 <label>{this.moveInQuestion}</label>
@@ -761,7 +766,7 @@ export default class Questionnaire2 extends Component {
               </div>
 
               <div class="form-group-footer">
-                                <button class="btn btn-primary" onClick={this.handleLogout.bind(this)}>Submit Review</button>
+                                <button class="btn btn-primary" onClick={this.handleSubmitQuestionnaire.bind(this)}>Submit Review</button>
                               </div>
               </div>
 

@@ -37,6 +37,7 @@ export default class Landlord extends Component {
         }
       }
     } else{
+      if(this.landlordObj){
        if(!this.landlordObj.landlordReviews){
           this.state.reviewSectionStyle = ["review-header hide-review-section"];
         }
@@ -46,7 +47,7 @@ export default class Landlord extends Component {
         if(!this.landlordObj.phone){
           this.state.phoneNumberSectionStyle = ["hide-phone-section"];
         }
-
+      }
     } 
 
     sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
@@ -105,6 +106,7 @@ export default class Landlord extends Component {
   handleLogout = event => {
     signOutUser();
     sessionStorage.setItem('landlordObject', null);
+        sessionStorage.setItem('userLoggedIn', null);
     this.userHasAuthenticated(false);
     ReactGA.event({
             category: 'Navigation',
@@ -130,6 +132,7 @@ export default class Landlord extends Component {
   }
 
   handleReview = event => {
+        sessionStorage.setItem('reviewType', 'L');
     ReactGA.event({
             category: 'Navigation',
             action: 'Questionnaire part 1',
