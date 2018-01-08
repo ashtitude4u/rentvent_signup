@@ -136,7 +136,7 @@ export default class Landing extends Component {
   }
 
   landlordSearchClicked = event => {
-    var landlordString = "https://h1zwqvevl5.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/"+this.state.landlordSearchField;
+    var landlordString = "https://5oz037wxx9.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/"+this.state.landlordSearchField;
     landlordString = encodeURI(landlordString);
     this.retrievelandlord(this,landlordString);
   }
@@ -162,8 +162,14 @@ export default class Landing extends Component {
                    if(json){
                       if(json.Items.length > 0) {
                           
-
-                          for(var i=0; i<25; i++){
+                        var maxCount = 0;
+                        if(json.Items.length > 25)
+                        {
+                          maxCount = 25;
+                        } else {
+                          maxCount = json.Items.length;
+                        }
+                          for(var i=0; i<maxCount; i++){
                             var landlordObj = json.Items[i];
                           var landlord = new LandlordModel;
                           landlord.firstName = landlordObj.L_First_Name ? landlordObj.L_First_Name : "";
