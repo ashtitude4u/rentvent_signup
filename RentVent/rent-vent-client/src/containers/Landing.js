@@ -258,11 +258,15 @@ export default class Landing extends Component {
   }
 
   landlordSearchAddressClicked = event => {
-    this.landlords = [];
-    this.landlordsDataSource = [];
-    var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landlordSearchAddressField;
-    landlordString = encodeURI(landlordString);
-    this.retrievelandlord(this,landlordString);
+    if(this.state.landlordSearchAddressField.includes(" ")){
+      this.landlords = [];
+      this.landlordsDataSource = [];
+      var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landlordSearchAddressField;
+      landlordString = encodeURI(landlordString);
+      this.retrievelandlord(this,landlordString);
+    } else {
+      alert("Please enter more address information");
+    }
   }
   
   retrievelandlord(self_this,landlordString){
@@ -425,6 +429,7 @@ export default class Landing extends Component {
               <div class="col-sm-3 mg-t-15 mg-sm-t-0">
                 <button class="btn btn-primary btn-block" disabled={!this.state.landlordSearchField} onClick={this.landlordSearchClicked}>Find Landlord</button>
               </div>
+              <div class = "landind-search-separator-section"></div>
               <div class="col-sm-9">
                 <div>
 

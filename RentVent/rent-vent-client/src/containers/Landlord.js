@@ -60,6 +60,7 @@ export default class Landlord extends Component {
         }
         if(this.landlordObj.avgRating){
             this.assignLandlordRatings(this.landlordObj.avgRating);
+            this.landlordObj.avgRating = Math.round(this.landlordObj.avgRating);
         }
         if(this.landlordObj.repairRequests){
           this.assignLandlordRepairRequestRatings(this.landlordObj.repairRequests);
