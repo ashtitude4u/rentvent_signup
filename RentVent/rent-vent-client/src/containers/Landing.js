@@ -401,7 +401,7 @@ export default class Landing extends Component {
 
     <div class="landing-header">
       <div class="header-wrapper">
-        <h3 class="header-headline">Check any landlord's reputation and rental history.</h3>
+        <h3 class="header-headline landlord-header-section">Check any landlord's reputation and rental history.</h3>
 
         <ul class="nav nav-landing-header">
           <li class="nav-item" onClick={this.landlordLinkClicked}><a href="#" data-toggle="tab" class="nav-link active" className={this.landlordLink.join('' )}>Find a Landlord</a></li>
@@ -464,7 +464,7 @@ export default class Landing extends Component {
       </div>
     </div>
 
-    <div class="bg-white pd-y-60 pd-sm-y-80">
+    <div class="bg-white pd-y-60 pd-sm-y-80 browse-section-landing browse-title">
       <div class="container">
         <h4 class="tx-sm-28 tx-center tx-gray-800 mg-b-60 mg-sm-b-80">Browse Landlord by Location</h4>
         <div class="row">

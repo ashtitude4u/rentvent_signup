@@ -68,6 +68,15 @@
   margin-top: 2.5rem;
   min-width: 100%;
 }
+.landlord-header-section {
+  margin-top:10rem;
+}
+@media only screen and (max-width: 479px) {
+  .browse-section-landing.browse-title {
+    padding-top: 50%;
+  }
+}
+
 /* --------------------------------------------------- */
 /* ############### GOOGLE FONTS IMPORT ############### */
 /* --------------------------------------------------- */
