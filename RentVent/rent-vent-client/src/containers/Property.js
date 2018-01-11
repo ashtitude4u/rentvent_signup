@@ -7,6 +7,7 @@ import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
 import ReactGA from 'react-ga';
+import config from "../config";
 
 export default class Property extends Component {
    constructor(props) {
@@ -27,7 +28,11 @@ export default class Property extends Component {
     this.state = {
       isAuthenticated: false,
       isAuthenticating: true,
-      modalDialogStyle: ["modal fade"]
+      modalDialogStyle: ["modal fade"],
+      showRentalInfo: false,
+      showRentalInfoStyle: ["property-review-data-list collapse"],
+      showRentalInfoLinkStyle: ["rental-link collapsed"]
+
     };
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
@@ -71,6 +76,20 @@ export default class Property extends Component {
 
   modalHideClicked = event => {
         this.setState({ modalDialogStyle: ["modal fade"] });
+  }
+
+  rentalInfoClicked = event => {
+    if(this.state.showRentalInfo == false){
+        this.setState({ showRentalInfo: true });
+        this.setState({ showRentalInfoStyle: ["property-review-data-list collapse show"] });
+        this.setState({ showRentalInfoLinkStyle: ["rental-link"] }); 
+      } else {
+        this.setState({ showRentalInfo: false });
+        this.setState({ showRentalInfoStyle: ["property-review-data-list collapse"] }); 
+        this.setState({ showRentalInfoLinkStyle: ["rental-link collapsed"] }); 
+        
+      }
+        
   }
 
   handleLogout = event => {
@@ -161,7 +180,6 @@ export default class Property extends Component {
               </div>
               <div class="property-approve-wrapper">
                 <div class="approve-landlord-donut">
-                  <span class="peity-donut" data-peity='{ "fill": ["#0866C6", "#E9ECEF"],  "innerRadius": 20, "radius": 28 }'>54/100</span>
                   <div class="approve-landlord-percent">
                     <h6>54%</h6>
                   </div>
@@ -293,9 +311,9 @@ export default class Property extends Component {
                 <label class="tx-medium">Cons</label>
                 <p class="tx-gray-700">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis.</p>
 
-                <a href="#rentalInformation" data-toggle="collapse" class="rental-link collapsed">Rental Information</a>
+                <div data-toggle="collapse" class="rental-link collapsed" onClick={this.rentalInfoClicked.bind(this)} className={this.state.showRentalInfoLinkStyle.join('' )}>Rental Information</div>
 
-                <div id="rentalInformation" class="property-review-data-list collapse">
+                <div id="rentalInformation" class="property-review-data-list collapse" className={this.state.showRentalInfoStyle.join('' )}>
                   <div class="row">
                     <div class="col-6 col-md-5">Rental Price</div>
                     <div class="col-6 col-md-7">$2,500</div>

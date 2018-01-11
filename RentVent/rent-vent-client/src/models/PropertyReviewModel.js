@@ -1,5 +1,6 @@
 export class PropertyReviewModel {
-  constructor(prid,prType,prCreatedDate,prtid,prDescription,prApproval,prRating,prTitle,prCondition,prCreatedBy,prUpdatedBy,prCreatedOn,prUpdatedOn) {
+  constructor(prid,prType,prCreatedDate,prtid,prDescription,prApproval,prRating,prTitle,prCondition,prCreatedBy,prUpdatedBy,prCreatedOn,prUpdatedOn,
+    prCount) {
     this.prid = prid;
     this.prType = prType;
     this.prCreatedDate = prCreatedDate;
@@ -13,5 +14,6 @@ export class PropertyReviewModel {
     this.prUpdatedBy = prUpdatedBy;
     this.prCreatedOn = prCreatedOn;
     this.prUpdatedOn = prUpdatedOn;
+    this.prCount = prCount;
   }
 }

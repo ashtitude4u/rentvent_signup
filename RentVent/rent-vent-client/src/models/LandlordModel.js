@@ -1,7 +1,7 @@
 export class LandlordModel {
   constructor(firstName, lastName, fullName, addressLine1,addressLine2,approval,avgApproval,avgRating,avgResponsiveness,city,
   	country,county,inquiries,phone,rating,recommend,repair,repairRequests,state,title,zipCode,landlordId,landlordProperties,
-  	landlordReviews,complaints,disputes,createdBy,createdOn,updatedBy,updatedOn) {
+  	landlordReviews,complaints,disputes,createdBy,createdOn,updatedBy,updatedOn,description) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.fullName = fullName;
@@ -32,6 +32,6 @@ export class LandlordModel {
     this.createdOn = createdOn;
     this.updatedBy = updatedBy;
     this.updatedOn = updatedOn;
-
+    this.description = description;
   }
 }

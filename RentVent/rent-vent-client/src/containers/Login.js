@@ -7,7 +7,7 @@ import config from "../config";
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
 import "./Login.css";
 import ReactGA from 'react-ga';
-
+import {SocialLoginModel} from '../models/SocialLoginModel';
 import AWS from "aws-sdk";
 import {LandlordModel} from '../models/LandlordModel';
 import {ComplaintsModel} from '../models/ComplaintsModel';
@@ -29,6 +29,7 @@ export default class Login extends Component {
       password: ""
     };
     this.myProps = props;
+    this.socialLoginUser = "";
 
     sessionStorage.setItem('landlordObject', null);
 
@@ -53,13 +54,94 @@ export default class Login extends Component {
 
   navigateToHomeScreen(self) {
     // this.postTenantLogin();
+   sessionStorage.setItem('userLoggedIn', 'true');
    self.props.history.push("/home");
   }
 
-  // postTenantLogin = event => {
-  //   var tenantObj = new TenantModel;
-  //   tenantObj.tFirstName = 
-  // }
+  postSocialLogin = self =>{
+    this.postSocialTenantLogin(self);
+    // navigateToHomeScreen(self);
+  }
+
+  postLogin = self =>{
+    this.postTenantLogin(self);
+  }
+
+  postTenantLogin = self => {
+    var jsonObj = this.formLoginObject();
+    this.postTenantService(self,jsonObj);
+  }
+
+  postSocialTenantLogin = self => {
+    var jsonObj = this.formTenantObject(this.socialLoginUser);
+    this.postTenantService(self,jsonObj);
+  }
+  
+  postTenantService(self,jsonObj){
+    const GATEWAY_URL = config.apis.TENANT_POST;
+
+    var jsonReqObj = JSON.stringify(jsonObj);
+    try{
+      fetch(GATEWAY_URL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: jsonReqObj,
+    }).then((response) => {
+                   return response.json();
+               })
+    .then((json) => {
+          if(json && !json.statusCode){
+            console.log('tenant post success '+json);
+            sessionStorage.setItem('tenantID', json);
+            self.navigateToHomeScreen(self);
+          } else {
+            alert("Login error - "+json.message);
+            // temp flow
+            self.navigateToHomeScreen(self);
+          }
+         
+      })
+      .catch((err) => {
+        console.log('There was an error:' + err);alert("tenant post error");
+      })
+        } catch (e) {
+                console.log('There was an error:'+e); 
+                alert("tenant post error");
+        }
+  }
+
+  formTenantObject(socialLoginUser){
+    var json = {};
+      json = {
+           "T_ID":this.socialLoginUser.tsid ? this.socialLoginUser.tsid : "",
+           "Anonymous":"oo",
+           "FirstName":this.socialLoginUser.tsfirstName ? this.socialLoginUser.tsfirstName : "",
+           "LastName":this.socialLoginUser.tslastName ? this.socialLoginUser.tslastName : "",
+           "Phone":this.socialLoginUser.tsPhone ? this.socialLoginUser.tsPhone : "",
+           "AddressLine1":this.socialLoginUser.tsAddressLine1 ? this.socialLoginUser.tsAddressLine1 : "",
+           "AddressLine2":this.socialLoginUser.tsAddressLine2 ? this.socialLoginUser.tsAddressLine2 : "",
+           "Zipcode":this.socialLoginUser.tsZipcode ? this.socialLoginUser.tsZipcode : "",
+           "City":this.socialLoginUser.tsCity ? this.socialLoginUser.tsCity : "",
+           "State":this.socialLoginUser.tsState ? this.socialLoginUser.tsState : "",
+           "Country":this.socialLoginUser.tsCountry ? this.socialLoginUser.tsCountry : "",
+           "T_Profile_Pic_URL":this.socialLoginUser.tsprofilePicURL ? this.socialLoginUser.tsprofilePicURL : "",
+           "CreatedOn":this.socialLoginUser.tsCreatedOn ? this.socialLoginUser.tsCreatedOn : "",
+           "UpdatedOn":this.socialLoginUser.tsUpdatedOn ? this.socialLoginUser.tsUpdatedOn : "",
+           "Email_ID": this.socialLoginUser.tsemail ? this.socialLoginUser.tsemail : ""
+      }
+    return json;
+  }
+
+  formLoginObject(){
+    var json = {};
+    json = {
+         "T_ID":this.state.email? this.state.email: ""
+    }
+  return json;
+  }
 
   handlePrivacyPolicy = event => {
     ReactGA.event({
@@ -94,6 +176,9 @@ export default class Login extends Component {
   }
 
   handleSocialLogin = (user) => {
+      var socUser = this.formSocialUserObj(user);
+      this.socialLoginUser = socUser;
+
       var userToken;
       var socialLoginType;
       if(user.token.idToken){
@@ -169,7 +254,7 @@ export default class Login extends Component {
              AWS.config.region = config.cognito.REGION;
               var self = this;
                var cognitoID = new AWS.CognitoIdentity();
-              var homeScreenNavigate = this.navigateToHomeScreen;
+              var homeScreenNavigate = this.postSocialLogin;
                cognitoID.getId(params, function(err, data) {
                  if (err) {
                       console.log(err, err.stack); // an error occurred
@@ -183,6 +268,27 @@ export default class Login extends Component {
                       
 
         
+  }
+
+  formSocialUserObj = user => {
+    var suserObj = new SocialLoginModel;
+    suserObj.tsemail = user.profile.email?user.profile.email:"";
+    suserObj.tsfirstName = user.profile.firstName?user.profile.firstName:"";
+    suserObj.tslastName = user.profile.lastName?user.profile.lastName:"";
+    suserObj.tsname = user.profile.name?user.profile.name:"";
+    suserObj.tsprofilePicURL = user.profile.profilePicURL?user.profile.profilePicURL:"";
+    suserObj.tsid = user.profile.id?user.profile.id:"";
+    suserObj.tsaccessToken = user.token.accessToken?user.token.accessToken:"";
+    suserObj.tsexpiresAt = user.token.expiresAt?user.token.expiresAt:"";
+    suserObj.tsexpiresIn = user.token.expiresIn?user.token.expiresIn:"";
+    suserObj.tsfirstIssued_at = user.token.firstIssued_at?user.token.firstIssued_at:"";
+    suserObj.tsidToken = user.token.idToken?user.token.idToken:"";
+    suserObj.tsscope = user.token.scope?user.token.scope:"";
+    suserObj.tsprovider = user.provider?user.provider:"";
+    var today  = new Date();
+    suserObj.tsUpdatedOn = today.toLocaleDateString("en-US");
+    suserObj.tsCreatedOn = today.toLocaleDateString("en-US");
+    return suserObj
   }
 
   handleSocialLoginFailure = (err) => {
@@ -252,7 +358,8 @@ export default class Login extends Component {
 
 
       this.props.userHasAuthenticated(true);
-      this.navigateToHomeScreen(this);
+      this.postLogin(this);
+      // this.navigateToHomeScreen(this);
       // this.props.history.push("/home");
     } catch (e) {
       alert(e);

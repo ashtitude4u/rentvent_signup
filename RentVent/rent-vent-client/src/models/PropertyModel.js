@@ -1,7 +1,7 @@
 export class PropertyModel {
   constructor(pid,pOwnerShipPeriod,pLat,pLong,pAdd1,pAdd2,pZip,pCity,pCounty,pState,pCountry,pTaxAmount,pMortgage,pWorkPermitsGranted,
   	pMap,pYearBuilt,pSqft,pBedrooms,pBathrooms,pInsuranceCost,pAvailability,pcid,prid,pLandlords,pReviews,pPhotos,pAvgRating,pAvgApproval,pCreatedBy,pUpdatedBy,
-  	pCreatedOn,pUpdatedOn) {
+  	pCreatedOn,pUpdatedOn,pComplaints,pRentals,pZoning,pLandbaseYear,pRCount,prRating) {
     this.pid = pid;
     this.pOwnerShipPeriod = pOwnerShipPeriod;
     this.pLat = pLat;
@@ -34,6 +34,11 @@ export class PropertyModel {
     this.pUpdatedBy = pUpdatedBy;
     this.pCreatedOn = pCreatedOn;
     this.pUpdatedOn = pUpdatedOn;
-
+    this.pComplaints = pComplaints;
+    this.pRentals = pRentals;
+    this.pZoning = pZoning;
+    this.pLandbaseYear = pLandbaseYear;
+    this.pRCount = pRCount;
+    this.prRating = prRating;
   }
 }

@@ -9,6 +9,8 @@ import LoaderButton from "../components/LoaderButton";
 import "./Signup.css";
 import { AuthenticationDetails, CognitoUserPool } from "amazon-cognito-identity-js";
 import config from "../config";
+import {TenantModel} from '../models/TenantModel';
+import {SocialLoginModel} from '../models/SocialLoginModel';
 import AWS from "aws-sdk";
 import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
@@ -34,6 +36,83 @@ export default class Signup extends Component {
       this.state.email.length > 0 &&
       this.state.password.length > 0
     );
+  }
+
+  navigateToHomeScreen(self) {
+    this.postTenantLogin(self);
+   // self.props.history.push("/home");
+  }
+
+  postTenantLogin = self => {
+    var tenantObj = new TenantModel;
+    tenantObj.tFirstName = self.state.givenName;
+    tenantObj.tLastName = self.state.familyName;
+    tenantObj.tEmail = self.state.email;
+    var today  = new Date();
+    tenantObj.tUpdatedOn = today.toLocaleDateString("en-US");
+    tenantObj.tCreatedOn = today.toLocaleDateString("en-US");
+    var jsonObj = this.formTenantObject(tenantObj);
+    this.postTenantService(jsonObj);
+  }
+
+  formTenantObject(tenantObj){
+    var json = {};
+      json = {
+          // complete this
+            "T_ID":tenantObj.tEmail ? tenantObj.tEmail : "",
+           "Anonymous":"oo",
+           "FirstName":tenantObj.tFirstName ? tenantObj.tFirstName : "",
+           "LastName":tenantObj.tLastName ? tenantObj.tLastName : "",
+           "Phone":tenantObj.tPhone ? tenantObj.tPhone : "",
+           "AddressLine1":tenantObj.tAddressLine1 ? tenantObj.tAddressLine1 : "",
+           "AddressLine2":tenantObj.tAddressLine2 ? tenantObj.tAddressLine2 : "",
+           "Zipcode":tenantObj.tZipCode ? tenantObj.tZipCode : "",
+           "City":tenantObj.tCity ? tenantObj.tCity : "",
+           "State":tenantObj.tState ? tenantObj.tState : "",
+           "Country":tenantObj.tCountry ? tenantObj.tCountry : "",
+           "CreatedOn":tenantObj.tCreatedOn ? tenantObj.tCreatedOn : "",
+           "UpdatedOn":tenantObj.tUpdatedOn ? tenantObj.tUpdatedOn : "",
+           "Email_ID": tenantObj.tEmail ? tenantObj.tEmail : ""
+           
+      }
+    return json;
+  }
+
+  postTenantService(json){
+    const GATEWAY_URL = config.apis.TENANT_POST;
+
+    var jsonReqObj = JSON.stringify(json);
+    try{
+      fetch(GATEWAY_URL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: jsonReqObj,
+    }).then((response) => {
+                   return response.json();
+               })
+    .then((json) => {
+      if(json && !json.statusCode){
+          console.log('tenant post success '+json);
+           sessionStorage.setItem('userLoggedIn', 'true');
+           sessionStorage.setItem('tenantID', json);
+           this.props.history.push("/home");
+          } else {
+            alert("Login error - "+json.message);
+            // temp flow
+            sessionStorage.setItem('userLoggedIn', 'true');
+            this.props.history.push("/home");          
+          }
+      })
+      .catch((err) => {
+        console.log('There was an error:' + err);alert("tenant post error");
+      })
+        } catch (e) {
+                console.log('There was an error:'+e); 
+                alert("tenant login error");
+        }
   }
 
   validateConfirmationForm() {
@@ -167,7 +246,8 @@ export default class Signup extends Component {
  
 
       this.props.userHasAuthenticated(true);
-      this.props.history.push("/home");
+      // this.props.history.push("/home");
+      this.navigateToHomeScreen(this);
     } catch (e) {
       alert(e);
       this.setState({ isLoading: false });

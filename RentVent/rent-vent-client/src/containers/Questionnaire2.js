@@ -12,7 +12,7 @@ import moment from 'moment';
 import ReactGA from 'react-ga';
 import {LQuestionnaireModel} from '../models/LQuestionnaireModel';
 import {PQuestionnaireModel} from '../models/PQuestionnaireModel';
-
+import config from "../config";
 
 export default class Questionnaire2 extends Component {
    constructor(props) {
@@ -407,10 +407,11 @@ export default class Questionnaire2 extends Component {
   }
 
   postQuestionnaireService(json){
+    const GATEWAY_URL = config.apis.QUESTIONNAIRE_POST;
 
     var jsonReqObj = JSON.stringify(json);
     try{
-      fetch('https://h1zwqvevl5.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/questionnaire', {
+      fetch(GATEWAY_URL, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -466,38 +467,37 @@ export default class Questionnaire2 extends Component {
     if(this.reviewType == "L"){
       json = {
            "landlordID":this.landlordObj.landlordId ? this.landlordObj.landlordId : "",
-           "tenant_id":3,
+           "tenant_id":sessionStorage.getItem('tenantID'),
            "Q_Type":"L",
            "LL_Q_Title":this.questionnaireObj.lpReviewTitle?this.questionnaireObj.lpReviewTitle:"",
            "LL_Q_Advice":this.questionnaireObj.lAdvice?this.questionnaireObj.lAdvice:"",
            "LL_Q_Con":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:"",
            "LL_Q_Pro":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:"",
-           "LL_Q_Current_Renting": this.questionnaireObj.lpCurrentRenting?this.questionnaireObj.lpCurrentRenting:"",
            "LL_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
            "Q_Movein_Date":this.questionnaireObj.lpMoveInDate?this.questionnaireObj.lpMoveInDate:"",
            "Q_Moveout_Date":this.questionnaireObj.lpMoveOutDate?this.questionnaireObj.lpMoveOutDate:"",
            "LL_Q_Recommend_Landlord": this.questionnaireObj.lpRecommend?this.questionnaireObj.lpRecommend:"",
-           "Q_LL_Response": this.questionnaireObj.lResponsive?this.questionnaireObj.lResponsive:""
+           "Q_LL_Response_Rate": this.questionnaireObj.lResponsive?this.questionnaireObj.lResponsive:"",
+           "LL_Q_Repair_Requests": this.questionnaireObj.lrResponsive?this.questionnaireObj.lrResponsive:""
+           
       }
     }else{
       json = {
-           "propertyID":2,
+          "tenant_id":sessionStorage.getItem('tenantID'),
+           "propertyID":JSON.parse(sessionStorage.getItem('propertyID')),
             "Q_Type":"P",
            "Q_Title":this.questionnaireObj.lpReviewTitle?this.questionnaireObj.lpReviewTitle:"",
            "P_Q_Con":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:"",
            "P_Q_Pro":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:"",
-           "P_Q_Current_Renting": this.questionnaireObj.lpCurrentRenting?this.questionnaireObj.lpCurrentRenting:"",
            "P_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
            "Q_Movein_Date":this.questionnaireObj.lpMoveInDate?this.questionnaireObj.lpMoveInDate:"",
            "Q_Moveout_Date":this.questionnaireObj.lpMoveOutDate?this.questionnaireObj.lpMoveOutDate:"",
            "P_Q_Recommend_Property": this.questionnaireObj.lpRecommend?this.questionnaireObj.lpRecommend:"",
-           "P_Q_Property_Photos": this.questionnaireObj.ppPhotos?this.questionnaireObj.ppPhotos:"",
            "P_Q_Condition_Listing": this.questionnaireObj.pCondition?this.questionnaireObj.pCondition:"",
            "P_Q_Application_Fee_Required": this.questionnaireObj.pApplicationFeeReq?this.questionnaireObj.pApplicationFeeReq:"",
            "P_Q_Rental_Rate": this.questionnaireObj.pMonthlyRent?this.questionnaireObj.pMonthlyRent:"",
            "P_Q_Security_Required": this.questionnaireObj.pSecurityDepositReq?this.questionnaireObj.pSecurityDepositReq:"",
            "P_Q_RR_Increase": this.questionnaireObj.pRentIncrease?this.questionnaireObj.pRentIncrease:"",
-           "P_Q_General_Issues": this.questionnaireObj.pGeneralIssues?this.questionnaireObj.pGeneralIssues:"",
            "P_Q_Insurance": this.questionnaireObj.pRentalInsuranceReq?this.questionnaireObj.pRentalInsuranceReq:"",
 
       }
@@ -551,21 +551,14 @@ export default class Questionnaire2 extends Component {
 
       <div class="pd-t-10 pd-b-50">
         <div class="container">
-          <nav aria-label="breadcrumb" role="navigation">
-            <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
-              <li class="breadcrumb-item"><a href="#" onClick={this.navigateToHomeScreen}>Home</a></li>
-              <li class="breadcrumb-item"><a href="#" onClick={this.navigateToLandLordScreen}>Landlords</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Teresa Auyeung's Profile</li>
-            </ol>
-          </nav>
           <div class="row">
             <div class="col-lg-8 col-xl-7">
               <div class="profile-head">
                 <div class="profile-head-left">
                   <div class="d-flex align-items-start">
-                    <h2 class="tx-gray-900 tx-light">Teresa Auyeung</h2>
+                    <h2 class="tx-gray-900 tx-light">{this.landlordObj.fullName}</h2>
                   </div>
-                  <p class="mg-b-0">2051 Norwalk Ave., Los Angeles CA, 90041</p>
+                  <p class="mg-b-0">{this.landlordObj.addressLine1} {this.landlordObj.addressLine2}, {this.landlordObj.city}, {this.landlordObj.state} {this.landlordObj.zipCode}</p>
                 </div>
               </div>
 
@@ -595,13 +588,6 @@ export default class Questionnaire2 extends Component {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="form-group">
-                <label class="ckbox mg-t-15">
-                <input name="ckbox1" type="checkbox" checked={this.state.rentingCheckBox} onChange={this.handleRentingCheckBoxChange.bind(this)} />
-                <span>Currently Renting</span>
-              </label>
               </div>
 
                 <div class="form-group">
@@ -662,21 +648,16 @@ export default class Questionnaire2 extends Component {
                   </div>
                 </div>
 
-                <div class="form-group" className={this.landlordQuestionStyle.join('')}>
-                  <label class="d-block mg-b-15">Share photos of this property</label>
-                
-
-                 <div className="previewComponent">
-                    <form onSubmit={(e)=>this.handleImageUploaded(e)}>
-                    <input className="fileInput" 
-                      type="file" 
-                      onChange={(e)=>this.handleImageChange(e)} />
-                    </form>
-                  <div className="imgPreview">
-                    {$imagePreview}
+                <div class="form-group" className={this.propertyQuestionStyle.join('')}>
+                  <label>Rate how responsive your landlord was to your repair requests.</label>
+                <div class="landlord-rating-star">
+                    <i onClick={this.landlordRepairResponsiveStarSelected.bind(this,0)} className={this.state.landlordRepairResponsiveStarArray[0].join('' )}></i>
+                    <i onClick={this.landlordRepairResponsiveStarSelected.bind(this,1)} className={this.state.landlordRepairResponsiveStarArray[1].join('' )}></i>
+                    <i onClick={this.landlordRepairResponsiveStarSelected.bind(this,2)} className={this.state.landlordRepairResponsiveStarArray[2].join('' )}></i>
+                    <i onClick={this.landlordRepairResponsiveStarSelected.bind(this,3)} className={this.state.landlordRepairResponsiveStarArray[3].join('' )}></i>
+                    <i onClick={this.landlordRepairResponsiveStarSelected.bind(this,4)} className={this.state.landlordRepairResponsiveStarArray[4].join('' )}></i>
                   </div>
                 </div>
-              </div>
 
                 <div class="form-group" className={this.landlordQuestionStyle.join('')}>
                   <label>What was the condition of the property compared to the listing?</label>
@@ -732,20 +713,6 @@ export default class Questionnaire2 extends Component {
                   </label>
                   <label class="rdiobox">
                     <input name="rdio6" type="radio" value="no"/>
-                    <span>No</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group" className={this.landlordQuestionStyle.join('')}>
-                <label>Were there general issues with the property?</label>
-                <div class="d-flex align-items-center mg-t-10" onChange={this.handleGeneralIssuesInputChange.bind(this)}>
-                  <label class="rdiobox mg-r-20">
-                    <input name="rdio7" type="radio" value="yes" />
-                    <span>Yes</span>
-                  </label>
-                  <label class="rdiobox">
-                    <input name="rdio7" type="radio" value="no" />
                     <span>No</span>
                   </label>
                 </div>

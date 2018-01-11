@@ -12,6 +12,7 @@ import "../libs/font-awesome/css/font-awesome.css";
 import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
+import config from "../config";
 import ReactGA from 'react-ga';
 import {LandlordModel} from '../models/LandlordModel';
 import {ComplaintsModel} from '../models/ComplaintsModel';
@@ -77,43 +78,144 @@ export default class Landing extends Component {
     this.options = {
       onRowClick: this.landlordResultsRowSelected
     };
-        sessionStorage.setItem('userLoggedIn', 'true');
 
   }
 
   landlordResultsRowSelected = row =>{
         var selectedLandlord = this.landlords[row.index];
-            sessionStorage.setItem('landlordObject', JSON.stringify(selectedLandlord));
-        this.retrievelandlordAvgRatings(selectedLandlord.landlordId);
+        this.retrievelandlordDetails(selectedLandlord.landlordId);
   }
 
-  retrievelandlordAvgRatings = landlordId => {
-    // try{
-    //  const GATEWAY_URL = [""];
+  retrievelandlordDetails = landlordId => {
+    try{
+     const GATEWAY_URL = config.apis.LANDLORD_LID_GET+landlordId;
 
-    //  fetch(GATEWAY_URL, {
-    //      method: 'GET',
-    //      mode: 'cors'
-    //  })
-    //   .then((response) => {
-    //                return response.json();
-    //            })
-    //            .then((json) => {
+     fetch(GATEWAY_URL, {
+         method: 'GET',
+         mode: 'cors'
+     })
+      .then((response) => {
+                   return response.json();
+               })
+               .then((json) => {
+                var landlord;
+                 if(json && json.Items && json.Items.length > 0){
+                  landlord = new LandlordModel;
+                  var landlordObj = json.Items[0];
+                          landlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
 
-    //             })
-    //            .catch((err) => {console.log('There was an error:' + err);alert("Landlord error");})
-    //          } catch (e) {
-    //             console.log('There was an error:'+e); 
-    //             alert("Landlord error");
-    //     }
+                          landlord.fullName = landlordObj.L_Full_Name ? landlordObj.L_Full_Name : "";;
+                          landlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
+                          landlord.addressLine2 = landlordObj.L_Address_Line2 ? landlordObj.L_Address_Line2 : "";
+                          landlord.approval = landlordObj.L_Approval ? landlordObj.L_Approval : "";
+                          landlord.avgApproval = landlordObj.L_Avg_Approval ? landlordObj.L_Avg_Approval : "";
+                          landlord.avgRating = landlordObj.L_Avg_Rating ? landlordObj.L_Avg_Rating : "";
+                          landlord.avgResponsiveness = landlordObj.L_Avg_Responsiveness ? landlordObj.L_Avg_Responsiveness : "";
+                          landlord.city = landlordObj.L_City ? landlordObj.L_City : "";
+                          landlord.country = landlordObj.L_Country ? landlordObj.L_Country : "";
+                          landlord.county = landlordObj.L_County ? landlordObj.L_County : "";
+                          landlord.inquiries = landlordObj.L_Inquiries ? landlordObj.L_Inquiries : "";
+                          landlord.phone = landlordObj.L_Phone ? landlordObj.L_Phone : "";
+                          landlord.rating = landlordObj.L_Rating ? landlordObj.L_Rating : "";
+                          landlord.recommend = landlordObj.L_Recommend ? landlordObj.L_Recommend : "";
+                          landlord.repair = landlordObj.L_Repair ? landlordObj.L_Repair : "";
+                          landlord.repairRequests = landlordObj.L_Repair_Requests ? landlordObj.L_Repair_Requests : "";
+                          landlord.state = landlordObj.L_State ? landlordObj.L_State : "";
+                          landlord.title = landlordObj.L_Title ? landlordObj.L_Title : "";
+                          landlord.zipCode = landlordObj.L_Zipcode ? landlordObj.L_Zipcode : "";
+                          landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
+                          landlord.createdBy = landlordObj.L_Created_By ? landlordObj.L_Created_By : "";
+                          landlord.createdOn = landlordObj.L_Created_On ? landlordObj.L_Created_On : "";
+                          landlord.updatedBy = landlordObj.L_Updated_By ? landlordObj.L_Updated_By : "";
+                          landlord.updatedOn = landlordObj.L_Updated_On ? landlordObj.L_Updated_On : "";
+                          landlord.description = landlordObj.L_Description ? landlordObj.L_Description : "";
 
+                          var complaintsObj = landlordObj.L_Complaints ? landlordObj.L_Complaints : "";
+                            landlord.complaints = [];
+                          if(complaintsObj){
+                            for(var i=0; i< complaintsObj.length; i++){
+                              landlord.complaints[i] = new ComplaintsModel;
+                              landlord.complaints[i].cid = complaintsObj[i];
+                            }
+                          }
 
-          this.props.userHasAuthenticated(true);
-          ReactGA.event({
-                  category: 'Navigation',
-                  action: 'Home',
-              });
-          this.props.history.push("/landlord");
+                          var disputesObj = landlordObj.L_Disputes ? landlordObj.L_Disputes : "";
+                          if(disputesObj){
+                              landlord.disputes = [];
+                            for(var i=0; i< disputesObj.length; i++){
+                              landlord.disputes[i] = new DisputesModel;
+                            landlord.disputes[i].did = disputesObj[i];
+                          }
+                        }
+
+                          var propertiesObj = landlordObj.L_Properties ? landlordObj.L_Properties : "";
+                          if(propertiesObj){
+                              landlord.landlordProperties = [];
+                            for(var i=0; i< propertiesObj.length; i++){
+                              landlord.landlordProperties[i] = new PropertyModel;
+                              var propChildObj = propertiesObj[i];
+                              landlord.landlordProperties[i].pAdd1 = propChildObj.P_Address_Line1 ? propChildObj.P_Address_Line1 : "Add 1";
+                              landlord.landlordProperties[i].pAdd2 = propChildObj.P_Address_Line2 ? propChildObj.P_Address_Line2 : "Add 2";
+                              landlord.landlordProperties[i].pCity = propChildObj.P_City ? propChildObj.P_City : "City";
+                              landlord.landlordProperties[i].pid = propChildObj.P_ID ? propChildObj.P_ID : "";
+                              landlord.landlordProperties[i].pState = propChildObj.P_State ? propChildObj.P_State : "State";
+                              landlord.landlordProperties[i].pZip = propChildObj.P_Zipcode ? propChildObj.P_Zipcode : "07095";
+                              landlord.landlordProperties[i].pCounty = propChildObj.P_County ? propChildObj.P_County : "";
+                              landlord.landlordProperties[i].pCreatedBy = propChildObj.P_Created_By ? propChildObj.P_Created_By : "";
+                              landlord.landlordProperties[i].pCreatedOn = propChildObj.P_Created_On ? propChildObj.P_Created_On  : "";
+                              landlord.landlordProperties[i].pCountry = propChildObj.P_Country ? propChildObj.P_Country : "";
+                              landlord.landlordProperties[i].pAvgApproval = propChildObj.P_Approval_Rate ? propChildObj.P_Approval_Rate : "";
+                              landlord.landlordProperties[i].pAvgRating = propChildObj.P_Avg_Rating ? propChildObj.P_Avg_Rating : "";
+                              landlord.landlordProperties[i].pReviews = propChildObj.P_Reviews ? propChildObj.P_Reviews : "";
+                              landlord.landlordProperties[i].pUpdatedBy = propChildObj.P_Updated_By ? propChildObj.P_Updated_By : "";
+                              landlord.landlordProperties[i].pUpdatedOn = propChildObj.P_Updated_On ? propChildObj.P_Updated_On : "";
+                              landlord.landlordProperties[i].pRCount = propChildObj.PR_Count ? propChildObj.PR_Count : "";
+                              landlord.landlordProperties[i].prRating = propChildObj.PR_Rating ? propChildObj.PR_Rating : "";
+                            }
+                          }
+                          
+                          var reviewsObj = landlordObj.Landlord_Reviews ? landlordObj.Landlord_Reviews : "";
+                          if(reviewsObj){
+                              landlord.landlordReviews = [];
+                            for(var i=0; i< reviewsObj.length; i++){
+                                landlord.landlordReviews[i] = new LandlordReviewModel;
+                                var propChildObj = reviewsObj[i];
+                                landlord.landlordReviews[i].lrCreatedDate = propChildObj ? propChildObj.LR_Created_Date : "";
+                                landlord.landlordReviews[i].lrDescription = propChildObj ? propChildObj.LR_Description : "";
+                                landlord.landlordReviews[i].lrTitle = propChildObj ? propChildObj.LR_Title : "";
+                                landlord.landlordReviews[i].lrtid = propChildObj ? propChildObj.T_ID : "";
+                                landlord.landlordReviews[i].lrid = propChildObj ? propChildObj.ID : "";
+                                landlord.landlordReviews[i].lrlpid = propChildObj ? propChildObj.LP_L_ID : "";
+                                landlord.landlordReviews[i].lrApproval = propChildObj ? propChildObj.LR_Approval : "";
+                                landlord.landlordReviews[i].lrCreatedBy = propChildObj ? propChildObj.LR_Created_By : "";
+                                landlord.landlordReviews[i].lrRating = propChildObj ? propChildObj.LR_Rating : "";
+                                landlord.landlordReviews[i].lrRepairRequests = propChildObj ? propChildObj.LR_Repair_Requests : "";
+                                landlord.landlordReviews[i].lrResponsiveness = propChildObj ? propChildObj.LR_Responsiveness : "";
+                                landlord.landlordReviews[i].lrType = propChildObj ? propChildObj.LR_Types : "";
+                                landlord.landlordReviews[i].lrUpdatedBy = propChildObj ? propChildObj.LR_Updated_By : "";
+                                landlord.landlordReviews[i].lrUpdatedOn = propChildObj ? propChildObj.LR_Updated_On : "";
+                                landlord.landlordReviews[i].lrtState = propChildObj ? propChildObj.T_State : "";
+                                landlord.landlordReviews[i].lrtCity = propChildObj ? propChildObj.T_City : "";
+
+                                
+                            }
+                          }
+                  sessionStorage.setItem('landlordObject', JSON.stringify(landlord));
+                  this.props.userHasAuthenticated(true);
+                  ReactGA.event({
+                          category: 'Navigation',
+                          action: 'Landlord',
+                      });
+                  this.props.history.push("/landlord");
+                 }
+                 
+                          
+                })
+               .catch((err) => {console.log('There was an error:' + err);alert("Landlord retrieve error");})
+             } catch (e) {
+                console.log('There was an error:'+e); 
+                alert("Landlord error");
+        }
 
   }
 
@@ -147,7 +249,7 @@ export default class Landing extends Component {
   }
 
   landlordSearchClicked = event => {
-    var landlordString = "https://5oz037wxx9.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/"+this.state.landlordSearchField;
+    var landlordString = config.apis.LANDLORD_NAME_GET+this.state.landlordSearchField;
     landlordString = encodeURI(landlordString);
     this.retrievelandlord(this,landlordString);
   }
@@ -171,87 +273,21 @@ export default class Landing extends Component {
                    // this.setState({ accessToken: json.done.json.access_token });
                    // this.search();
                    if(json){
-                      if(json.Items.length > 0) {
+                      if(json.length > 0) {
                           
                         var maxCount = 0;
-                        if(json.Items.length > 25)
+                        if(json.length > 25)
                         {
                           maxCount = 25;
                         } else {
-                          maxCount = json.Items.length;
+                          maxCount = json.length;
                         }
                           for(var i=0; i<maxCount; i++){
-                            var landlordObj = json.Items[i];
+                            var landlordObj = json[i];
                           var landlord = new LandlordModel;
-                          landlord.firstName = landlordObj.L_First_Name ? landlordObj.L_First_Name : "";
-                          landlord.lastName = landlordObj.L_Last_Name ? landlordObj.L_Last_Name : "";
                           landlord.fullName = landlordObj.L_Full_Name ? landlordObj.L_Full_Name : "";;
-                          landlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
-                          landlord.addressLine2 = landlordObj.L_Address_Line2 ? landlordObj.L_Address_Line2 : "";
-                          landlord.approval = landlordObj.L_Approval ? landlordObj.L_Approval : "";
-                          landlord.avgApproval = landlordObj.L_Avg_Approval ? landlordObj.L_Avg_Approval : "";
-                          landlord.avgRating = landlordObj.L_Avg_Rating ? landlordObj.L_Avg_Rating : "";
-                          landlord.avgResponsiveness = landlordObj.L_Avg_Responsiveness ? landlordObj.L_Avg_Responsiveness : "";
-                          landlord.city = landlordObj.L_City ? landlordObj.L_City : "";
-                          landlord.country = landlordObj.L_Country ? landlordObj.L_Country : "";
-                          landlord.county = landlordObj.L_County ? landlordObj.L_County : "";
-                          landlord.inquiries = landlordObj.L_Inquiries ? landlordObj.L_Inquiries : "";
-                          landlord.phone = landlordObj.L_Phone ? landlordObj.L_Phone : "";
-                          landlord.rating = landlordObj.L_Rating ? landlordObj.L_Rating : "";
-                          landlord.recommend = landlordObj.L_Recommend ? landlordObj.L_Recommend : "";
-                          landlord.repair = landlordObj.L_Repair ? landlordObj.L_Repair : "";
-                          landlord.repairRequests = landlordObj.L_Repair_Requests ? landlordObj.L_Repair_Requests : "";
-                          landlord.state = landlordObj.L_State ? landlordObj.L_State : "";
-                          landlord.title = landlordObj.L_Title ? landlordObj.L_Title : "";
-                          landlord.zipCode = landlordObj.L_Zipcode ? landlordObj.L_Zipcode : "";
-                          landlord.landlordId = landlordObj.landlord_id ? landlordObj.landlord_id : "";
-
-                          var complaintsObj = landlordObj.L_Complaints ? landlordObj.L_Complaints : "";
-                            landlord.complaints = [];
-                          if(complaintsObj){
-                            for(var i=0; i< complaintsObj.length; i++){
-                              landlord.complaints[i] = new ComplaintsModel;
-                              landlord.complaints[i].cid = complaintsObj[i];
-                            }
-                          }
-
-                          var disputesObj = landlordObj.L_Disputes ? landlordObj.L_Disputes : "";
-                          if(disputesObj){
-                              landlord.disputes = [];
-                            for(var i=0; i< disputesObj.length; i++){
-                              landlord.disputes[i] = new DisputesModel;
-                            landlord.disputes[i].did = disputesObj[i];
-                          }
-                        }
-
-                          // var propertiesObj = landlordObj.L_Properties ? landlordObj.L_Properties : "";
-                          // if(propertiesObj){
-                          //     landlord.landlordProperties = [];
-                          //   for(var i=0; i< propertiesObj.length; i++){
-                          //     landlord.landlordProperties[i] = new PropertyModel;
-                          //     var propChildObj = propertiesObj[i];
-                          //     landlord.landlordProperties[i].pAdd1 = propChildObj ? propChildObj.P_Address_Line1 : "";
-                          //     landlord.landlordProperties[i].pAdd2 = propChildObj ? propChildObj.P_Address_Line2 : "";
-                          //     landlord.landlordProperties[i].pCity = propChildObj ? propChildObj.P_City : "";
-                          //     landlord.landlordProperties[i].pid = propChildObj ? propChildObj.P_ID : "";
-                          //     landlord.landlordProperties[i].pPhotos = propChildObj ? propChildObj.P_Photos : "";
-                          //     landlord.landlordProperties[i].pState = propChildObj ? propChildObj.P_State : "";
-                          //     landlord.landlordProperties[i].pZip = propChildObj ? propChildObj.P_Zipcode : "";
-                          //   }
-                          // }
+                          landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
                           
-                          var reviewsObj = landlordObj.L_Reviews ? landlordObj.L_Reviews : "";
-                          if(reviewsObj){
-                              landlord.landlordReviews = [];
-                            for(var i=0; i< reviewsObj.length; i++){
-                                landlord.landlordReviews[i] = new LandlordReviewModel;
-                                var propChildObj = reviewsObj[i];
-                                landlord.landlordReviews[i].lrCreatedDate = propChildObj ? propChildObj.LR_Created_Date : "";
-                                landlord.landlordReviews[i].lrDescription = propChildObj ? propChildObj.LR_Description : "";
-                                landlord.landlordReviews[i].lrTitle = propChildObj ? propChildObj.LR_Title : "";
-                                landlord.landlordReviews[i].lrtid = propChildObj ? propChildObj.T_ID : "";
-                            }
-                          }
                           self.landlords.push(landlord);
                           var dsobj = {
                             "landlordName":landlord.fullName,

@@ -7,6 +7,9 @@ import "../libs/Ionicons/css/ionicons.css";
 import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
 import ReactGA from 'react-ga';
+import {PropertyModel} from '../models/PropertyModel';
+import {LandlordModel} from '../models/LandlordModel';
+import config from "../config";
 
 export default class Landlord extends Component {
    constructor(props) {
@@ -15,39 +18,55 @@ export default class Landlord extends Component {
       isAuthenticated: false,
       isAuthenticating: true,
       reviewSectionStyle: ["review-header"],
-      landlordPropertiesSectionStyle: [""],
-      phoneNumberSectionStyle: ['']
+      landlordPropertiesSectionStyle: ["col-lg-4 mg-t-40 mg-lg-t-0"],
+      phoneNumberSectionStyle: [''],
+      modalDialogStyle:['modal fade']
     };
     // this.landlordObj = props.landlordObject;
     this.showMe = false;
     this.landlordObj = JSON.parse(sessionStorage.getItem('landlordObject'));
     this.landlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
+    this.landlordOverallRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
+    this.landlordResponsiveRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
+    this.landlordRepairRequestRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
 
-    if(this.landlordObj && this.landlordObj.landlordReviews){
-      for (var j = 0; j < this.landlordObj.landlordReviews.length; j++){
+
+      if(this.landlordObj){
+        if(this.landlordObj.landlordReviews){
+        for (var j = 0; j < this.landlordObj.landlordReviews.length; j++){
           var item = this.landlordObj.landlordReviews[j];
-        for(var i = 0; i < item.lrDescription.length; i++){
-            if(item.lrDescription[i].LR_Type.toUpperCase() == "ADVICE"){
-                item.adviceObj = item.lrDescription[i];
-            } else if(item.lrDescription[i].LR_Type.toUpperCase() == "PRO"){
-                item.proObj = item.lrDescription[i];
-            } else if(item.lrDescription[i].LR_Type.toUpperCase() == "CON"){
-                item.conObj = item.lrDescription[i];
+        for(var i = 0; i < item.lrType.length; i++){
+            if(item.lrType[i].LR_Type.toUpperCase() == "ADVICE"){
+                item.adviceObj = item.lrType[i];
+            } else if(item.lrType[i].LR_Type.toUpperCase() == "PRO"){
+                item.proObj = item.lrType[i];
+            } else if(item.lrType[i].LR_Type.toUpperCase() == "CON"){
+                item.conObj = item.lrType[i];
             }
+          }
         }
       }
-    } else{
-      if(this.landlordObj){
        if(!this.landlordObj.landlordReviews){
           this.state.reviewSectionStyle = ["review-header hide-review-section"];
         }
         if(!this.landlordObj.landlordProperties){
-          this.state.landlordPropertiesSectionStyle = ["hide-property-section"];
+          this.state.landlordPropertiesSectionStyle = ["col-lg-4 mg-t-40 mg-lg-t-0 hide-property-section"];
         }
         if(!this.landlordObj.phone){
           this.state.phoneNumberSectionStyle = ["hide-phone-section"];
         }
-      }
+        if(!this.landlordObj.description){
+          this.landlordObj.description = "Hi, my name is "+this.landlordObj.fullName+"...";
+        }
+        if(this.landlordObj.avgRating){
+            this.assignLandlordRatings(this.landlordObj.avgRating);
+        }
+        if(this.landlordObj.repairRequests){
+          this.assignLandlordRepairRequestRatings(this.landlordObj.repairRequests);
+        }
+        if(!this.landlordObj.recommend){
+          this.landlordObj.recommend = 0;
+        }
     } 
 
     sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
@@ -65,7 +84,6 @@ export default class Landlord extends Component {
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
-
     this.houseImage1 = "https://s3.amazonaws.com/rentvent-web/1.jpg";
     this.houseImage2 = "https://s3.amazonaws.com/rentvent-web/2.jpg";
     this.houseImage3 = "https://s3.amazonaws.com/rentvent-web/3.jpg";
@@ -78,11 +96,35 @@ export default class Landlord extends Component {
 
   }
 
+  assignOverallExp = rating => {
+    this.landlordOverallRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
+    var ratings = Math.round(rating);
+      for(var i=0; i<ratings; i++) {
+        this.landlordOverallRatingArray[i]=["square-10 bg-primary"];
+      }
+  }
+
+  assignResponsiveRate = rating => {
+    this.landlordResponsiveRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
+    var ratings = Math.round(rating);
+      for(var i=0; i<ratings; i++) {
+        this.landlordResponsiveRatingArray[i]=["square-10 bg-primary"];
+      }
+  }
+
+  assignLandlordRepairRequestRatings = rating => {
+    this.landlordRepairRequestRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
+    var ratings = Math.round(rating);
+      for(var i=0; i<ratings; i++) {
+        this.landlordRepairRequestRatingArray[i]=["square-10 bg-primary"];
+      }
+  }
+  
   assignLandlordRatings = rating => {
     this.landlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
     var ratings = Math.round(rating);
       for(var i=0; i<ratings; i++) {
-        this.landlordRatingStarArray[i]=["icon ion-star tx-primary"];
+        this.landlordRatingStarArray[i]=["icon ion-star active"];
       }
   }
 
@@ -123,14 +165,117 @@ export default class Landlord extends Component {
     this.props.history.push("/home");
   }
   
-  navigateToPropertyScreen = event => {
+  modalShowClicked = event => {
+    this.setState({ modalDialogStyle: ["modal fade show modal-complaints-section"] });
+  }
+
+  modalHideClicked = event => {
+    this.setState({ modalDialogStyle: ["modal fade"] });
+  }
+
+  navigateToPropertyScreen = item => {
+    // this.retrievePropertyDetails(item.pid);
+
     ReactGA.event({
             category: 'Navigation',
             action: 'Property',
         });
+    sessionStorage.setItem('propertyID', JSON.stringify(item.pid));
+
     this.props.history.push("/property");
   }
 
+  retrievePropertyDetails = propertyId => {
+    try{
+     const GATEWAY_URL = config.apis.PROPERTY_PID_GET+propertyId;
+
+     fetch(GATEWAY_URL, {
+         method: 'GET',
+         mode: 'cors'
+     })
+      .then((response) => {
+                   return response.json();
+               })
+               .then((json) => {
+                var property;
+                 if(json && json.Items && json.Items.length > 0){
+                  property = new PropertyModel;
+                  var propertyObj = json.Items[0];
+                          property.pid = propertyObj.P_ID ? propertyObj.P_ID : "";
+
+                          property.pAdd1 = propertyObj.P_Address_Line1 ? propertyObj.P_Address_Line1 : "Add 1";
+                          property.pAdd2 = propertyObj.P_Address_Line2 ? propertyObj.P_Address_Line2 : "Add 2";
+                          property.pCity = propertyObj.P_City ? propertyObj.P_City : "City";
+                          property.pid = propertyObj.P_ID ? propertyObj.P_ID : "";
+                          property.pPhotos = propertyObj.P_Photos ? propertyObj.P_Photos : "";
+                          property.pState = propertyObj.P_State ? propertyObj.P_State : "State";
+                          property.pZip = propertyObj.P_Zipcode ? propertyObj.P_Zipcode : "07095";
+                          property.pCounty = propertyObj.P_County ? propertyObj.P_County : "";
+                          property.pCreatedBy = propertyObj.P_Created_By ? propertyObj.P_Created_By : "";
+                          property.pCreatedOn = propertyObj.P_Created_On ? propertyObj.P_Created_On  : "";
+                          property.pBathrooms = propertyObj.P_Bathrooms ? propertyObj.P_Bathrooms : "";
+                          property.pBedrooms = propertyObj.P_Bedrooms ? propertyObj.P_Bedrooms : "";
+                          property.pCountry = propertyObj.P_Country ? propertyObj.P_Country : "";
+                          property.pAvgApproval = propertyObj.P_Approval_Rate ? propertyObj.P_Approval_Rate : "";
+                          property.pAvgRating = propertyObj.P_Avg_Rating ? propertyObj.P_Avg_Rating : "";
+                          property.pComplaints = propertyObj.P_Complaints ? propertyObj.P_Complaints : "";
+                          property.pInsuranceCost = propertyObj.P_Insurance_Cost ? propertyObj.P_Insurance_Cost : "";
+                          property.pRCount = propertyObj.PR_Count ? propertyObj.PR_Count : "";
+                          property.prRating = propertyObj.PR_Rating ? propertyObj.PR_Rating : "";
+
+                          var propertiesObj = propertyObj.P_Landlords ? propertyObj.P_Landlords : "";
+                          property.pLandlords = [];
+                          if(propertyObj && propertyObj.P_Landlords){
+                            for(var i=0; i< propertiesObj.length; i++){
+                              property.pLandlords[i] = new LandlordModel;
+                              property.pLandlords[i].landlordId = propertyObj.P_Landlords[i].L_ID;
+                            }
+                          }
+                          
+                          property.pLat = propertyObj.P_Lat ? propertyObj.P_Lat : "";
+                          property.pLong = propertyObj.P_Long ? propertyObj.P_Long : "";
+                          property.pMortgage = propertyObj.P_Mortgage ? propertyObj.P_Mortgage : "";
+                          property.pOwnerShipPeriod = propertyObj.P_Ownership_Period ? propertyObj.P_Ownership_Period : "";
+                          property.pPhotos = propertyObj.P_Photos ? propertyObj.P_Photos : "";
+                          property.pRentals = propertyObj.P_Rentals ? propertyObj.P_Rentals : "";
+                          property.pReviews = propertyObj.P_Reviews ? propertyObj.P_Reviews : "";
+                          property.pSqft = propertyObj.P_Sqft ? propertyObj.P_Sqft : "";
+                          property.pTaxAmount = propertyObj.P_Tax_Amount ? propertyObj.P_Tax_Amount : "";
+                          property.pUpdatedBy = propertyObj.P_Updated_By ? propertyObj.P_Updated_By : "";
+                          property.pUpdatedOn = propertyObj.P_Updated_On ? propertyObj.P_Updated_On : "";
+                          property.pYearBuilt = propertyObj.P_Year_Bulit ? propertyObj.P_Year_Bulit : "";
+                          property.pZoning = propertyObj.P_Zoning ? propertyObj.P_Zoning : "";
+
+                          property.pAvailability = propertyObj.P_Availability ? propertyObj.P_Availability: "";
+                          property.pLandbaseYear = propertyObj.P_LandBase_Year ? propertyObj.P_LandBase_Year: "";
+                          property.pWorkPermitsGranted = propertyObj.P_Work_Permits_Granted ? propertyObj.P_Work_Permits_Granted: "";
+
+
+                         
+
+                          
+                          
+                         
+                  sessionStorage.setItem('propertyObject', JSON.stringify(property));
+                  this.props.userHasAuthenticated(true);
+                  ReactGA.event({
+                          category: 'Navigation',
+                          action: 'Landlord',
+                      });
+                  this.props.history.push("/landlord");
+                 }
+                 
+                          
+                })
+               .catch((err) => {console.log('There was an error:' + err);alert("Landlord retrieve error");})
+             } catch (e) {
+                console.log('There was an error:'+e); 
+                alert("Landlord error");
+        }
+
+  }
+
+  
   handleReview = event => {
         sessionStorage.setItem('reviewType', 'L');
     ReactGA.event({
@@ -149,29 +294,84 @@ export default class Landlord extends Component {
      var listItems = this.landlordObj.landlordReviews.map(function(item) {
       return (
 
-        <div class="pd-y-30 bd-b">
-                <div class="d-sm-flex justify-content-between mg-b-20 mg-sm-b-0">
-                  <div>
-                    <h6 class="tx-gray-800 tx-14 mg-b-5">A Renter <span class="tx-gray-600 tx-normal mg-l-2">in Vancouver, WA</span></h6>
-                    <p>{item.lrCreatedDate}<a href="javascript:void(0)" class="mg-l-5 tx-gray-500"><i class="icon ion-ios-flag tx-16 lh-0"></i></a></p>
-                  </div>
-                  <div class="tx-sm-right">
-                    <p class="mg-b-0">Rating</p>
-                    <div class="lh-5 tx-16">
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                      <i class="icon ion-star tx-primary"></i>
-                    </div>
-                  </div>
+
+
+          <div class="review-item">
+            <div class="review-item-header">
+              <div>
+                <h6 class="review-item-title">{item.lrTitle}</h6>
+                <div>
+                  <span class="tx-gray-800">Previous Renter</span>
+                  <span class="mg-l-2">in San Francisco, CA</span>
                 </div>
+              </div>
+              <div class="tx-sm-right mg-t-10 mg-sm-t-0">
+                <p class="mg-b-0">Overall Rating</p>
+                <div class="lh-5 tx-18">
+                {(() => {
+                          var starArray = ['<i class="icon ion-star"></i>','<i class="icon ion-star"></i>',
+                          '<i class="icon ion-star"></i>','<i class="icon ion-star"></i>',
+                          '<i class="icon ion-star"></i>'];
+                          for(var i=0; i<item.lrRating;i++){
+                             starArray[i] = '<i class="icon ion-star tx-primary"></i>';
+                          }   
+                          var str = starArray[0]+starArray[1]+starArray[2]+starArray[3]+starArray[4];
+                                return <div dangerouslySetInnerHTML={{__html: str}}></div>
+                      })()}
+
+                </div>
+              </div>
+            </div>
+            {(() => {
+              if(item.lrApproval){
+                return <div class="row mg-b-25">
+              <div class="col-sm-6 col-md-4">
+                <i class="fa fa-check tx-success"></i> Approve this landlord
+              </div>
+            </div>;
+              }
+            
+            })()}
+            <div class="row row-landlord-rating">
+              <div class="col-sm-6 col-md-3 mg-t-15 mg-sm-t-0">
+                <p class="mg-b-5">Repair Request</p>
+                <div>
+                  {(() => {
+                          var starArray = ['<span class="square-10"></span>','<span class="square-10"></span>',
+                          '<span class="square-10"></span>','<span class="square-10"></span>',
+                          '<span class="square-10"></span>'];
+                          for(var i=0; i<item.lrRepairRequests;i++){
+                             starArray[i] = '<span class="square-10 bg-primary"></span>';
+                          }   
+                          var str = starArray[0]+starArray[1]+starArray[2]+starArray[3]+starArray[4];
+                                return <div dangerouslySetInnerHTML={{__html: str}}></div>
+                      })()}
+                </div>
+              </div>
+              <div class="col-md-6 mg-t-15 mg-md-t-0">
+                <p class="mg-b-5">Responsiveness to renter messages</p>
+                <div>
+                  {(() => {
+                          var starArray = ['<span class="square-10"></span>','<span class="square-10"></span>',
+                          '<span class="square-10"></span>','<span class="square-10"></span>',
+                          '<span class="square-10"></span>'];
+                          for(var i=0; i<item.lrResponsiveness;i++){
+                             starArray[i] = '<span class="square-10 bg-primary"></span>';
+                          }   
+                          var str = starArray[0]+starArray[1]+starArray[2]+starArray[3]+starArray[4];
+                                return <div dangerouslySetInnerHTML={{__html: str}}></div>
+                      })()}
+                </div>
+              </div>
+            </div>
+
+
                 {(() => {
                         if (item.proObj) {
                           return <div>
                           <div>
-                          <label class="tx-bold tx-uppercase tx-12 tx-primary">Pros</label>
-                          <p>{item.proObj.description}</p>
+                          <label class="tx-medium">Pros</label>
+                          <p class="tx-gray-700">{item.proObj.description}</p>
                           </div>
                           </div>;
                          } 
@@ -181,8 +381,8 @@ export default class Landlord extends Component {
                         if (item.adviceObj) {
                           return <div>
                           <div>
-                          <label class="tx-bold tx-uppercase tx-12 tx-primary">Advice</label>
-                          <p>{item.adviceObj.description}</p>
+                          <label class="tx-medium">Advice</label>
+                          <p class="tx-gray-700">{item.adviceObj.description}</p>
                           </div>
                           </div>;
 
@@ -193,23 +393,40 @@ export default class Landlord extends Component {
                         if (item.conObj) {
                           return <div>
                           <div>
-                          <label class="tx-bold tx-uppercase tx-12 tx-primary">Cons</label>
-                          <p>{item.conObj.description}</p>
+                          <label class="tx-medium">Cons</label>
+                          <p class="tx-gray-700">{item.conObj.description}</p>
                           </div>
                           </div>;
                          }
                       })()}
-                <div class="row row-xs">
-                  <div class="col-sm">
-                    <p class="mg-b-5">Approve Landlord?</p>
-                    <p class="tx-success mg-b-0">Yes</p>
-                  </div>
-                </div>
+               <p class="mg-t-30 mg-b-0">Added: {item.lrCreatedDate} &nbsp;</p>
               </div>
 
-        : null
       );
     });
+    var self = this;
+    if(this.landlordObj && this.landlordObj.landlordProperties){
+    var propertyItems = this.landlordObj.landlordProperties.map(function(item) {
+      return (
+      <div class="bd pd-20 bg-white mg-b-20 div-cursor-section" onClick={self.navigateToPropertyScreen.bind(self,item)}>
+        <p class="mg-b-5">{item.pAdd1+" "+item.pAdd2+" "+item.pCity+" "+item.pState+" "+item.pZip+" "}</p>
+        <div class="lh-5 tx-14">
+        {(() => {
+                var starArray = ['<i class="icon ion-star"></i>','<i class="icon ion-star"></i>',
+                '<i class="icon ion-star"></i>','<i class="icon ion-star"></i>',
+                '<i class="icon ion-star"></i>'];
+                for(var i=0; i<item.lrResponsiveness;i++){
+                   starArray[i] = '<i class="icon ion-star tx-primary"></i>';
+                }   
+                var str = starArray[0]+starArray[1]+starArray[2]+starArray[3]+starArray[4];
+                      return <div dangerouslySetInnerHTML={{__html: str}}></div>
+            })()}
+          <a href="" class="mg-l-5 tx-13">{item.pReviews.length} Reviews</a>
+        </div>
+      </div>
+      )
+    });
+  }
 }
     return (
       this.showMe ? 
@@ -231,24 +448,17 @@ export default class Landlord extends Component {
       </div>
     </div>
 
-    <div class="pd-t-10 pd-b-50">
+    <div class="pd-y-50">
       <div class="container">
-        <nav aria-label="breadcrumb" role="navigation">
-          <ol class="breadcrumb bg-transparent pd-x-0 tx-13">
-            <li class="breadcrumb-item"><a href="#" onClick={this.navigateToHomeScreen}>Home</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Landlord</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{this.landlordObj.fullName}'s Profile</li>
-          </ol>
-        </nav>
         <div class="row">
           <div class="col-lg-8">
             <div class="profile-head">
               <div class="profile-head-left">
-                <div class="d-sm-flex align-items-start">
-                  <h2 class="tx-gray-900 tx-light">{this.landlordObj.fullName}</h2>
-                         
-                  <div class="d-flex align-items-center mg-sm-l-20">
-                    <div class="lh-5 tx-24">
+                <div class="landlord-rating">
+                   <h2 class="landlord-name">{this.landlordObj.fullName}</h2>
+
+                  <div class="landlord-star">
+                    <div class="landlord-rating-star">
                       <i className={this.landlordRatingStarArray[0].join('' )}></i>
                       <i className={this.landlordRatingStarArray[1].join('' )}></i>
                       <i className={this.landlordRatingStarArray[2].join('' )}></i>
@@ -258,35 +468,70 @@ export default class Landlord extends Component {
                     <span class="mg-l-10 tx-16">{this.landlordObj.avgRating}</span>
                   </div>
                 </div>
-                <p class="mg-b-0">{this.landlordObj.addressLine1 + ", " + this.landlordObj.addressLine2 + ", " + this.landlordObj.city + ", " + this.landlordObj.state
-                  +", " + this.landlordObj.zipCode}</p>
               </div>
-              <a href="#" class="btn btn-primary mg-t-20 mg-md-t-0" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
+              <a href="#" class="btn btn-primary landlord-section-review mg-t-20 mg-md-t-0" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
 
-            <div class="d-flex mg-y-30">
-              <div className={this.state.phoneNumberSectionStyle.join('' )}>
-                <p class="mg-b-10">Phone Number</p>
-                <h6 class="tx-lato tx-bold tx-14 tx-gray-800 mg-b-0">{this.landlordObj.phone}</h6>
+
+            <div class="row row-landlord-rating">
+            <div class="col-sm-6 col-md-4">
+                <p class="mg-b-5">Repair Requests</p>
+                <div>
+                  <span className={this.landlordRepairRequestRatingArray[0].join('' )}></span>
+                  <span className={this.landlordRepairRequestRatingArray[1].join('' )}></span>
+                  <span className={this.landlordRepairRequestRatingArray[2].join('' )}></span>
+                  <span className={this.landlordRepairRequestRatingArray[3].join('' )}></span>
+                  <span className={this.landlordRepairRequestRatingArray[4].join('' )}></span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4 mg-t-20 mg-sm-t-0">
+                <p class="mg-b-5">Responsiveness to Renters</p>
+                <div>
+                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
+                </div>
+              </div>
+              <div class="col-md-4 mg-t-20 mg-md-t-0">
+                <div class="d-flex align-items-center">
+                  <div class="approve-landlord-donut">
+                    <div class="approve-landlord-percent">
+                      <h6>{this.landlordObj.recommend}%</h6>
+                    </div>
+                  </div>
+                  <p class="mg-b-0 mg-l-15">Recommend this landlord</p>
+                </div>
               </div>
             </div>
+
+
+
+                        <div class="row mg-b-25">
+                          <div class="col-sm-4">
+                            <p class="mg-b-5">Mailing Address</p>
+                            <p class="tx-gray-800 mg-b-0">{this.landlordObj.addressLine1}<br />{this.landlordObj.addressLine2}<br />{this.landlordObj.city} {this.landlordObj.state}, {this.landlordObj.zipCode}</p>
+                          </div>
+
+                          <div className={this.state.phoneNumberSectionStyle.join('' )}>
+                           <div class="col-sm-4 mg-t-20 mg-sm-t-0">
+                              <p class="mg-b-5">Phone Number</p>
+                              <p class="tx-gray-800 mg-b-0">{this.landlordObj.phone}</p>
+                            </div>
+                          </div>
+                        </div>
+
+            
 
             <p>Hi, my name is {this.landlordObj.fullName}... <a href="javascript:void(0)">Read more</a></p>
-
-            <hr class="mg-y-25" />
-
-            <div class="row">
-              <div class="col-lg-6">
-
-                <p class="mg-b-5 mg-t-30">Legal disputes history</p>
-                <a href="#" class="btn btn-primary mg-t-20 mg-md-t-0" onClick={this.revealDisputes}>Reveal Disputes</a>
-
-              </div>
-            </div>
-
-            <div class="review-header" className={this.state.reviewSectionStyle.join('' )}>
-                 <h6 class="section-label mg-t-25 mg-b-15">Reviews (86)</h6>
-              <div class="mg-t-15 mg-sm-t-0">
+              <h6 class="section-label mg-t-50 mg-b-15">Reviews (86)</h6>
+            <div className={this.state.reviewSectionStyle.join('' )}>
+               <div class="input-form-group wd-250">
+                  <input type="search" class="form-control" placeholder="Search within the reviews" />
+                  <button class="btn btn-primary"><i class="fa fa-search"></i></button>
+                </div>
+                <div class="mg-t-15 mg-sm-t-0">
                 <span>Sort by</span>
                 <select class="select2">
                   <option value="1" selected>Newest First</option>
@@ -294,46 +539,80 @@ export default class Landlord extends Component {
                   <option value="3">Highest Rated</option>
                   <option value="2">Lowest Rated</option>
                 </select>
-              </div>
+                </div>
             </div>
 
-            <div class="media-list">
+            <div class="review-list">
                                          {listItems}
 
             </div>
 
           </div>
+
+
           <div className={this.state.landlordPropertiesSectionStyle.join('' )}>
-          <div class="col-lg-4 mg-t-40 mg-lg-t-0">
-            <label class="tx-uppercase tx-medium tx-gray-700 mg-b-15">Owned Properties (2)</label>
 
-            <div class="bd pd-20 bg-white mg-b-30 div-cursor-section" onClick={this.navigateToPropertyScreen}>
-              <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage1} alt="Image of Property" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage2} alt="Image of Property" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage3} alt="Image of Property" class="wd-100p ht-100p object-fit-cover" /></div>
-              </div>
-              <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
-            </div>
+          <div class="complaint-wrapper">
+            <p>This landlord has</p>
+            <h1><a href="#complaintModal" data-toggle="modal" onClick={this.modalShowClicked.bind(this)}>2</a></h1>
+            <p>Complaints</p>
+          </div>
 
-            <div class="bd pd-20 bg-white mg-b-30 div-cursor-section" onClick={this.navigateToPropertyScreen}>
-              <div class="row no-gutters mg-b-20">
-                <div class="col ht-100 pd-r-1-force"><img src={this.houseImage4} alt="Image of Property in Location CA" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-x-1-force"><img src={this.houseImage5} alt="Image of Property in Location CA" class="wd-100p ht-100p object-fit-cover" /></div>
-                <div class="col ht-100 pd-l-1-force"><img src={this.houseImage6} alt="Image of Property in Location CA" class="wd-100p ht-100p object-fit-cover" /></div>
-              </div>
-              <p class="mg-b-5">2051 Norwalk Ave., Los Angeles CA, 90041</p>
-            </div>
+            <div class="mg-t-30"></div>
+
+            <label class="tx-uppercase tx-medium tx-gray-800 mg-b-15">Owned Properties ({this.landlordObj.landlordProperties.length})</label>
+            
+            {propertyItems}
 
             <div class="mg-t-20 bd pd-25 tx-center">
-              <p class="mg-b-5 tx-gray-800 tx-medium">Do you own or manage this property?</p>
+              <p class="mg-b-5 tx-gray-800 tx-medium">Is this your profile?</p>
               <a href="javascript:void(0)">Claim Your Profile</a>
+              <span>It's Free</span>
             </div>
 
-          </div>
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="complaintModal" tabindex="-1" role="dialog" className={this.state.modalDialogStyle.join('' )}>
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h6 class="tx-15 modal-title">Landlord Complaint History</h6>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={this.modalHideClicked.bind(this)}>
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-complaint">
+                <thead>
+                  <tr>
+                    <th>Date Received</th>
+                    <th>Problem Description</th>
+                    <th>Status</th>
+                    <th>Department</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>10/12/2017</td>
+                    <td class="tx-gray-700">Pro-active Code Enforcement</td>
+                    <td class="tx-success">Open</td>
+                    <td>LADBS</td>
+                  </tr>
+                  <tr>
+                    <td>10/12/2017</td>
+                    <td class="tx-gray-700">General</td>
+                    <td class="tx-success">Open</td>
+                    <td>LADBS</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     </div>
     : null

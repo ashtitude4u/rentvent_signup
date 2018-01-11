@@ -1,6 +1,6 @@
 export class LandlordReviewModel {
   constructor(lrid,lrType,lrCreatedDate,lrtid,lrDescription,lrApproval,lrRating,lrTitle,lrResponsiveness,lrRepairRequests,lrCreatedBy,
-    lrUpdatedBy,lrCreatedOn,lrUpdatedOn) {
+    lrUpdatedBy,lrCreatedOn,lrUpdatedOn,lrlpid,lrtCity,lrtState) {
     this.lrid = lrid;
     this.lrType = lrType;
     this.lrCreatedDate = lrCreatedDate;
@@ -15,5 +15,8 @@ export class LandlordReviewModel {
     this.lrUpdatedBy = lrUpdatedBy;
     this.lrCreatedOn = lrCreatedOn;
     this.lrUpdatedOn = lrUpdatedOn;
+    this.lrlpid = lrlpid;
+    this.lrtCity = lrtCity;
+    this.lrtState = lrtState;
   }
 }
