@@ -13,6 +13,7 @@ export default {
   },
   apis:{
     LANDLORD_NAME_GET:"https://srnezkfid4.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/search/",
+    LANDLORD_ADDRESS_GET:"https://srnezkfid4.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/address/",
     LANDLORD_LID_GET:"https://srnezkfid4.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/",
     PROPERTY_PID_GET:"https://srnezkfid4.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/",
     PROPERTY_ADDRESS_GET:"https://srnezkfid4.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/address/",

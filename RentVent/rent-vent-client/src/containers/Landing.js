@@ -51,7 +51,8 @@ export default class Landing extends Component {
       propertySearchField: null,
       landlordSearchField: null,
       propertySearchLocation: null,
-      landlordResultsClass:["landlord-result-hidden"]
+      landlordResultsClass:["landlord-result-hidden"],
+      landlordSearchAddressField: null
     };
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
@@ -249,11 +250,21 @@ export default class Landing extends Component {
   }
 
   landlordSearchClicked = event => {
+    this.landlords = [];
+    this.landlordsDataSource = [];
     var landlordString = config.apis.LANDLORD_NAME_GET+this.state.landlordSearchField;
     landlordString = encodeURI(landlordString);
     this.retrievelandlord(this,landlordString);
   }
 
+  landlordSearchAddressClicked = event => {
+    this.landlords = [];
+    this.landlordsDataSource = [];
+    var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landlordSearchAddressField;
+    landlordString = encodeURI(landlordString);
+    this.retrievelandlord(this,landlordString);
+  }
+  
   retrievelandlord(self_this,landlordString){
         // test api
         var self = self_this;
@@ -300,6 +311,8 @@ export default class Landing extends Component {
                             self.setState({
                               landlordResultsClass: ["landlord-result"]
                             });
+                      } else {
+                        alert("No results found");
                       }
                    }
                })
@@ -325,6 +338,12 @@ export default class Landing extends Component {
   handleLandlordKeyPress = (event) => {
     if(event.key == 'Enter' || event.key == 'Search'){
       this.landlordSearchClicked();
+    }
+  }
+
+  handleLandlordSearchKeyPress = (event) => {
+    if(event.key == 'Enter' || event.key == 'Search'){
+      this.landlordSearchAddressClicked();
     }
   }
   
@@ -396,7 +415,7 @@ export default class Landing extends Component {
                   type="search"
                   value={this.state.landlordSearchField}
                   onChange={this.handleChange}
-                  placeholder="Search landlord by name or address"
+                  placeholder="Search landlord by name"
                   onKeyPress={this.handleLandlordKeyPress}
                 />
                 </FormGroup>
@@ -406,6 +425,24 @@ export default class Landing extends Component {
               <div class="col-sm-3 mg-t-15 mg-sm-t-0">
                 <button class="btn btn-primary btn-block" disabled={!this.state.landlordSearchField} onClick={this.landlordSearchClicked}>Find Landlord</button>
               </div>
+              <div class="col-sm-9">
+                <div>
+
+                <FormGroup controlId="landlordSearchAddressField" bsSize="large">
+                <FormControl
+                  type="search"
+                  value={this.state.landlordSearchAddressField}
+                  onChange={this.handleChange}
+                  placeholder="Search landlord by address"
+                  onKeyPress={this.handleLandlordSearchKeyPress}
+                />
+                </FormGroup>
+
+                </div>
+              </div>
+              <div class="col-sm-3 mg-t-15 mg-sm-t-0">
+                <button class="btn btn-primary btn-block" disabled={!this.state.landlordSearchAddressField} onClick={this.landlordSearchAddressClicked}>Find Landlord</button>
+              </div>
               
               <div className={this.state.landlordResultsClass.join('' )}>
                 <BootstrapTable data={this.landlordsDataSource} striped hover options={ this.options } height='300' scrollTop={ 'Top' }>
@@ -414,6 +451,7 @@ export default class Landing extends Component {
               </div>
 
             </div>
+
           </div>
           
         </div>
