@@ -424,7 +424,7 @@ export default class Landlord extends Component {
 
 
                 {(() => {
-                        if (item.proObj) {
+                        if (item.proObj && item.proObj.description.replace(/^\s+/g, '')) {
                           return <div>
                           <div>
                           <label class="tx-medium">Pros</label>
@@ -435,7 +435,7 @@ export default class Landlord extends Component {
                       })()}
 
                       {(() => {
-                        if (item.adviceObj) {
+                        if (item.adviceObj && item.adviceObj.description.replace(/^\s+/g, '')) {
                           return <div>
                           <div>
                           <label class="tx-medium">Advice</label>
@@ -447,7 +447,7 @@ export default class Landlord extends Component {
                       })()}
 
                       {(() => {
-                        if (item.conObj) {
+                        if (item.conObj && item.conObj.description.replace(/^\s+/g, '')) {
                           return <div>
                           <div>
                           <label class="tx-medium">Cons</label>

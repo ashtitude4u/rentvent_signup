@@ -44,11 +44,11 @@ export default class Questionnaire2 extends Component {
       disableLeaseExpireDate: false,
       recommendOn: false,
       recommendOff: false,
-      lpMoveInDate: moment(),
+      lpMoveInDate: null,
       pSecurityDepositBackDate: moment(),
       pRentIncreaseDate: moment(),
       pLeaseExpiryDate: moment(),
-      lpMoveOutDate: moment(),
+      lpMoveOutDate: null,
       starRatingArray: [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]],
       landlordGeneralResponsiveStarArray:[["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]],
       landlordRepairResponsiveStarArray:[["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]],
@@ -381,17 +381,108 @@ export default class Questionnaire2 extends Component {
   }
 
   handleSubmitQuestionnaire = event =>{
-    var jsonObj = this.formQuestionnaireObject();
+    if(this.validateAllEntries()){
+      var jsonObj = this.formQuestionnaireObject();
 
-    this.postQuestionnaireService(jsonObj);
-    signOutUser();
-    sessionStorage.setItem('landlordObject', null);
-    this.userHasAuthenticated(false);
-    ReactGA.event({
-            category: 'Navigation',
-            action: 'Logout',
-        });
-    this.props.history.push("/");
+      this.postQuestionnaireService(jsonObj);
+      signOutUser();
+      sessionStorage.setItem('landlordObject', null);
+      this.userHasAuthenticated(false);
+      ReactGA.event({
+              category: 'Navigation',
+              action: 'Logout',
+          });
+          alert("Thank you for your response");
+      this.handleLogout();
+    }
+  }
+
+  validateAllEntries = event => {
+    if(this.reviewType == "P"){
+      if(!this.state.lpMoveInDate){
+        alert("Please select your move in date");
+        return false;
+      }
+      if(!this.state.lpMoveOutDate){
+        alert("Please select your move out date");
+        return false;
+      }
+      if(!this.questionnaireObj.lpReviewTitle){
+        alert("Please enter a title for the review");
+        return false;
+      } 
+      if(!(this.questionnaireObj.lpCons || this.questionnaireObj.lpPros)){
+        alert("Please enter either Pros or Cons for the property");
+        return false;
+      }
+      if(!this.questionnaireObj.lpExperience){
+        alert("Please rate your experience for the property");
+        return false;
+      }
+      if(!this.questionnaireObj.lpRecommend){
+        alert("Please tell us whether you recommend this property");
+        return false;
+      }
+      if(!this.questionnaireObj.pCondition){
+        alert("Please rate the condition of the property");
+        return false;
+      }
+      if(!this.questionnaireObj.pApplicationFeeReq){
+        alert("Please tell us whether an application fee was required");
+        return false;
+      }
+      if(!this.questionnaireObj.pMonthlyRent){
+        alert("Please tell us the monthly rent");
+        return false;
+      }
+      if(!this.questionnaireObj.pSecurityDepositReq){
+        alert("Please tell us whether security deposit was required");
+        return false;
+      }
+      if(!this.questionnaireObj.pRentIncrease){
+        alert("Please tell us whether the rent increased");
+        return false;
+      }
+      if(!this.questionnaireObj.pRentalInsuranceReq){
+        alert("Please tell us whether rental insurance was required");
+        return false;
+      }
+    } else {
+      if(!this.state.lpMoveInDate){
+        alert("Please select your move in date");
+        return false;
+      }
+      if(!this.state.lpMoveOutDate){
+        alert("Please select your move out date");
+        return false;
+      }
+      if(!this.questionnaireObj.lpReviewTitle){
+        alert("Please enter a title for the review");
+        return false;
+      } 
+      if(!(this.questionnaireObj.lpCons || this.questionnaireObj.lpPros || this.questionnaireObj.lAdvice)){
+        alert("Please enter either Pros, Cons or Advice for the landlord");
+        return false;
+      }
+      if(!this.questionnaireObj.lpExperience){
+        alert("Please rate your experience for the landlord");
+        return false;
+      }
+      if(!this.questionnaireObj.lpRecommend){
+        alert("Please tell us whether you recommend this landlord");
+        return false;
+      }
+      if(!this.questionnaireObj.lResponsive){
+        alert("Please rate how responsive your landlord was ");
+        return false;
+      }
+      if(!this.questionnaireObj.lrResponsive){
+        alert("Please rate how responsive your landlord was for repair requests");
+        return false;
+      }
+    }
+
+    return true;
   }
 
   handleLogout = event => {
@@ -471,6 +562,8 @@ export default class Questionnaire2 extends Component {
            "Q_Type":"L",
            "LL_Q_Title":this.questionnaireObj.lpReviewTitle?this.questionnaireObj.lpReviewTitle:"",
            "LL_Q_Advice":this.questionnaireObj.lAdvice?this.questionnaireObj.lAdvice:"",
+           "Q_Movein_Date":this.questionnaireObj.lpMoveInDate?this.questionnaireObj.lpMoveInDate:"",
+           "Q_Moveout_Date":this.questionnaireObj.lpMoveOutDate?this.questionnaireObj.lpMoveOutDate:"",
            "LL_Q_Con":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:"",
            "LL_Q_Pro":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:"",
            "LL_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
@@ -624,7 +717,7 @@ export default class Questionnaire2 extends Component {
                 <div class="form-group">
                 <label>Write a title for your review</label>
                   <input type="text" class="form-control" placeholder="Summarize your experience to the landlord" 
-                  value={this.questionnaireObj.lpReviewTitle} onChange={ this.handleTitleInputChange.bind(this)} />
+                  value={this.questionnaireObj.lpReviewTitle} onChange={ this.handleTitleInputChange.bind(this)} required/>
                 </div>
 
                 <div class="form-group">
