@@ -116,14 +116,15 @@ export default class Login extends Component {
   formTenantObject(socialLoginUser){
     var json = {};
       json = {
-           "T_ID":this.socialLoginUser.tsid ? this.socialLoginUser.tsid : "",
-           "Anonymous":"oo",
+           "T_ID":this.socialLoginUser.tsemail ? this.socialLoginUser.tsemail : "",
+           "Anonymous":"Anonymous",
            "FirstName":this.socialLoginUser.tsfirstName ? this.socialLoginUser.tsfirstName : "",
            "LastName":this.socialLoginUser.tslastName ? this.socialLoginUser.tslastName : "",
            "T_Profile_Pic_URL":this.socialLoginUser.tsprofilePicURL ? this.socialLoginUser.tsprofilePicURL : "",
            "CreatedOn":this.socialLoginUser.tsCreatedOn ? this.socialLoginUser.tsCreatedOn : "",
            "UpdatedOn":this.socialLoginUser.tsUpdatedOn ? this.socialLoginUser.tsUpdatedOn : "",
-           "Email_ID": this.socialLoginUser.tsemail ? this.socialLoginUser.tsemail : ""
+           "CreatedBy":"SocialLogin",
+           "UpdatedBy":"SocialLogin" 
       }
     return json;
   }
@@ -131,8 +132,8 @@ export default class Login extends Component {
   formLoginObject(){
     var json = {};
     json = {
-         "T_ID":"",
-         "Email_ID": this.state.email? this.state.email:""
+         "T_ID":this.state.email? this.state.email:"",
+         "UpdatedBy":"Login" 
     }
   return json;
   }

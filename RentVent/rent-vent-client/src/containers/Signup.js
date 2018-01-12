@@ -59,14 +59,14 @@ export default class Signup extends Component {
     var json = {};
       json = {
           // complete this
-            "T_ID":"",
+            "T_ID":tenantObj.tEmail ? tenantObj.tEmail : "",
            "Anonymous":"oo",
            "FirstName":tenantObj.tFirstName ? tenantObj.tFirstName : "",
            "LastName":tenantObj.tLastName ? tenantObj.tLastName : "",
            "CreatedOn":tenantObj.tCreatedOn ? tenantObj.tCreatedOn : "",
            "UpdatedOn":tenantObj.tUpdatedOn ? tenantObj.tUpdatedOn : "",
-           "Email_ID": tenantObj.tEmail ? tenantObj.tEmail : ""
-           
+           "CreatedBy":"SignUp",
+           "UpdatedBy":"SignUp"           
       }
     return json;
   }

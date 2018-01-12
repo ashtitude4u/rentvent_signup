@@ -21,6 +21,7 @@ import {PropertyModel} from '../models/PropertyModel';
 import {LandlordReviewModel} from '../models/LandlordReviewModel';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import '../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
+import Select from 'react-select';
 
 export default class Landing extends Component {
    constructor(props) {
@@ -52,12 +53,16 @@ export default class Landing extends Component {
       landlordSearchField: null,
       propertySearchLocation: null,
       landlordResultsClass:["landlord-result-hidden"],
-      landlordSearchAddressField: null
+      landlordSearchAddressField: null,
+      selectedDropDownOption:{
+        "label":"address",
+        "value":"address"
+      },
+      landingSearchField: null
     };
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
     this.headerOption = true;
-
     this.houseImage1 = "https://s3.amazonaws.com/rentvent-web/1.jpg";
     this.houseImage2 = "https://s3.amazonaws.com/rentvent-web/2.jpg";
     this.houseImage3 = "https://s3.amazonaws.com/rentvent-web/3.jpg";
@@ -75,16 +80,31 @@ export default class Landing extends Component {
     this.landlords = [];
     this.landlordsDataSource = [];
     this.landlordResultsRowSelected = this.landlordResultsRowSelected.bind(this);
-
+    this.landlordSearchCriteria = "address";
     this.options = {
       onRowClick: this.landlordResultsRowSelected
     };
+
+    this.dropDownOptions = [
+      { value: 'address', label: 'address' },
+      { value: 'name', label: 'name' }
+      ];
 
   }
 
   landlordResultsRowSelected = row =>{
         var selectedLandlord = this.landlords[row.index];
         this.retrievelandlordDetails(selectedLandlord.landlordId);
+  }
+
+  dropDownSelected = val => {
+    console.log("Selected: " + val);
+    this.setState({ selectedDropDownOption: val });
+    if(val){
+      this.landlordSearchCriteria = val.value;
+    } else {
+      this.landlordSearchCriteria = "";
+    }
   }
 
   retrievelandlordDetails = landlordId => {
@@ -249,19 +269,27 @@ export default class Landing extends Component {
     this.props.history.push("/property");
   }
 
+  landingSearchClicked = event =>{
+    if(this.landlordSearchCriteria == "name" && this.state.landingSearchField){
+      this.landlordSearchClicked();
+    }else if(this.landlordSearchCriteria == "address" && this.state.landingSearchField){
+      this.landlordSearchAddressClicked();
+    }
+  }
+
   landlordSearchClicked = event => {
     this.landlords = [];
     this.landlordsDataSource = [];
-    var landlordString = config.apis.LANDLORD_NAME_GET+this.state.landlordSearchField;
+    var landlordString = config.apis.LANDLORD_NAME_GET+this.state.landingSearchField;
     landlordString = encodeURI(landlordString);
     this.retrievelandlord(this,landlordString);
   }
 
   landlordSearchAddressClicked = event => {
-    if(this.state.landlordSearchAddressField.includes(" ")){
+    if(this.state.landingSearchField.includes(" ")){
       this.landlords = [];
       this.landlordsDataSource = [];
-      var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landlordSearchAddressField;
+      var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landingSearchField;
       landlordString = encodeURI(landlordString);
       this.retrievelandlord(this,landlordString);
     } else {
@@ -345,6 +373,12 @@ export default class Landing extends Component {
     }
   }
 
+  handleLandingKeyPress = (event) => {
+    if(event.key == 'Enter' || event.key == 'Search'){
+      this.landingSearchClicked();
+    }
+  }
+
   handleLandlordSearchKeyPress = (event) => {
     if(event.key == 'Enter' || event.key == 'Search'){
       this.landlordSearchAddressClicked();
@@ -409,46 +443,35 @@ export default class Landing extends Component {
 
         <div class="tab-content">
           <div id="findLandlord" class="tab-pane active show" className={this.landlordTab.join('' )}>
+          <span>Search by</span>
             <div class="row row-xs">
               <div class="col-sm-9">
                 <div>
+                <div class="mg-t-15 mg-sm-t-0 landing-search-dropdown">
+                <Select
+                    name="form-field-name"
+                    value={this.state.selectedDropDownOption}
+                    options={this.dropDownOptions}
+                    onChange={this.dropDownSelected}
+                  />
+                
 
-                <FormGroup controlId="landlordSearchField" bsSize="large">
+                <FormGroup controlId="landingSearchField" bsSize="large" className="landing-search-form-object">
                 <FormControl
                   autoFocus
                   type="search"
-                  value={this.state.landlordSearchField}
+                  value={this.state.landingSearchField}
                   onChange={this.handleChange}
-                  placeholder="Search landlord by name"
-                  onKeyPress={this.handleLandlordKeyPress}
+                  placeholder="Search landlord"
+                  onKeyPress={this.handleLandingKeyPress}
                 />
                 </FormGroup>
-
+                </div>
                 </div>
               </div>
               <div class="col-sm-3 mg-t-15 mg-sm-t-0">
-                <button class="btn btn-primary btn-block" disabled={!this.state.landlordSearchField} onClick={this.landlordSearchClicked}>Find Landlord</button>
+                <button class="btn btn-primary btn-block" disabled={!this.state.landingSearchField} onClick={this.landingSearchClicked}>Find Landlord</button>
               </div>
-              <div class = "landind-search-separator-section"></div>
-              <div class="col-sm-9">
-                <div>
-
-                <FormGroup controlId="landlordSearchAddressField" bsSize="large">
-                <FormControl
-                  type="search"
-                  value={this.state.landlordSearchAddressField}
-                  onChange={this.handleChange}
-                  placeholder="Search landlord by address"
-                  onKeyPress={this.handleLandlordSearchKeyPress}
-                />
-                </FormGroup>
-
-                </div>
-              </div>
-              <div class="col-sm-3 mg-t-15 mg-sm-t-0">
-                <button class="btn btn-primary btn-block" disabled={!this.state.landlordSearchAddressField} onClick={this.landlordSearchAddressClicked}>Find Landlord</button>
-              </div>
-              
               <div className={this.state.landlordResultsClass.join('' )}>
                 <BootstrapTable data={this.landlordsDataSource} striped hover options={ this.options } height='300' scrollTop={ 'Top' }>
                   <TableHeaderColumn isKey dataField='landlordName'>Landlord Results</TableHeaderColumn>
