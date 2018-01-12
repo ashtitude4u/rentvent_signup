@@ -474,8 +474,6 @@ export default class Questionnaire2 extends Component {
            "LL_Q_Con":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:"",
            "LL_Q_Pro":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:"",
            "LL_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
-           "Q_Movein_Date":this.questionnaireObj.lpMoveInDate?this.questionnaireObj.lpMoveInDate:"",
-           "Q_Moveout_Date":this.questionnaireObj.lpMoveOutDate?this.questionnaireObj.lpMoveOutDate:"",
            "LL_Q_Recommend_Landlord": this.questionnaireObj.lpRecommend?this.questionnaireObj.lpRecommend:"",
            "Q_LL_Response_Rate": this.questionnaireObj.lResponsive?this.questionnaireObj.lResponsive:"",
            "LL_Q_Repair_Requests": this.questionnaireObj.lrResponsive?this.questionnaireObj.lrResponsive:""

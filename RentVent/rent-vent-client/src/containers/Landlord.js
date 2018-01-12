@@ -9,6 +9,7 @@ import { signOutUser } from "../libs/awsLib";
 import ReactGA from 'react-ga';
 import {PropertyModel} from '../models/PropertyModel';
 import {LandlordModel} from '../models/LandlordModel';
+import {ComplaintsModel} from '../models/ComplaintsModel';
 import config from "../config";
 
 export default class Landlord extends Component {
@@ -29,7 +30,7 @@ export default class Landlord extends Component {
     this.landlordOverallRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
     this.landlordResponsiveRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
     this.landlordRepairRequestRatingArray = [["square-10"],["square-10"],["square-10"],["square-10"],["square-10"]];
-
+    this.complaintsObj = [];
 
       if(this.landlordObj){
         if(this.landlordObj.landlordReviews){
@@ -68,6 +69,10 @@ export default class Landlord extends Component {
         if(!this.landlordObj.recommend){
           this.landlordObj.recommend = 0;
         }
+        if(this.landlordObj.complaints && this.landlordObj.complaints.length > 0){
+          this.retrieveComplaintsData();
+        }
+        
     } 
 
     sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
@@ -166,10 +171,61 @@ export default class Landlord extends Component {
     this.props.history.push("/home");
   }
   
+  retrieveComplaintsData = event => {
+    this.complaintsObj = [];
+      for(var i=0; i<this.landlordObj.complaints.length; i++){
+          var cid = this.landlordObj.complaints[i].cid.C_ID;
+          this.fetchComplaintsService(cid);
+      }
+  }
   modalShowClicked = event => {
     this.setState({ modalDialogStyle: ["modal fade show modal-complaints-section"] });
   }
 
+  fetchComplaintsService = cid =>{
+    var self = this;
+    try{
+      const GATEWAY_URL = config.apis.COMPLAINTS_GET+cid;
+ 
+      fetch(GATEWAY_URL, {
+          method: 'GET',
+          mode: 'cors'
+      })
+       .then((response) => {
+                    return response.json();
+                })
+                .then((json) => {
+                 var property;
+                  if(json && json.Items && json.Items.length > 0){
+                   var complaintObj = json.Items[0];
+                   var complaint = new ComplaintsModel;
+                   if(complaintObj){
+                      complaint.cAddressDirection = complaintObj.C_Address_Street_Direction ? complaintObj.C_Address_Street_Direction : "";
+                      complaint.cCreateOn = complaintObj.C_Created_On ? complaintObj.C_Created_On : "";
+                      complaint.cUpdatedBy = complaintObj.C_Updated_By ? complaintObj.C_Updated_By : "";
+                      complaint.cZip = complaintObj.C_Address_Zip ? complaintObj.C_Address_Zip : "";
+                      complaint.cid = complaintObj.C_ID ? complaintObj.C_ID : "";
+                      complaint.cAddressLine1 = complaintObj.C_Address_Line_1 ? complaintObj.C_Address_Line_1 : "";
+                      complaint.cUpdatedOn =  complaintObj.C_Updated_On ? complaintObj.C_Updated_On : "";
+                      complaint.cCaseGenerated =  complaintObj.C_Case_Generated ? complaintObj.C_Case_Generated : "";
+                      complaint.cpID =  complaintObj.P_ID ? complaintObj.P_ID : "";
+                      complaint.cCaseClosed =  complaintObj.C_Case_Closed ? complaintObj.C_Case_Closed : "";
+                      complaint.cCaseNumber =  complaintObj.C_Case_Number ? complaintObj.C_Case_Number : "";
+                      complaint.cCreatedBy =  complaintObj.C_Created_By ? complaintObj.C_Created_By : "";
+                      complaint.cResponseDays =  complaintObj.C_Response_Days ? complaintObj.C_Response_Days : "";
+                      self.complaintsObj.push(complaint);
+                   }
+                  }
+                  return null;
+                 })
+                .catch((err) => {console.log('There was an error:' + err);alert("Complaints retrieve error");})
+              } catch (e) {
+                 console.log('There was an error:'+e); 
+                 alert("Complaints error");
+         }
+
+  }
+  
   modalHideClicked = event => {
     this.setState({ modalDialogStyle: ["modal fade"] });
   }
@@ -428,6 +484,24 @@ export default class Landlord extends Component {
       )
     });
   }
+  if(this.landlordObj && this.complaintsObj){
+    var complaintItems = this.complaintsObj.map(function(item) {
+      return (
+        <tr>
+          <td>{item.cCreateOn}</td>
+          <td class="tx-gray-700">{item.cAddressLine1}</td>
+          <td class="tx-success">{(() => {
+                        if (item.cCaseClosed) {
+                          return "Closed";
+                         } else {
+                           return "Open";
+                         }
+                      })()}</td>
+          <td>LADBS</td>
+        </tr>
+      )
+    });
+  }
 }
     return (
       this.showMe ? 
@@ -555,7 +629,7 @@ export default class Landlord extends Component {
 
           <div class="complaint-wrapper">
             <p>This landlord has</p>
-            <h1><a href="#complaintModal" data-toggle="modal" onClick={this.modalShowClicked.bind(this)}>2</a></h1>
+            <h1><a href="#complaintModal" data-toggle="modal" onClick={this.modalShowClicked.bind(this)}>{this.landlordObj.complaints.length}</a></h1>
             <p>Complaints</p>
           </div>
 
@@ -567,7 +641,7 @@ export default class Landlord extends Component {
 
             <div class="mg-t-20 bd pd-25 tx-center">
               <p class="mg-b-5 tx-gray-800 tx-medium">Is this your profile?</p>
-              <a href="javascript:void(0)">Claim Your Profile</a>
+              <a href="javascript:void(0)" class="d-block">Claim Your Profile</a>
               <span>It's Free</span>
             </div>
 
@@ -589,24 +663,13 @@ export default class Landlord extends Component {
                 <thead>
                   <tr>
                     <th>Date Received</th>
-                    <th>Problem Description</th>
+                    <th>Property</th>
                     <th>Status</th>
                     <th>Department</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>10/12/2017</td>
-                    <td class="tx-gray-700">Pro-active Code Enforcement</td>
-                    <td class="tx-success">Open</td>
-                    <td>LADBS</td>
-                  </tr>
-                  <tr>
-                    <td>10/12/2017</td>
-                    <td class="tx-gray-700">General</td>
-                    <td class="tx-success">Open</td>
-                    <td>LADBS</td>
-                  </tr>
+                 {complaintItems}
                 </tbody>
               </table>
             </div>

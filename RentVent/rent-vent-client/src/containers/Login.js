@@ -120,13 +120,6 @@ export default class Login extends Component {
            "Anonymous":"oo",
            "FirstName":this.socialLoginUser.tsfirstName ? this.socialLoginUser.tsfirstName : "",
            "LastName":this.socialLoginUser.tslastName ? this.socialLoginUser.tslastName : "",
-           "Phone":this.socialLoginUser.tsPhone ? this.socialLoginUser.tsPhone : "",
-           "AddressLine1":this.socialLoginUser.tsAddressLine1 ? this.socialLoginUser.tsAddressLine1 : "",
-           "AddressLine2":this.socialLoginUser.tsAddressLine2 ? this.socialLoginUser.tsAddressLine2 : "",
-           "Zipcode":this.socialLoginUser.tsZipcode ? this.socialLoginUser.tsZipcode : "",
-           "City":this.socialLoginUser.tsCity ? this.socialLoginUser.tsCity : "",
-           "State":this.socialLoginUser.tsState ? this.socialLoginUser.tsState : "",
-           "Country":this.socialLoginUser.tsCountry ? this.socialLoginUser.tsCountry : "",
            "T_Profile_Pic_URL":this.socialLoginUser.tsprofilePicURL ? this.socialLoginUser.tsprofilePicURL : "",
            "CreatedOn":this.socialLoginUser.tsCreatedOn ? this.socialLoginUser.tsCreatedOn : "",
            "UpdatedOn":this.socialLoginUser.tsUpdatedOn ? this.socialLoginUser.tsUpdatedOn : "",
@@ -138,7 +131,8 @@ export default class Login extends Component {
   formLoginObject(){
     var json = {};
     json = {
-         "T_ID":this.state.email? this.state.email: ""
+         "T_ID":"",
+         "Email_ID": this.state.email? this.state.email:""
     }
   return json;
   }
