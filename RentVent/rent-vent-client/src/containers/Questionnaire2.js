@@ -476,7 +476,11 @@ export default class Questionnaire2 extends Component {
            "LL_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
            "LL_Q_Recommend_Landlord": this.questionnaireObj.lpRecommend?this.questionnaireObj.lpRecommend:"",
            "Q_LL_Response_Rate": this.questionnaireObj.lResponsive?this.questionnaireObj.lResponsive:"",
-           "LL_Q_Repair_Requests": this.questionnaireObj.lrResponsive?this.questionnaireObj.lrResponsive:""
+           "LL_Q_Repair_Requests": this.questionnaireObj.lrResponsive?this.questionnaireObj.lrResponsive:"",
+           "Created_On":moment().format('L'),
+           "Updated_On":moment().format('L'),
+           "Updated_By":"questionnaire",
+           "Created_By":"questionnaire"
            
       }
     }else{
@@ -497,7 +501,10 @@ export default class Questionnaire2 extends Component {
            "P_Q_Security_Required": this.questionnaireObj.pSecurityDepositReq?this.questionnaireObj.pSecurityDepositReq:"",
            "P_Q_RR_Increase": this.questionnaireObj.pRentIncrease?this.questionnaireObj.pRentIncrease:"",
            "P_Q_Insurance": this.questionnaireObj.pRentalInsuranceReq?this.questionnaireObj.pRentalInsuranceReq:"",
-
+           "Created_On":moment().format('L'),
+           "Updated_On":moment().format('L'),
+           "Updated_By":"questionnaire",
+           "Created_By":"questionnaire"
       }
     }
     return json;
