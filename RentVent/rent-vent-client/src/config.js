@@ -15,6 +15,7 @@ export default {
     LANDLORD_NAME_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/search/",
     LANDLORD_ADDRESS_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/address/",
     LANDLORD_LID_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/",
+    LANDLORD_PID_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/property/",    
     PROPERTY_PID_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/",
     PROPERTY_ADDRESS_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/address/",
     RENTAL_GET:"https://ykfhhoo131.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/rental/",

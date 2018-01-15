@@ -58,7 +58,8 @@ export default class Landing extends Component {
         "label":"address",
         "value":"address"
       },
-      landingSearchField: null
+      landingSearchField: null,
+      searchTableTitle: "Property Results"
     };
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
@@ -94,7 +95,41 @@ export default class Landing extends Component {
 
   landlordResultsRowSelected = row =>{
         var selectedLandlord = this.landlords[row.index];
-        this.retrievelandlordDetails(selectedLandlord.landlordId);
+        if(this.landlordSearchCriteria == "address"){
+          this.retrievelandlordIDDetails(selectedLandlord.pid);
+        } else {
+          this.retrievelandlordDetails(selectedLandlord.landlordId);
+        }
+  }
+
+  retrievelandlordIDDetails = landlordId => {
+    try{
+     const GATEWAY_URL = config.apis.LANDLORD_PID_GET+landlordId;
+
+     fetch(GATEWAY_URL, {
+         method: 'GET',
+         mode: 'cors'
+     })
+      .then((response) => {
+                   return response.json();
+               })
+               .then((json) => {
+                var landlord;
+                 if(json && json.length > 0){
+                  landlord = new LandlordModel;
+                          var landlordObj = json[0];
+                          landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
+                          this.retrievelandlordDetails(landlord.landlordId);
+                          } else {
+                            alert("No property details found");
+                          }
+                })
+               .catch((err) => {console.log('There was an error:' + err);alert("Landlord retrieve error");})
+             } catch (e) {
+                console.log('There was an error:'+e); 
+                alert("Landlord error");
+        }
+
   }
 
   dropDownSelected = val => {
@@ -228,7 +263,9 @@ export default class Landing extends Component {
                           action: 'Landlord',
                       });
                   this.props.history.push("/landlord");
-                 }
+                 } else {
+                  alert("No landlord details found");
+                }
                  
                           
                 })
@@ -271,8 +308,10 @@ export default class Landing extends Component {
 
   landingSearchClicked = event =>{
     if(this.landlordSearchCriteria == "name" && this.state.landingSearchField){
+      this.state.searchTableTitle = "Landlord Results";
       this.landlordSearchClicked();
     }else if(this.landlordSearchCriteria == "address" && this.state.landingSearchField){
+      this.state.searchTableTitle = "Property Results";
       this.landlordSearchAddressClicked();
     }
   }
@@ -289,9 +328,9 @@ export default class Landing extends Component {
     if(this.state.landingSearchField.includes(" ")){
       this.landlords = [];
       this.landlordsDataSource = [];
-      var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landingSearchField;
+      var landlordString = config.apis.PROPERTY_ADDRESS_GET+this.state.landingSearchField;
       landlordString = encodeURI(landlordString);
-      this.retrievelandlord(this,landlordString);
+      this.retrieveProperty(this,landlordString);
     } else {
       alert("Please enter more address information");
     }
@@ -354,6 +393,65 @@ export default class Landing extends Component {
                 alert("Landlord error");
         }
   }
+
+  retrieveProperty(self_this,landlordString){
+    // test api
+    var self = self_this;
+    
+
+      try{
+       const GATEWAY_URL = [landlordString];
+
+       fetch(GATEWAY_URL, {
+           method: 'GET',
+           mode: 'cors'
+       })
+           .then((response) => {
+               return response.json();
+           })
+           .then((json) => {
+               // this.setState({ accessToken: json.done.json.access_token });
+               // this.search();
+               if(json){
+                 var jsonObj = json.Items;
+                  if(json && jsonObj.length > 0) {
+                      
+                    var maxCount = 0;
+                    if(jsonObj.length > 25)
+                    {
+                      maxCount = 25;
+                    } else {
+                      maxCount = jsonObj.length;
+                    }
+                      for(var i=0; i<maxCount; i++){
+                        var propertyObj = jsonObj[i];
+                      var property = new PropertyModel;
+                      property.pAdd1 = propertyObj.P_Address_Line1 ? propertyObj.P_Address_Line1 : "";;
+                      property.pid = propertyObj.P_ID ? propertyObj.P_ID : "";
+                      
+                      self.landlords.push(property);
+                      var dsobj = {
+                        "landlordName":property.pAdd1,
+                        "index": i
+                      };
+                      self.landlordsDataSource.push(dsobj);
+                    }
+                        // show landlord class
+                        // self.landlordResultsClass = ["landlord-result"];
+                        self.setState({
+                          landlordResultsClass: ["landlord-result"]
+                        });
+                  } else {
+                    alert("No results found");
+                  }
+               }
+           })
+           .catch((err) => {console.log('There was an error:' + err);alert("Landlord error");})
+         } catch (e) {
+            console.log('There was an error:'+e); 
+            alert("Landlord error");
+    }
+}
 
   handleChange = event => {
     this.setState({
@@ -474,7 +572,7 @@ export default class Landing extends Component {
               </div>
               <div className={this.state.landlordResultsClass.join('' )}>
                 <BootstrapTable data={this.landlordsDataSource} striped hover options={ this.options } height='300' scrollTop={ 'Top' }>
-                  <TableHeaderColumn isKey dataField='landlordName'>Landlord Results</TableHeaderColumn>
+                  <TableHeaderColumn isKey dataField='landlordName'>{this.state.searchTableTitle}</TableHeaderColumn>
               </BootstrapTable>
               </div>
 
