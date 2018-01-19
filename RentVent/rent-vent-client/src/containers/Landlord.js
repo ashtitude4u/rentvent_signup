@@ -11,6 +11,7 @@ import {PropertyModel} from '../models/PropertyModel';
 import {LandlordModel} from '../models/LandlordModel';
 import {ComplaintsModel} from '../models/ComplaintsModel';
 import config from "../config";
+import {PieChart} from 'react-easy-chart';
 
 export default class Landlord extends Component {
    constructor(props) {
@@ -71,6 +72,10 @@ export default class Landlord extends Component {
         }
         if(this.landlordObj.complaints && this.landlordObj.complaints.length > 0){
           this.retrieveComplaintsData();
+        }
+        if(this.landlordObj.recommend){
+          this.donutVal1 = Number(this.landlordObj.recommend);
+          this.donutVal2 = 100 - Number(this.landlordObj.recommend);
         }
         
     } 
@@ -572,6 +577,13 @@ export default class Landlord extends Component {
               <div class="col-md-4 mg-t-20 mg-md-t-0">
                 <div class="d-flex align-items-center">
                   <div class="approve-landlord-donut">
+                  <PieChart
+                          size={50}
+                          innerHoleSize={36}
+                           data={[
+                             { key: 'A', value: this.donutVal1, color: '#2567C0' },
+                             { key: 'C', value: this.donutVal2, color: '#EAECEF' }
+                            ]}/>
                     <div class="approve-landlord-percent">
                       <h6>{this.landlordObj.recommend}%</h6>
                     </div>

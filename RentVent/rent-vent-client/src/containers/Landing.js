@@ -22,6 +22,8 @@ import {LandlordReviewModel} from '../models/LandlordReviewModel';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import '../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import Select from 'react-select';
+import Dropdown from 'react-dropdown'
+import {PieChart} from 'react-easy-chart';
 
 export default class Landing extends Component {
    constructor(props) {
@@ -54,10 +56,7 @@ export default class Landing extends Component {
       propertySearchLocation: null,
       landlordResultsClass:["landlord-result-hidden"],
       landlordSearchAddressField: null,
-      selectedDropDownOption:{
-        "label":"address",
-        "value":"address"
-      },
+      selectedDropDownOption: "Address",
       landingSearchField: null,
       searchTableTitle: "Property Results"
     };
@@ -73,6 +72,13 @@ export default class Landing extends Component {
     this.profileImage1 = "https://s3.amazonaws.com/rentvent-web/7.jpg";
     this.profileImage2 = "https://s3.amazonaws.com/rentvent-web/8.jpg";
     this.profileImage3 = "https://s3.amazonaws.com/rentvent-web/9.jpg";
+    this.backgroundImage = "https://s3.amazonaws.com/rentvent-web/12.jpg";
+    this.longBeachImage = "https://s3.amazonaws.com/rentvent-web/long-beach.jpg";
+    this.beverlyHillsImage = "https://s3.amazonaws.com/rentvent-web/beverly-hills.jpg";
+    this.manhattanImage = "https://s3.amazonaws.com/rentvent-web/manhattan.jpg";
+    this.pasadenaImage = "https://s3.amazonaws.com/rentvent-web/pasadena.jpg";
+    this.santaMonicaImage = "https://s3.amazonaws.com/rentvent-web/santa-monica.jpg";
+    this.westHollywoodImage = "https://s3.amazonaws.com/rentvent-web/west-hollywood.jpg";
 
     this.landlordLink = ["nav-link active"];
     this.propertyLink = ["nav-link"];
@@ -81,21 +87,21 @@ export default class Landing extends Component {
     this.landlords = [];
     this.landlordsDataSource = [];
     this.landlordResultsRowSelected = this.landlordResultsRowSelected.bind(this);
-    this.landlordSearchCriteria = "address";
+    this.landlordSearchCriteria = "Address";
     this.options = {
       onRowClick: this.landlordResultsRowSelected
     };
-
+    this.val1 = 19;
+    this.val2 = 81;
     this.dropDownOptions = [
-      { value: 'address', label: 'address' },
-      { value: 'name', label: 'name' }
+      'Address', 'Landlord Name'
       ];
 
   }
 
   landlordResultsRowSelected = row =>{
         var selectedLandlord = this.landlords[row.index];
-        if(this.landlordSearchCriteria == "address"){
+        if(this.landlordSearchCriteria == "Address"){
           this.retrievelandlordIDDetails(selectedLandlord.pid);
         } else {
           this.retrievelandlordDetails(selectedLandlord.landlordId);
@@ -115,9 +121,10 @@ export default class Landing extends Component {
                })
                .then((json) => {
                 var landlord;
-                 if(json && json.length > 0){
+                var jsonObj = json.resultlist;
+                 if(json && jsonObj && jsonObj.length > 0){
                   landlord = new LandlordModel;
-                          var landlordObj = json[0];
+                          var landlordObj = jsonObj[0];
                           landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
                           this.retrievelandlordDetails(landlord.landlordId);
                           } else {
@@ -307,10 +314,10 @@ export default class Landing extends Component {
   }
 
   landingSearchClicked = event =>{
-    if(this.landlordSearchCriteria == "name" && this.state.landingSearchField){
+    if(this.landlordSearchCriteria == "Landlord Name" && this.state.landingSearchField){
       this.state.searchTableTitle = "Landlord Results";
       this.landlordSearchClicked();
-    }else if(this.landlordSearchCriteria == "address" && this.state.landingSearchField){
+    }else if(this.landlordSearchCriteria == "Address" && this.state.landingSearchField){
       this.state.searchTableTitle = "Property Results";
       this.landlordSearchAddressClicked();
     }
@@ -355,17 +362,17 @@ export default class Landing extends Component {
                    // this.setState({ accessToken: json.done.json.access_token });
                    // this.search();
                    if(json){
-                      if(json.length > 0) {
-                          
+                    var jsonObj = json.resultlist;
+                      if(json && jsonObj && jsonObj.length > 0) {
                         var maxCount = 0;
-                        if(json.length > 25)
+                        if(jsonObj.length > 25)
                         {
                           maxCount = 25;
                         } else {
-                          maxCount = json.length;
+                          maxCount = jsonObj.length;
                         }
                           for(var i=0; i<maxCount; i++){
-                            var landlordObj = json[i];
+                            var landlordObj = jsonObj[i];
                           var landlord = new LandlordModel;
                           landlord.fullName = landlordObj.L_Full_Name ? landlordObj.L_Full_Name : "";;
                           landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
@@ -405,15 +412,14 @@ export default class Landing extends Component {
        fetch(GATEWAY_URL, {
            method: 'GET',
            mode: 'cors'
-       })
-           .then((response) => {
+       }).then((response) => {
                return response.json();
            })
            .then((json) => {
                // this.setState({ accessToken: json.done.json.access_token });
                // this.search();
                if(json){
-                 var jsonObj = json.Items;
+                 var jsonObj = json.resultlist;
                   if(json && jsonObj.length > 0) {
                       
                     var maxCount = 0;
@@ -515,7 +521,7 @@ export default class Landing extends Component {
       this.showMe ? 
     <div>
 
-    <div class="headerpanel">
+    <div class="headerpanel headerpanel-landing">
       <div class="container">
         <div class="headerpanel-left">
           <div class="logo"><i class="icon ion-ios-home"></i></div>
@@ -535,26 +541,20 @@ export default class Landing extends Component {
       <div class="header-wrapper">
         <h3 class="header-headline landlord-header-section">Check any landlord's reputation and rental history.</h3>
 
-        <ul class="nav nav-landing-header">
-          <li class="nav-item" onClick={this.landlordLinkClicked}><a href="#" data-toggle="tab" class="nav-link active" className={this.landlordLink.join('' )}>Find a Landlord</a></li>
-        </ul>
-
         <div class="tab-content">
           <div id="findLandlord" class="tab-pane active show" className={this.landlordTab.join('' )}>
-          <span>Search by</span>
-            <div class="row row-xs">
-              <div class="col-sm-9">
-                <div>
-                <div class="mg-t-15 mg-sm-t-0 landing-search-dropdown">
-                <Select
-                    name="form-field-name"
-                    value={this.state.selectedDropDownOption}
-                    options={this.dropDownOptions}
-                    onChange={this.dropDownSelected}
-                  />
-                
 
-                <FormGroup controlId="landingSearchField" bsSize="large" className="landing-search-form-object">
+
+          <div class="row row-xs align-items-end">
+              <div class="col-sm-9">
+                <div class="row row-xs align-items-end">
+                  <div class="col-5">
+                    <div class="mg-b-5">Search by</div>
+                    <Dropdown options={this.dropDownOptions} onChange={this.dropDownSelected} value={this.state.selectedDropDownOption} 
+                    placeholder="Select an option" />
+                  </div>
+                  <div class="col-7">
+                  <FormGroup controlId="landingSearchField" bsSize="large" className="landing-search-form-object">
                 <FormControl
                   autoFocus
                   type="search"
@@ -564,7 +564,7 @@ export default class Landing extends Component {
                   onKeyPress={this.handleLandingKeyPress}
                 />
                 </FormGroup>
-                </div>
+                  </div>
                 </div>
               </div>
               <div class="col-sm-3 mg-t-15 mg-sm-t-0">
@@ -575,82 +575,216 @@ export default class Landing extends Component {
                   <TableHeaderColumn isKey dataField='landlordName'>{this.state.searchTableTitle}</TableHeaderColumn>
               </BootstrapTable>
               </div>
-
             </div>
-
           </div>
-          
+          <div id="findProperty" class="tab-pane" className={this.propertyTab.join('' )}>
+            <div class="row row-xs">
+              <div class="col-md-9">
+                <div class="row row-xs">
+                  <div class="col-sm-7">
+                    <FormGroup controlId="propertySearchField" bsSize="large">
+                <FormControl
+                  autoFocus
+                  type="search"
+                  value={this.state.propertySearchField}
+                  onChange={this.handleChange}
+                  placeholder="Enter keywords"
+                  onKeyPress={this.handlePropertyKeyPress}
+                />
+                </FormGroup>
+                  </div>
+                  <div class="col-sm-5 mg-t-15 mg-sm-t-0">
+                    <FormGroup controlId="propertySearchLocation" bsSize="large">
+                <FormControl
+                  autoFocus
+                  type="search"
+                  value={this.state.propertySearchLocation}
+                  onChange={this.handleChange}
+                  placeholder="Location"
+                  onKeyPress={this.handlePropertyKeyPress}
+                />
+                </FormGroup>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mg-t-15 mg-md-t-0">
+                <button class="btn btn-primary btn-block" disabled={!this.state.propertySearchField && !this.state.propertySearchLocation} onClick={this.propertySearchClicked}>Find Property</button>
+              </div>
+            </div>
+          </div>
+
+
         </div>
 
       </div>
     </div>
 
-    <div class="bg-white pd-y-60 pd-sm-y-80 browse-section-landing browse-title">
+    <div class="bg-white pd-y-60 pd-sm-y-80">
       <div class="container">
-        <h4 class="tx-sm-28 tx-center tx-gray-800 mg-b-60 mg-sm-b-80">Browse Landlord by Location</h4>
+        <h4 class="tx-sm-28 tx-center tx-gray-800 mg-b-60 mg-sm-b-80">Recent Reviews</h4>
         <div class="row">
           <div class="col-lg-6">
-            <div class="card card-landlord-fold">
-              <figure>
-                
-                <figcaption>
-                  <h2>Los Angeles</h2>
-                </figcaption>
-              </figure>
+            <div class="card card-recent-review">
               <div class="card-body">
-                <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.landlordSearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <h5 class="recent-review-landlord"><a href="">Jennifer J. Ferrel</a></h5>
+                <p class="recent-review-address"><a href="">3125 Henry Ford Avenue, Los Angeles, CA 74119 </a></p>
+                <hr />
+                <div class="row align-items-center">
+                  <div class="col-sm">
+                    <div class="landlord-star">
+                      <div class="landlord-rating-star">
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm mg-t-20 mg-sm-t-0">
+                    <div class="d-flex align-items-center">
+                      <div class="approve-landlord-donut">
+                      <PieChart
+                          size={50}
+                          innerHoleSize={36}
+                           data={[
+                             { key: 'A', value: 81, color: '#2567C0' },
+                             { key: 'C', value: 19, color: '#EAECEF' }
+                            ]}/>
+                        <div class="approve-landlord-percent">
+                          <h6>81%</h6>
+                        </div>
+                      </div>
+                      <p class="mg-b-0 mg-l-10">Recommend this landlord</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div class="col-lg-6 mg-t-30 mg-lg-t-0">
-            <div class="card card-landlord-fold">
-              <figure>
-                
-                <figcaption>
-                  <h2>San Francisco</h2>
-                </figcaption>
-              </figure>
+            <div class="card card-recent-review">
               <div class="card-body">
-                <p>Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipis.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.landlordSearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <h5 class="recent-review-landlord"><a href="">James C. Kelley</a></h5>
+                <p class="recent-review-address"><a href="">4892 Lucky Duck Drive, Pittsburgh, PA 15222 </a></p>
+                <hr />
+                <div class="row align-items-center">
+                  <div class="col-sm">
+                    <div class="landlord-star">
+                      <div class="landlord-rating-star">
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm mg-t-20 mg-sm-t-0">
+                    <div class="d-flex align-items-center">
+                      <div class="approve-landlord-donut">
+                      <PieChart
+                          size={50}
+                          innerHoleSize={36}
+                           data={[
+                             { key: 'A', value: 89, color: '#2567C0' },
+                             { key: 'C', value: 11, color: '#EAECEF' }
+                            ]}/>
+                        <div class="approve-landlord-percent">
+                          <h6>89%</h6>
+                        </div>
+                      </div>
+                      <p class="mg-b-0 mg-l-10">Recommend this landlord</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="col-lg-6 mg-t-30">
-            <div class="card card-landlord-fold">
-              <figure>
-               
-                <figcaption>
-                  <h2>New York</h2>
-                </figcaption>
-              </figure>
+            <div class="card card-recent-review">
               <div class="card-body">
-                <p>Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipis.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.landlordSearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <h5 class="recent-review-landlord"><a href="">William D. Constantine</a></h5>
+                <p class="recent-review-address"><a href="">4892 Lucky Duck Drive, Pittsburgh, PA 15222 </a></p>
+                <hr />
+                <div class="row align-items-center">
+                  <div class="col-sm">
+                    <div class="landlord-star">
+                      <div class="landlord-rating-star">
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm mg-t-20 mg-sm-t-0">
+                    <div class="d-flex align-items-center">
+                      <div class="approve-landlord-donut">
+                      <PieChart
+                          size={50}
+                          innerHoleSize={36}
+                           data={[
+                             { key: 'A', value: 83, color: '#2567C0' },
+                             { key: 'C', value: 17, color: '#EAECEF' }
+                            ]}/>
+                        <div class="approve-landlord-percent">
+                          <h6>83%</h6>
+                        </div>
+                      </div>
+                      <p class="mg-b-0 mg-l-10">Recommend this landlord</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="col-lg-6 mg-t-30">
-            <div class="card card-landlord-fold">
-              <figure>
-                
-                <figcaption>
-                  <h2>Washington DC</h2>
-                </figcaption>
-              </figure>
+            <div class="card card-recent-review">
               <div class="card-body">
-                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.landlordSearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <h5 class="recent-review-landlord"><a href="">Daniel D. Jones</a></h5>
+                <p class="recent-review-address"><a href="">4730 Hiney Road, North Las Vegas, NV 89032</a></p>
+                <hr />
+                <div class="row align-items-center">
+                  <div class="col-sm">
+                    <div class="landlord-star">
+                      <div class="landlord-rating-star">
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                        <i class="icon ion-star active"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm mg-t-20 mg-sm-t-0">
+                    <div class="d-flex align-items-center">
+                      <div class="approve-landlord-donut">
+                      <PieChart
+                          size={50}
+                          innerHoleSize={36}
+                           data={[
+                             { key: 'A', value: 90, color: '#2567C0' },
+                             { key: 'C', value: 10, color: '#EAECEF' }
+                            ]}/>
+                        <div class="approve-landlord-percent">
+                          <h6>90%</h6>
+                        </div>
+                      </div>
+                      <p class="mg-b-0 mg-l-10">Recommend this landlord</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
+    
     <div class="bg-gray-100 pd-y-60 pd-sm-y-80">
       <div class="container">
         <h4 class="tx-sm-28 tx-center tx-gray-800 mg-b-60 mg-sm-b-80">Browse Property by Location</h4>
@@ -658,90 +792,86 @@ export default class Landing extends Component {
           <div class="col-sm-6 col-lg-4">
             <div class="card card-landlord-fold">
               <figure>
-                
+                <img src={this.santaMonicaImage} class="img-fit-cover" alt="" />
                 <figcaption>
-                  <h2>Los Angeles</h2>
+                  <h2>Santa Monica</h2>
                 </figcaption>
               </figure>
               <div class="card-body">
-                <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.propertySearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <a href="" class="btn btn-outline-primary pd-x-25">View City <i class="fa fa-angle-right mg-l-5"></i></a>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-lg-4 mg-t-30 mg-sm-t-0">
             <div class="card card-landlord-fold">
               <figure>
-                
+                <img src={this.westHollywoodImage} class="img-fit-cover" alt="" />
                 <figcaption>
-                  <h2>San Francisco</h2>
+                  <h2>West Hollywood</h2>
                 </figcaption>
               </figure>
               <div class="card-body">
-                <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.propertySearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <a href="" class="btn btn-outline-primary pd-x-25">View City <i class="fa fa-angle-right mg-l-5"></i></a>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-lg-4 mg-t-30 mg-lg-t-0">
             <div class="card card-landlord-fold">
               <figure>
-                
+                <img src={this.pasadenaImage} class="img-fit-cover" alt="" />
                 <figcaption>
-                  <h2>New York</h2>
+                  <h2>Pasadena</h2>
                 </figcaption>
               </figure>
               <div class="card-body">
-                <p>Maecenas tempus, tellus eget condimentum rhoncus, sem quam sit amet adipis.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.propertySearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <a href="" class="btn btn-outline-primary pd-x-25">View City <i class="fa fa-angle-right mg-l-5"></i></a>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-lg-4 mg-t-30">
             <div class="card card-landlord-fold">
               <figure>
-                
+                <img src={this.beverlyHillsImage} class="img-fit-cover" alt="" />
                 <figcaption>
-                  <h2>Washington DC</h2>
+                  <h2>Beverly Hills</h2>
                 </figcaption>
               </figure>
               <div class="card-body">
-                <p>Maecenas tempus, tellus eget condimentum rhoncus, sem quam sit amet adipis.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.propertySearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <a href="" class="btn btn-outline-primary pd-x-25">View City <i class="fa fa-angle-right mg-l-5"></i></a>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-lg-4 mg-t-30">
             <div class="card card-landlord-fold">
               <figure>
-                
+                <img src={this.manhattanImage} class="img-fit-cover" alt="" />
                 <figcaption>
-                  <h2>Orlando</h2>
+                  <h2>Manhattan Beach</h2>
                 </figcaption>
               </figure>
               <div class="card-body">
-                <p>Maecenas nec odio et ante tincidunt vitae sapien ut libero venenatis faucibus.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.propertySearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <a href="" class="btn btn-outline-primary pd-x-25">View City <i class="fa fa-angle-right mg-l-5"></i></a>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-lg-4 mg-t-30">
             <div class="card card-landlord-fold">
               <figure>
-                
+                <img src={this.longBeachImage} class="img-fit-cover" alt="" />
                 <figcaption>
-                  <h2>Miami</h2>
+                  <h2>Long Beach</h2>
                 </figcaption>
               </figure>
               <div class="card-body">
-                <p>Maecenas nec odio et ante tincidunt vitae sapien ut libero venenatis faucibus.</p>
-                <a href="#" class="btn btn-outline-primary pd-x-25" onClick={this.propertySearchClicked}>View Details <i class="fa fa-angle-right mg-l-5"></i></a>
+                <a href="" class="btn btn-outline-primary pd-x-25">View City <i class="fa fa-angle-right mg-l-5"></i></a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    
 
     </div>
     : null
