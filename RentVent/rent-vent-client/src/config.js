@@ -12,17 +12,16 @@ export default {
   	APP_ID:"1777119195915239"
   },
   apis:{
-    LANDLORD_NAME_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/search/",
-    LANDLORD_ADDRESS_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/address/",
-    LANDLORD_LID_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/",
-    LANDLORD_PID_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/property/",    
-    PROPERTY_PID_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/",
-    PROPERTY_ADDRESS_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/address/",
-    RENTAL_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/rental/",
-    QUESTION_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/question/{q_type}/{search_by}/{search_val}",
-    COMPLAINTS_GET:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/Complaints/",
-    QUESTIONNAIRE_POST:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/questionnaire",
-    TENANT_POST:"https://2rej90wsdi.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/tenant"
+    LANDLORD_NAME_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/search/",
+    LANDLORD_ADDRESS_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/address/",
+    LANDLORD_LID_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/",
+    LANDLORD_PID_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/landlord/property/",    
+    PROPERTY_PID_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/",
+    PROPERTY_ADDRESS_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/property/address/",
+    RENTAL_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/rental/",
+    QUESTION_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/question/{q_type}/{search_by}/{search_val}",
+    COMPLAINTS_GET:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/Complaints/",
+    QUESTIONNAIRE_POST:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/questionnaire",
+    TENANT_POST:"https://50sq1sgno7.execute-api.us-east-1.amazonaws.com/prod/Vent.Rent/tenant"
   }
 };
-
