@@ -76,8 +76,45 @@ export default class Landlord extends Component {
         if(this.landlordObj.recommend){
           this.donutVal1 = Number(this.landlordObj.recommend);
           this.donutVal2 = 100 - Number(this.landlordObj.recommend);
+        } else {
+          this.donutVal1 = 0;
+          this.donutVal2 = 100;
         }
-        
+        if(!this.landlordObj.addressLine1){
+          if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pAdd1){
+            this.landlordObj.addressLine1 = this.landlordObj.landlordProperties[0].pAdd1;
+          } else {
+            this.landlordObj.addressLine1 = "N/A";
+          }
+        }
+        if(!this.landlordObj.addressLine2){
+          if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pAdd2){
+            this.landlordObj.addressLine2 = this.landlordObj.landlordProperties[0].pAdd2;
+          } else {
+            this.landlordObj.addressLine2 = "N/A";
+          }
+        }
+        if(!this.landlordObj.city){
+          if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pCity){
+            this.landlordObj.city = this.landlordObj.landlordProperties[0].pCity;
+          } else {
+            this.landlordObj.city = "N/A";
+          }
+        }
+        if(!this.landlordObj.state){
+          if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pState){
+            this.landlordObj.state = this.landlordObj.landlordProperties[0].pState;
+          } else {
+            this.landlordObj.state = "N/A";
+          }
+        }
+        if(!this.landlordObj.zipCode){
+          if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pZip){
+            this.landlordObj.zipCode = this.landlordObj.landlordProperties[0].pZip;
+          } else {
+            this.landlordObj.zipCode = "N/A";
+          }
+        }
     } 
 
     sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
@@ -184,7 +221,11 @@ export default class Landlord extends Component {
       }
   }
   modalShowClicked = event => {
-    this.setState({ modalDialogStyle: ["modal fade show modal-complaints-section"] });
+    if(this.landlordObj.complaints.length > 0){
+      this.setState({ modalDialogStyle: ["modal fade show modal-complaints-section"] });
+    } else {
+      alert("No Complaints founds");
+    }
   }
 
   fetchComplaintsService = cid =>{
@@ -201,8 +242,8 @@ export default class Landlord extends Component {
                 })
                 .then((json) => {
                  var property;
-                  if(json && json.Items && json.Items.length > 0){
-                   var complaintObj = json.Items[0];
+                  if(json && json.resultlist && json.resultlist.length > 0){
+                   var complaintObj = json.resultlist[0];
                    var complaint = new ComplaintsModel;
                    if(complaintObj){
                       complaint.cAddressDirection = complaintObj.C_Address_Street_Direction ? complaintObj.C_Address_Street_Direction : "";
@@ -210,7 +251,7 @@ export default class Landlord extends Component {
                       complaint.cUpdatedBy = complaintObj.C_Updated_By ? complaintObj.C_Updated_By : "";
                       complaint.cZip = complaintObj.C_Address_Zip ? complaintObj.C_Address_Zip : "";
                       complaint.cid = complaintObj.C_ID ? complaintObj.C_ID : "";
-                      complaint.cAddressLine1 = complaintObj.C_Address_Line_1 ? complaintObj.C_Address_Line_1 : "";
+                      complaint.cAddressLine1 = complaintObj.C_Address_Line1 ? complaintObj.C_Address_Line1 : "";
                       complaint.cUpdatedOn =  complaintObj.C_Updated_On ? complaintObj.C_Updated_On : "";
                       complaint.cCaseGenerated =  complaintObj.C_Case_Generated ? complaintObj.C_Case_Generated : "";
                       complaint.cpID =  complaintObj.P_ID ? complaintObj.P_ID : "";
@@ -537,7 +578,10 @@ export default class Landlord extends Component {
                 <div class="landlord-rating">
                    <h2 class="landlord-name">{this.landlordObj.fullName}</h2>
 
-                  <div class="landlord-star">
+                  
+                </div>
+              </div>
+              <div class="landlord-star">
                     <div class="landlord-rating-star">
                       <i className={this.landlordRatingStarArray[0].join('' )}></i>
                       <i className={this.landlordRatingStarArray[1].join('' )}></i>
@@ -547,8 +591,6 @@ export default class Landlord extends Component {
                     </div> 
                     <span class="mg-l-10 tx-16">{this.landlordObj.avgRating}</span>
                   </div>
-                </div>
-              </div>
               <a href="#" class="btn btn-primary landlord-section-review mg-t-20 mg-md-t-0" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
 
@@ -651,7 +693,7 @@ export default class Landlord extends Component {
             
             {propertyItems}
 
-            <div class="mg-t-20 bd pd-25 tx-center">
+            <div class="mg-t-20 bd pd-25 tx-center" hidden>
               <p class="mg-b-5 tx-gray-800 tx-medium">Is this your profile?</p>
               <a href="javascript:void(0)" class="d-block">Claim Your Profile</a>
               <span>It's Free</span>

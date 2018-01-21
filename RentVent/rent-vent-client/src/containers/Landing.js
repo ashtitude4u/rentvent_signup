@@ -24,6 +24,7 @@ import '../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.
 import Select from 'react-select';
 import Dropdown from 'react-dropdown'
 import {PieChart} from 'react-easy-chart';
+import { ScaleLoader } from 'react-spinners';
 
 export default class Landing extends Component {
    constructor(props) {
@@ -58,7 +59,9 @@ export default class Landing extends Component {
       landlordSearchAddressField: null,
       selectedDropDownOption: "Address",
       landingSearchField: null,
-      searchTableTitle: "Property Results"
+      searchTableTitle: "Property Results",
+      loading:false,
+      wrapperClass: []
     };
     
     this.headerpanelClass = ["headerpanel-right d-lg-block d-none"];
@@ -111,7 +114,7 @@ export default class Landing extends Component {
   retrievelandlordIDDetails = landlordId => {
     try{
      const GATEWAY_URL = config.apis.LANDLORD_PID_GET+landlordId;
-
+     this.setLoadingIndicator(true);
      fetch(GATEWAY_URL, {
          method: 'GET',
          mode: 'cors'
@@ -127,12 +130,17 @@ export default class Landing extends Component {
                           var landlordObj = jsonObj[0];
                           landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
                           this.retrievelandlordDetails(landlord.landlordId);
+                          this.setLoadingIndicator(false);
                           } else {
+                            this.setLoadingIndicator(false);
                             alert("No property details found");
                           }
                 })
-               .catch((err) => {console.log('There was an error:' + err);alert("Landlord retrieve error");})
+               .catch((err) => {
+                this.setLoadingIndicator(false);
+                console.log('There was an error:' + err);alert("Landlord retrieve error");})
              } catch (e) {
+              this.setLoadingIndicator(false);
                 console.log('There was an error:'+e); 
                 alert("Landlord error");
         }
@@ -149,10 +157,19 @@ export default class Landing extends Component {
     }
   }
 
+  setLoadingIndicator = val => {
+    if(val){
+      this.setState({ wrapperClass: ["overlay-wrapper"] });
+    } else {
+      this.setState({ wrapperClass: [] });
+    }
+    this.setState({ loading: val });
+  }
+  
   retrievelandlordDetails = landlordId => {
     try{
      const GATEWAY_URL = config.apis.LANDLORD_LID_GET+landlordId;
-
+      this.setLoadingIndicator(true);
      fetch(GATEWAY_URL, {
          method: 'GET',
          mode: 'cors'
@@ -217,12 +234,12 @@ export default class Landing extends Component {
                             for(var i=0; i< propertiesObj.length; i++){
                               landlord.landlordProperties[i] = new PropertyModel;
                               var propChildObj = propertiesObj[i];
-                              landlord.landlordProperties[i].pAdd1 = propChildObj.P_Address_Line1 ? propChildObj.P_Address_Line1 : "Add 1";
-                              landlord.landlordProperties[i].pAdd2 = propChildObj.P_Address_Line2 ? propChildObj.P_Address_Line2 : "Add 2";
-                              landlord.landlordProperties[i].pCity = propChildObj.P_City ? propChildObj.P_City : "City";
+                              landlord.landlordProperties[i].pAdd1 = propChildObj.P_Address_Line1 ? propChildObj.P_Address_Line1 : "N/A";
+                              landlord.landlordProperties[i].pAdd2 = propChildObj.P_Address_Line2 ? propChildObj.P_Address_Line2 : "N/A";
+                              landlord.landlordProperties[i].pCity = propChildObj.P_City ? propChildObj.P_City : "N/A";
                               landlord.landlordProperties[i].pid = propChildObj.P_ID ? propChildObj.P_ID : "";
-                              landlord.landlordProperties[i].pState = propChildObj.P_State ? propChildObj.P_State : "State";
-                              landlord.landlordProperties[i].pZip = propChildObj.P_Zipcode ? propChildObj.P_Zipcode : "07095";
+                              landlord.landlordProperties[i].pState = propChildObj.P_State ? propChildObj.P_State : "N/A";
+                              landlord.landlordProperties[i].pZip = propChildObj.P_Zipcode ? propChildObj.P_Zipcode : "N/A";
                               landlord.landlordProperties[i].pCounty = propChildObj.P_County ? propChildObj.P_County : "";
                               landlord.landlordProperties[i].pCreatedBy = propChildObj.P_Created_By ? propChildObj.P_Created_By : "";
                               landlord.landlordProperties[i].pCreatedOn = propChildObj.P_Created_On ? propChildObj.P_Created_On  : "";
@@ -263,7 +280,8 @@ export default class Landing extends Component {
                                 
                             }
                           }
-                  sessionStorage.setItem('landlordObject', JSON.stringify(landlord));
+                          this.setLoadingIndicator(false);
+                          sessionStorage.setItem('landlordObject', JSON.stringify(landlord));
                   this.props.userHasAuthenticated(true);
                   ReactGA.event({
                           category: 'Navigation',
@@ -271,15 +289,19 @@ export default class Landing extends Component {
                       });
                   this.props.history.push("/landlord");
                  } else {
+                  this.setLoadingIndicator(false);
                   alert("No landlord details found");
                 }
                  
                           
                 })
-               .catch((err) => {console.log('There was an error:' + err);alert("Landlord retrieve error");})
+               .catch((err) => {
+                this.setLoadingIndicator(false);
+                console.log('There was an error:' + err);alert("Landlord retrieve error");})
              } catch (e) {
                 console.log('There was an error:'+e); 
                 alert("Landlord error");
+                this.setLoadingIndicator(false);
         }
 
   }
@@ -346,7 +368,7 @@ export default class Landing extends Component {
   retrievelandlord(self_this,landlordString){
         // test api
         var self = self_this;
-        
+        self.setLoadingIndicator(true);
 
           try{
            const GATEWAY_URL = [landlordString];
@@ -389,13 +411,19 @@ export default class Landing extends Component {
                             self.setState({
                               landlordResultsClass: ["landlord-result"]
                             });
+                            self.setLoadingIndicator(false);
+
                       } else {
+                        self.setLoadingIndicator(false);
                         alert("No results found");
                       }
                    }
                })
-               .catch((err) => {console.log('There was an error:' + err);alert("Landlord error");})
+               .catch((err) => {
+                self.setLoadingIndicator(false);
+                console.log('There was an error:' + err);alert("Landlord error");})
              } catch (e) {
+              self.setLoadingIndicator(false);
                 console.log('There was an error:'+e); 
                 alert("Landlord error");
         }
@@ -405,6 +433,7 @@ export default class Landing extends Component {
     // test api
     var self = self_this;
     
+    self.setLoadingIndicator(true);
 
       try{
        const GATEWAY_URL = [landlordString];
@@ -447,14 +476,19 @@ export default class Landing extends Component {
                         self.setState({
                           landlordResultsClass: ["landlord-result"]
                         });
+                        self.setLoadingIndicator(false);
                   } else {
+                    self.setLoadingIndicator(false);
                     alert("No results found");
                   }
                }
            })
-           .catch((err) => {console.log('There was an error:' + err);alert("Landlord error");})
+           .catch((err) => {
+            self.setLoadingIndicator(false);
+            console.log('There was an error:' + err);alert("Landlord error");})
          } catch (e) {
             console.log('There was an error:'+e); 
+            self.setLoadingIndicator(false);
             alert("Landlord error");
     }
 }
@@ -520,7 +554,7 @@ export default class Landing extends Component {
     return (
       this.showMe ? 
     <div>
-
+      <div className={this.state.wrapperClass.join('' )}>
     <div class="headerpanel headerpanel-landing">
       <div class="container">
         <div class="headerpanel-left">
@@ -570,6 +604,7 @@ export default class Landing extends Component {
               <div class="col-sm-3 mg-t-15 mg-sm-t-0">
                 <button class="btn btn-primary btn-block" disabled={!this.state.landingSearchField} onClick={this.landingSearchClicked}>Find Landlord</button>
               </div>
+              
               <div className={this.state.landlordResultsClass.join('' )}>
                 <BootstrapTable data={this.landlordsDataSource} striped hover options={ this.options } height='300' scrollTop={ 'Top' }>
                   <TableHeaderColumn isKey dataField='landlordName'>{this.state.searchTableTitle}</TableHeaderColumn>
@@ -577,6 +612,8 @@ export default class Landing extends Component {
               </div>
             </div>
           </div>
+          
+          
           <div id="findProperty" class="tab-pane" className={this.propertyTab.join('' )}>
             <div class="row row-xs">
               <div class="col-md-9">
@@ -618,7 +655,6 @@ export default class Landing extends Component {
 
       </div>
     </div>
-
     <div class="bg-white pd-y-60 pd-sm-y-80">
       <div class="container">
         <h4 class="tx-sm-28 tx-center tx-gray-800 mg-b-60 mg-sm-b-80">Recent Reviews</h4>
@@ -872,7 +908,15 @@ export default class Landing extends Component {
     </div>
 
     
-
+      </div>
+      <div className="overlay-indicator">
+      <div className="loading-indicator">
+          <ScaleLoader
+          color={'#8E54E9'} 
+          loading={this.state.loading}
+           />
+          </div>
+      </div>
     </div>
     : null
     );

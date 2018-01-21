@@ -188,6 +188,24 @@
   padding: 0px;
   max-width:none;
 }
+
+.loading-indicator{
+  text-align:center;
+  margin: 0.5rem auto;
+}
+
+.overlay-wrapper {
+  opacity:0.1;
+  overflow: hidden;
+}
+
+.overlay-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+
 /* --------------------------------------------------- */
 /* ############### GOOGLE FONTS IMPORT ############### */
 /* --------------------------------------------------- */
