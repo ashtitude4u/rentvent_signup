@@ -8,6 +8,8 @@ import "../libs/select2/css/select2.min.css";
 import { signOutUser } from "../libs/awsLib";
 import ReactGA from 'react-ga';
 import config from "../config";
+import {PieChart} from 'react-easy-chart';
+import Dropdown from 'react-dropdown'
 
 export default class Property extends Component {
    constructor(props) {
@@ -29,9 +31,13 @@ export default class Property extends Component {
       isAuthenticated: false,
       isAuthenticating: true,
       modalDialogStyle: ["modal fade"],
+      interestmodalDialogStyle:["modal fade"],
+      renovationModalDialogStyle:["modal fade"],
+      claimProfileModalDialogStyle:["modal fade"],
       showRentalInfo: false,
       showRentalInfoStyle: ["property-review-data-list collapse"],
-      showRentalInfoLinkStyle: ["rental-link collapsed"]
+      showRentalInfoLinkStyle: ["rental-link collapsed"],
+      selectedInterestDropDownOption: "Renter"
 
     };
     
@@ -51,6 +57,14 @@ export default class Property extends Component {
 
     this.propertyImagesArray = [this.houseImage1,this.houseImage2,this.houseImage3,this.houseImage4,this.houseImage5,this.houseImage6];
     this.selectedPropertyImage = this.propertyImagesArray[0];
+
+    // temp values
+    this.donutVal1 = 54;
+    this.donutVal2 = 46;
+
+    this.interestDropDownOptions = [
+      'Renter', 'Prospective Renter','Neighbor'
+      ];
   }
 
   userHasAuthenticated = authenticated => {
@@ -66,6 +80,16 @@ export default class Property extends Component {
     this.headerOption = !this.headerOption;
   }
 
+  interestDropDownSelected = val => {
+    console.log("Selected: " + val);
+    this.setState({ selectedInterestDropDownOption: val });
+    // if(val){
+    //   this.landlordSearchCriteria = val.value;
+    // } else {
+    //   this.landlordSearchCriteria = "";
+    // }
+  }
+
   revealDisputes() {
     alert("Under development");
   }
@@ -74,8 +98,32 @@ export default class Property extends Component {
         this.setState({ modalDialogStyle: ["modal fade show modal-complaints-section"] });
   }
 
+  renovationModalShowClicked = event => {
+    this.setState({ renovationModalDialogStyle: ["modal fade show modal-renovations-section"] });
+}
+
+claimProfileModalShowClicked = event => {
+  this.setState({ claimProfileModalDialogStyle: ["modal fade show modal-renovations-section"] });
+}
+
+claimProfileModalHideClicked = event => {
+  this.setState({ claimProfileModalDialogStyle: ["modal fade"] });
+}
+
   modalHideClicked = event => {
         this.setState({ modalDialogStyle: ["modal fade"] });
+  }
+
+  renovationModalHideClicked = event => {
+    this.setState({ renovationModalDialogStyle: ["modal fade"] });
+}
+
+  interestModalShowClicked = event => {
+    this.setState({ interestmodalDialogStyle: ["modal fade show modal-interests-section"] });
+  }
+
+  interestModalHideClicked = event => {
+    this.setState({ interestmodalDialogStyle: ["modal fade"] });
   }
 
   rentalInfoClicked = event => {
@@ -161,7 +209,18 @@ export default class Property extends Component {
     
     <div class="pd-y-50">
       <div class="container">
-        <h3 class="tx-light tx-gray-800 mg-b-15">548 Market St., San Francisco CA 94104</h3>
+        <div class="row">
+          <div class="col-lg-8">
+          <div class="property-address-header">
+              <h3 class="tx-light tx-gray-800 mg-b-0">548 Market St., San Francisco CA 94104</h3>
+              <a href="#interestModal" data-toggle="modal" class="show-interest-link" onClick={this.interestModalShowClicked.bind(this)}>Show interest in property</a>
+            </div>
+            <div class="claimed-indicator">
+              <div class="indicator"></div>
+              <div class="indicator-text">Claimed Profile</div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-lg-8">
             <div class="property-header">
@@ -180,15 +239,27 @@ export default class Property extends Component {
               </div>
               <div class="property-approve-wrapper">
                 <div class="approve-landlord-donut">
+                <PieChart
+                          size={60}
+                          innerHoleSize={40}
+                           data={[
+                             { key: 'A', value: this.donutVal1, color: '#2567C0' },
+                             { key: 'C', value: this.donutVal2, color: '#EAECEF' }
+                            ]}/>
                   <div class="approve-landlord-percent">
                     <h6>54%</h6>
                   </div>
                 </div>
                 <p class="mg-b-0 mg-l-15">Recommend this property</p>
               </div>
-
-              <a href="#" class="btn btn-primary btn-review" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
+              <div>
+                <a href="#" class="btn btn-primary btn-review" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
+                <div class="mg-t-2 wd-165 tx-12 tx-center">It's Anonymous</div>
+              </div>
             </div>
+
+            <p>Claim your profile to tell renters about yourself and your properties. <a href="#modalClaimProfile" data-toggle="modal" onClick={this.claimProfileModalShowClicked.bind(this)}>Claim Profile</a></p>
+
 
             <div class="upload-photo-wrapper">
               <button class="btn btn-primary" onClick={this.handleReview}>Upload Property Photos</button>
@@ -221,12 +292,14 @@ export default class Property extends Component {
 
               <div class="mg-t-30"></div>
 
-              <label class="tx-medium tx-gray-800 mg-b-5">Last Renovated <a href="" class="tx-gray-600" data-toggle="modal" data-target="#renovationModal"><i class="icon ion-information-circled"></i></a></label>
+              <label class="tx-medium tx-gray-800 mg-b-5">Last Renovated 
+              <a href="#renovationModal" class="tx-gray-600" data-toggle="modal" data-target="#renovationModal"  onClick={this.renovationModalShowClicked.bind(this)}>
+              (Click for Building Permits)</a></label>
               <p class="mg-b-0 tx-primary">2001</p>
 
               <div class="mg-t-20"></div>
 
-              <label class="tx-medium tx-gray-800 mg-b-5">Rental Price <a href="" class="tx-gray-600"><i class="icon ion-information-circled"></i></a></label>
+              <label class="tx-medium tx-gray-800 mg-b-5">Rental Price <a href="" class="tx-gray-600 tx-normal">(Click for Rental Price History)</a></label>
               <p class="mg-b-0 tx-primary">$2,500 per month</p>
 
               <div class="mg-t-30"></div>
@@ -257,21 +330,26 @@ export default class Property extends Component {
                   <p class="tx-gray-700"><i class="icon ion-calendar"></i> Year Built</p>
                   <p>1918</p>
                 </div>
-                <div class="property-info-item">
-                  <p class="tx-gray-700"><i class="icon ion-umbrella"></i> Insurance Cost</p>
-                  <p>$200</p>
-                </div>
               </div>
 
               <div class="mg-t-30"></div>
 
-              <label class="tx-medium tx-gray-800 mg-b-7">Property Taxes <a href="" class="tx-gray-600" data-toggle="tooltip" title="Amount and Status"><i class="icon ion-information-circled"></i></a></label>
-              <p class="mg-b-0 tx-primary">$10, 440.00</p>
+              <label class="tx-medium tx-gray-800 mg-b-10">Landlord's Estimated Monthly Expenses</label>
 
-              <div class="mg-t-30"></div>
-
-              <label class="tx-medium tx-gray-800 mg-b-7">Estimated Mortgage <a href="" class="tx-gray-600" data-toggle="tooltip" title="Loan amount, prevailing interest rate, 30-year fixed"><i class="icon ion-information-circled"></i></a></label>
-              <p class="mg-b-0 tx-primary">$2,200 per month</p>
+              <div class="property-info-group">
+                <div class="property-info-item">
+                  <p class="tx-gray-700"><i class="icon ion-social-usd"></i> Mortgage</p>
+                  <p>$2,200</p>
+                </div>
+                <div class="property-info-item">
+                  <p class="tx-gray-700"><i class="icon ion-social-usd"></i> Property Tax</p>
+                  <p>$10,440</p>
+                </div>
+                <div class="property-info-item">
+                  <p class="tx-gray-700"><i class="icon ion-social-usd"></i> Insurance</p>
+                  <p>$200</p>
+                </div>
+              </div>
 
               <div class="mg-t-30"></div>
 
@@ -311,7 +389,7 @@ export default class Property extends Component {
                 <label class="tx-medium">Cons</label>
                 <p class="tx-gray-700">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis.</p>
 
-                <div data-toggle="collapse" class="rental-link collapsed" onClick={this.rentalInfoClicked.bind(this)} className={this.state.showRentalInfoLinkStyle.join('' )}>Rental Information</div>
+                <a href="#rentalInformation" data-toggle="collapse" class="rental-link collapsed" onClick={this.rentalInfoClicked.bind(this)} className={this.state.showRentalInfoLinkStyle.join('' )}>Rental Information</a>
 
                 <div id="rentalInformation" class="property-review-data-list collapse" className={this.state.showRentalInfoStyle.join('' )}>
                   <div class="row">
@@ -411,7 +489,7 @@ export default class Property extends Component {
                     <h6 class="tx-15 review-item-title">Friendly Landlord!</h6>
                     <div>
                       <span class="tx-gray-800">Previous Renter</span>
-                      <span class="mg-l-2">in Loas Angeles, CA</span>
+                      <span class="mg-l-2">in Los Angeles, CA</span>
                     </div>
                   </div>
                   <div class="tx-sm-right mg-t-10 mg-sm-t-0">
@@ -451,12 +529,12 @@ export default class Property extends Component {
     </div>
 
     
-    <div class="modal fade" id="renovationModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="renovationModal" tabindex="-1" role="dialog" aria-hidden="true" className={this.state.renovationModalDialogStyle.join('' )}>
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header bd-b-0">
             <h6 class="modal-title">Work Permits Granted</h6>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={this.renovationModalHideClicked.bind(this)}>
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -535,6 +613,89 @@ export default class Property extends Component {
       </div>
     </div>
     
+    <div class="modal fade" id="interestModal" tabindex="-1" role="dialog" aria-hidden="true" className={this.state.interestmodalDialogStyle.join('' )}>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header bd-b-0">
+            <h6 class="tx-15 modal-title">Show interest in property</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={this.interestModalHideClicked.bind(this)}>            
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="pd-20 bd-t">
+            <div class="form-group">
+              <Dropdown options={this.interestDropDownOptions} onChange={this.interestDropDownSelected} value={this.state.selectedInterestDropDownOption} 
+                    placeholder="Select an option" className="property-interest-rating-dropdown"/>
+            </div>
+            <div class="form-group">
+              <input type="text" name="firstname" class="form-control" placeholder="Enter First Name" />
+            </div>
+            <div class="form-group">
+              <input type="text" name="lastname" class="form-control" placeholder="Enter Last Name" />
+            </div>
+            <div class="form-group">
+              <input type="email" name="email" class="form-control" placeholder="Enter Email" />
+            </div>
+            <div class="form-group">
+              <input type="text" name="phone" class="form-control" placeholder="Enter Phone" />
+            </div>
+            <div class="form-group">
+              <textarea class="form-control" rows="3" placeholder="Write your message"></textarea>
+            </div>
+            <button class="btn btn-primary pd-x-20">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalClaimProfile" tabindex="-1" role="dialog" aria-hidden="true" className={this.state.claimProfileModalDialogStyle.join('' )}>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="tx-15 modal-title">Claim Profile <span class="tx-normal tx-gray-600">It's quick and free.</span></h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={this.claimProfileModalHideClicked.bind(this)}>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body pd-40">
+            <div class="form-group">
+              <div class="row row-xs">
+                <div class="col"><input type="text" class="form-control" placeholder="First Name" /></div>
+                <div class="col"><input type="text" class="form-control" placeholder="Last Name" /></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <input type="email" class="form-control" placeholder="Email Address" />
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password" />
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Confirm Password" />
+            </div>
+
+            <div class="signwith"><span>or</span></div>
+
+            <div class="row row-xs mg-b-25">
+              <div class="col"><a href="" class="btn btn-danger btn-block">Sign Up with Google</a></div>
+              <div class="col"><a href="" class="btn btn-primary btn-block">Sign Up with Facebook</a></div>
+            </div>
+
+            <div class="d-flex align-items-start mg-b-25">
+              <label class="ckbox ckbox-success mg-b-0">
+                <input type="checkbox" /><span></span>
+              </label>
+              <span class="tx-13">I confirm that I own this property and I accept rent vent's <a href="">Terms of Use</a> and <a href="">Privacy Policy</a></span>
+            </div>
+
+            <button class="btn btn-primary pd-x-25">Claim My Profile</button>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
     </div>
     : null
     );

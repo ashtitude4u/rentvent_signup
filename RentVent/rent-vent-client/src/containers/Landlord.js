@@ -12,6 +12,7 @@ import {LandlordModel} from '../models/LandlordModel';
 import {ComplaintsModel} from '../models/ComplaintsModel';
 import config from "../config";
 import {PieChart} from 'react-easy-chart';
+import Dropdown from 'react-dropdown'
 
 export default class Landlord extends Component {
    constructor(props) {
@@ -22,7 +23,8 @@ export default class Landlord extends Component {
       reviewSectionStyle: ["review-header"],
       landlordPropertiesSectionStyle: ["col-lg-4 mg-t-40 mg-lg-t-0"],
       phoneNumberSectionStyle: [''],
-      modalDialogStyle:['modal fade']
+      modalDialogStyle:['modal fade'],
+      selectedDropDownOption: "Newest First"
     };
     // this.landlordObj = props.landlordObject;
     this.showMe = false;
@@ -48,7 +50,7 @@ export default class Landlord extends Component {
           }
         }
       }
-       if(!this.landlordObj.landlordReviews){
+       if(this.landlordObj.landlordReviews.length == 0){
           this.state.reviewSectionStyle = ["review-header hide-review-section"];
         }
         if(!this.landlordObj.landlordProperties){
@@ -115,6 +117,10 @@ export default class Landlord extends Component {
             this.landlordObj.zipCode = "N/A";
           }
         }
+
+        this.dropDownOptions = [
+          'Newest First', 'Oldest First','Highest Rated','Lowest Rated'
+          ];
     } 
 
     sessionStorage.setItem('landlordObject', JSON.stringify(this.landlordObj));
@@ -142,6 +148,16 @@ export default class Landlord extends Component {
     this.profileImage2 = "https://s3.amazonaws.com/rentvent-web/8.jpg";
     this.profileImage3 = "https://s3.amazonaws.com/rentvent-web/9.jpg";
 
+  }
+
+  dropDownSelected = val => {
+    console.log("Selected: " + val);
+    this.setState({ selectedDropDownOption: val });
+    // if(val){
+    //   this.landlordSearchCriteria = val.value;
+    // } else {
+    //   this.landlordSearchCriteria = "";
+    // }
   }
 
   assignOverallExp = rating => {
@@ -573,15 +589,14 @@ export default class Landlord extends Component {
       <div class="container">
         <div class="row">
           <div class="col-lg-8">
-            <div class="profile-head">
+            <div class="profile-head profile-head-section">
               <div class="profile-head-left">
-                <div class="landlord-rating">
+                <div class="landlord-rating landlord-name-wrapper">
                    <h2 class="landlord-name">{this.landlordObj.fullName}</h2>
-
-                  
                 </div>
               </div>
               <div class="landlord-star">
+                    <div class="landlord-star-wrapper">
                     <div class="landlord-rating-star">
                       <i className={this.landlordRatingStarArray[0].join('' )}></i>
                       <i className={this.landlordRatingStarArray[1].join('' )}></i>
@@ -589,11 +604,15 @@ export default class Landlord extends Component {
                       <i className={this.landlordRatingStarArray[3].join('' )}></i>
                       <i className={this.landlordRatingStarArray[4].join('' )}></i>
                     </div> 
+                    </div>
                     <span class="mg-l-10 tx-16">{this.landlordObj.avgRating}</span>
                   </div>
               <a href="#" class="btn btn-primary landlord-section-review mg-t-20 mg-md-t-0" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
-
+            <div class="claimed-indicator">
+                  <div class="indicator"></div>
+                  <div class="indicator-text">Claimed Profile</div>
+                </div>
 
             <div class="row row-landlord-rating">
             <div class="col-sm-6 col-md-4">
@@ -654,7 +673,7 @@ export default class Landlord extends Component {
             
 
             <p>Hi, my name is {this.landlordObj.fullName}... <a href="javascript:void(0)">Read more</a></p>
-              <h6 class="section-label mg-t-50 mg-b-15">Reviews (86)</h6>
+            <h6 class="section-label mg-t-50 mg-b-15">Reviews ({this.landlordObj.landlordReviews.length})</h6>
             <div className={this.state.reviewSectionStyle.join('' )}>
                <div class="input-form-group wd-250">
                   <input type="search" class="form-control" placeholder="Search within the reviews" />
@@ -662,12 +681,8 @@ export default class Landlord extends Component {
                 </div>
                 <div class="mg-t-15 mg-sm-t-0">
                 <span>Sort by</span>
-                <select class="select2">
-                  <option value="1" selected>Newest First</option>
-                  <option value="2">Oldest First</option>
-                  <option value="3">Highest Rated</option>
-                  <option value="2">Lowest Rated</option>
-                </select>
+                <Dropdown options={this.dropDownOptions} onChange={this.dropDownSelected} value={this.state.selectedDropDownOption} 
+                    placeholder="Select an option" className="landlord-rating-dropdown"/>
                 </div>
             </div>
 

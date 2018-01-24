@@ -45,7 +45,8 @@
   display: none;
 }
 
-.modal.modal-complaints-section.modal-complaints-section {
+.modal.modal-complaints-section.modal-complaints-section, .modal.modal-interests-section.modal-interests-section , 
+.modal.modal-renovations-section.modal-renovations-section{
   display: block;
 }
 
@@ -83,6 +84,10 @@
   }
 }
 .landing-search-form-object {
+  display: inline-block;
+}
+
+.landlord-star-wrapper{
   display: inline-block;
 }
 
@@ -205,7 +210,33 @@
   left: 50%;
 }
 
+.landlord-rating.landlord-name-wrapper {
+  word-break: break-all;
+  max-width: 240px;
+}
 
+.profile-head.profile-head-section {
+  margin-bottom: 5px;
+}
+
+.landlord-rating-dropdown , .property-interest-rating-dropdown {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.landlord-rating-dropdown .Dropdown-control {
+  height: 40px;
+  padding: 5px 52px 5px 10px;
+}
+
+.property-interest-rating-dropdown .Dropdown-control {
+  height: 40px;
+  padding: 5px 142px 5px 10px;
+}
+
+.landlord-rating-dropdown .Dropdown-arrow , .property-interest-rating-dropdown .Dropdown-arrow {
+  top: 17px;
+}
 /* --------------------------------------------------- */
 /* ############### GOOGLE FONTS IMPORT ############### */
 /* --------------------------------------------------- */
@@ -7135,6 +7166,21 @@ p {
   margin-bottom: 0;
 }
 
+.claimed-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.claimed-indicator .indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background-color: #23BF08;
+}
+.claimed-indicator .indicator-text {
+  margin-left: 5px;
+}
+
 .property-header {
   margin-bottom: 25px;
   border-top: 1px solid #ced4da;
@@ -7289,6 +7335,28 @@ p {
   justify-content: center;
   border: 1px solid #ced4da;
   background-color: #fcfcfc;
+}
+
+.property-address-header {
+  margin-bottom: 7px;
+}
+@media (min-width: 576px) {
+  .property-address-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.show-interest-link {
+  display: block;
+  margin-top: 10px;
+}
+@media (min-width: 768px) {
+  .show-interest-link {
+    margin-top: 0;
+    margin-left: 10px;
+  }
 }
 
 .signin-wrapper {
