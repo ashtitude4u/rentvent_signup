@@ -13,6 +13,10 @@ import {ComplaintsModel} from '../models/ComplaintsModel';
 import config from "../config";
 import {PieChart} from 'react-easy-chart';
 import Dropdown from 'react-dropdown'
+import {LandlordReviewModel} from '../models/LandlordReviewModel';
+import { ScaleLoader } from 'react-spinners';
+import {PropertyReviewModel} from '../models/PropertyReviewModel';
+import moment from 'moment';
 
 export default class Landlord extends Component {
    constructor(props) {
@@ -24,7 +28,9 @@ export default class Landlord extends Component {
       landlordPropertiesSectionStyle: ["col-lg-4 mg-t-40 mg-lg-t-0"],
       phoneNumberSectionStyle: [''],
       modalDialogStyle:['modal fade'],
-      selectedDropDownOption: "Newest First"
+      selectedDropDownOption: "Newest First",
+      loading:false,
+      wrapperClass: []
     };
     // this.landlordObj = props.landlordObject;
     this.showMe = false;
@@ -66,6 +72,11 @@ export default class Landlord extends Component {
             this.assignLandlordRatings(this.landlordObj.avgRating);
             this.landlordObj.avgRating = Math.round(this.landlordObj.avgRating);
         }
+        if(this.landlordObj.avgResponsiveness){
+          this.assignResponsiveRate(this.landlordObj.avgResponsiveness);
+          this.landlordObj.avgResponsiveness = Math.round(this.landlordObj.avgResponsiveness);
+        }
+        
         if(this.landlordObj.repairRequests){
           this.assignLandlordRepairRequestRatings(this.landlordObj.repairRequests);
         }
@@ -76,8 +87,8 @@ export default class Landlord extends Component {
           this.retrieveComplaintsData();
         }
         if(this.landlordObj.recommend){
-          this.donutVal1 = Number(this.landlordObj.recommend);
-          this.donutVal2 = 100 - Number(this.landlordObj.recommend);
+          this.donutVal1 = this.landlordObj.recommend;
+          this.donutVal2 = 100 - this.donutVal1;
         } else {
           this.donutVal1 = 0;
           this.donutVal2 = 100;
@@ -86,35 +97,35 @@ export default class Landlord extends Component {
           if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pAdd1){
             this.landlordObj.addressLine1 = this.landlordObj.landlordProperties[0].pAdd1;
           } else {
-            this.landlordObj.addressLine1 = "N/A";
+            this.landlordObj.addressLine1 = "";
           }
         }
         if(!this.landlordObj.addressLine2){
           if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pAdd2){
             this.landlordObj.addressLine2 = this.landlordObj.landlordProperties[0].pAdd2;
           } else {
-            this.landlordObj.addressLine2 = "N/A";
+            this.landlordObj.addressLine2 = "";
           }
         }
         if(!this.landlordObj.city){
           if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pCity){
             this.landlordObj.city = this.landlordObj.landlordProperties[0].pCity;
           } else {
-            this.landlordObj.city = "N/A";
+            this.landlordObj.city = "";
           }
         }
         if(!this.landlordObj.state){
           if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pState){
             this.landlordObj.state = this.landlordObj.landlordProperties[0].pState;
           } else {
-            this.landlordObj.state = "N/A";
+            this.landlordObj.state = "";
           }
         }
         if(!this.landlordObj.zipCode){
           if(this.landlordObj.landlordProperties && this.landlordObj.landlordProperties[0] && this.landlordObj.landlordProperties[0].pZip){
             this.landlordObj.zipCode = this.landlordObj.landlordProperties[0].pZip;
           } else {
-            this.landlordObj.zipCode = "N/A";
+            this.landlordObj.zipCode = "";
           }
         }
 
@@ -158,6 +169,15 @@ export default class Landlord extends Component {
     // } else {
     //   this.landlordSearchCriteria = "";
     // }
+  }
+
+  setLoadingIndicator = val => {
+    if(val){
+      this.setState({ wrapperClass: ["overlay-wrapper"] });
+    } else {
+      this.setState({ wrapperClass: [] });
+    }
+    this.setState({ loading: val });
   }
 
   assignOverallExp = rating => {
@@ -232,10 +252,18 @@ export default class Landlord extends Component {
   retrieveComplaintsData = event => {
     this.complaintsObj = [];
       for(var i=0; i<this.landlordObj.complaints.length; i++){
-          var cid = this.landlordObj.complaints[i].cid.C_ID;
+          var cid = this.landlordObj.complaints[i].cid;
           this.fetchComplaintsService(cid);
       }
   }
+
+  retrieveComplaintsDataFromProperty = event => {
+    var properties = this.landlordObj.landlordProperties;
+    for (var property in properties){
+      
+    }
+  }
+
   modalShowClicked = event => {
     if(this.landlordObj.complaints.length > 0){
       this.setState({ modalDialogStyle: ["modal fade show modal-complaints-section"] });
@@ -258,23 +286,23 @@ export default class Landlord extends Component {
                 })
                 .then((json) => {
                  var property;
-                  if(json && json.resultlist && json.resultlist.length > 0){
-                   var complaintObj = json.resultlist[0];
+                  if(json && json.length > 0){
+                   var complaintObj = json[0];
                    var complaint = new ComplaintsModel;
                    if(complaintObj){
-                      complaint.cAddressDirection = complaintObj.C_Address_Street_Direction ? complaintObj.C_Address_Street_Direction : "";
-                      complaint.cCreateOn = complaintObj.C_Created_On ? complaintObj.C_Created_On : "";
-                      complaint.cUpdatedBy = complaintObj.C_Updated_By ? complaintObj.C_Updated_By : "";
-                      complaint.cZip = complaintObj.C_Address_Zip ? complaintObj.C_Address_Zip : "";
-                      complaint.cid = complaintObj.C_ID ? complaintObj.C_ID : "";
-                      complaint.cAddressLine1 = complaintObj.C_Address_Line1 ? complaintObj.C_Address_Line1 : "";
-                      complaint.cUpdatedOn =  complaintObj.C_Updated_On ? complaintObj.C_Updated_On : "";
-                      complaint.cCaseGenerated =  complaintObj.C_Case_Generated ? complaintObj.C_Case_Generated : "";
-                      complaint.cpID =  complaintObj.P_ID ? complaintObj.P_ID : "";
-                      complaint.cCaseClosed =  complaintObj.C_Case_Closed ? complaintObj.C_Case_Closed : "";
-                      complaint.cCaseNumber =  complaintObj.C_Case_Number ? complaintObj.C_Case_Number : "";
-                      complaint.cCreatedBy =  complaintObj.C_Created_By ? complaintObj.C_Created_By : "";
-                      complaint.cResponseDays =  complaintObj.C_Response_Days ? complaintObj.C_Response_Days : "";
+                      complaint.cAddressDirection = complaintObj.c_address_street_direction ? complaintObj.c_address_street_direction : "";
+                      complaint.cCreateOn = complaintObj.c_created_on ? complaintObj.c_created_on : "";
+                      complaint.cUpdatedBy = complaintObj.c_updated_by ? complaintObj.c_updated_by : "";
+                      complaint.cZip = complaintObj.c_address_zip ? complaintObj.c_address_zip : "";
+                      complaint.cid = complaintObj.c_id ? complaintObj.c_id : "";
+                      complaint.cAddressLine1 = complaintObj.c_address_line1 ? complaintObj.c_address_line1 : "";
+                      complaint.cUpdatedOn =  complaintObj.c_updated_on ? complaintObj.c_updated_on : "";
+                      complaint.cCaseGenerated =  complaintObj.c_case_generated ? complaintObj.c_case_generated : "";
+                      complaint.cpID =  complaintObj.p_id ? complaintObj.p_id : "";
+                      complaint.cCaseClosed =  complaintObj.c_case_closed ? complaintObj.c_case_closed : "";
+                      complaint.cCaseNumber =  complaintObj.c_case_number ? complaintObj.c_case_number : "";
+                      complaint.cCreatedBy =  complaintObj.c_created_by ? complaintObj.c_created_by : "";
+                      complaint.cResponseDays =  complaintObj.c_response_days ? complaintObj.c_response_days : "";
                       self.complaintsObj.push(complaint);
                    }
                   }
@@ -293,16 +321,151 @@ export default class Landlord extends Component {
   }
 
   navigateToPropertyScreen = item => {
-    // this.retrievePropertyDetails(item.pid);
-
-    ReactGA.event({
-            category: 'Navigation',
-            action: 'Property',
-        });
-    sessionStorage.setItem('propertyID', JSON.stringify(item.pid));
-
-    this.props.history.push("/property");
+    this.propertyID = item.pid;
+    var propertyIDString = config.apis.PROPERTY_PID_GET+this.propertyID;
+    propertyIDString = encodeURI(propertyIDString);
+    this.retrieveProperty(this,propertyIDString);
   }
+
+  retrieveProperty(self_this,propertyString){
+    // test api
+    var self = self_this;
+    
+    self.setLoadingIndicator(true);
+
+      try{
+       const GATEWAY_URL = [propertyString];
+
+       fetch(GATEWAY_URL, {
+           method: 'GET',
+           mode: 'cors'
+       }).then((response) => {
+               return response.json();
+           })
+           .then((json) => {
+               // this.setState({ accessToken: json.done.json.access_token });
+               // this.search();
+               if(json){
+                var jsonObj = json.Items;
+                  if(jsonObj && jsonObj.length > 0) {
+                      for(var i=0; i<jsonObj.length; i++){
+                        var propertyObj = jsonObj[i];
+                      var property = new PropertyModel;
+                      property.pAdd1 = propertyObj.P_Address_Line1 ? propertyObj.P_Address_Line1 : "";
+                      property.pid = propertyObj.P_ID ? propertyObj.P_ID : "";
+                      property.pBathrooms = propertyObj.P_Bathrooms ? propertyObj.P_Bathrooms : "0";
+                      property.pBedrooms = propertyObj.P_Bedrooms ? propertyObj.P_Bedrooms : "0";
+                      property.pCity = propertyObj.P_City ? propertyObj.P_City : "";
+                      property.pCountry = propertyObj.P_Country ? propertyObj.P_Country : "";
+                      property.pCounty = propertyObj.P_County ? propertyObj.P_County : "";
+                      property.pCreatedBy = propertyObj.P_Created_By ? propertyObj.P_Created_By : "";
+                      property.pCreatedOn = propertyObj.P_Created_On ? propertyObj.P_Created_On : "";
+                      property.pLandbaseYear = propertyObj.P_LandBase_Year ? propertyObj.P_LandBase_Year : "";
+                      property.pLat = propertyObj.P_Lat ? propertyObj.P_Lat : "";
+                      property.pLong = propertyObj.P_Long ? propertyObj.P_Long : "";
+                      property.pMortgage = propertyObj.P_Mortgage ? propertyObj.P_Mortgage : "";
+                      property.pSqft = propertyObj.P_Sqft ? propertyObj.P_Sqft : "";
+                      property.pState = propertyObj.P_State ? propertyObj.P_State : "";
+                      property.pTaxAmount = propertyObj.P_Tax_Amount ? propertyObj.P_Tax_Amount : "";
+                      property.pUpdatedBy = propertyObj.P_Updated_By ? propertyObj.P_Updated_By : "";
+                      property.pUpdatedOn = propertyObj.P_Updated_On ? propertyObj.P_Updated_On : "";
+                      property.pYearBuilt = propertyObj.P_Year_Bulit ? propertyObj.P_Year_Bulit : "";
+                      property.pZip = propertyObj.P_Zipcode ? propertyObj.P_Zipcode : "";
+                      property.pAvgRating = propertyObj.P_Avg_Rating ? propertyObj.P_Avg_Rating : "";
+                      property.pAvgApproval = propertyObj.P_Approval_Rate ? propertyObj.P_Approval_Rate : "";
+                      property.prRecommend = propertyObj.P_Approval_Rate ? parseInt(propertyObj.P_Approval_Rate * 100) : 0;
+                      property.pLastRentPrice = propertyObj.P_last_Rental_Price ? propertyObj.P_last_Rental_Price : "";
+                      property.pLastRentDate = propertyObj.P_End_Date ? propertyObj.P_End_Date : "";
+                      property.pReviews = [];
+                      var reviewsObj = propertyObj.P_Reviews ? propertyObj.P_Reviews : "";
+                      if(reviewsObj){
+                        for(var j=0; j< reviewsObj.length; j++){
+                          var previewsObj = reviewsObj[j];
+                          var previewObj = new PropertyReviewModel;
+                            previewObj.prApproval = previewsObj.PR_Approval ? previewsObj.PR_Approval : "";
+                            previewObj.prtCity = previewsObj.T_City ? previewsObj.T_City : "";
+                            previewObj.prtState = previewsObj.T_State ? previewsObj.T_State : "";
+                            previewObj.prCreatedOn = previewsObj.PR_Created_Date ? previewsObj.PR_Created_Date : "";
+                            previewObj.prDescription = previewsObj.PR_Types ? previewsObj.PR_Types : "";
+                            previewObj.prTitle = previewsObj.PR_Title ? previewsObj.PR_Title : "";
+                            previewObj.prRating = previewsObj.PR_Rating ? previewsObj.PR_Rating : "";
+                            previewObj.prRental = previewsObj.PR_Rental ? previewsObj.PR_Rental : "";
+                            property.pReviews.push(previewObj);
+                        }
+                      }
+                          var complaintsObj;
+                          property.pComplaints = [];
+                          var landlordObj = propertyObj.P_Landlords ? propertyObj.P_Landlords[0] ?  propertyObj.P_Landlords[0]: "" : "";
+                          if(landlordObj){
+                              property.pLandlord = new LandlordModel;
+                              property.pLandlord.createdBy = landlordObj.C_Created_By ? landlordObj.C_Created_By : "";
+                              property.pLandlord.createdOn = landlordObj.C_Created_On ? landlordObj.C_Created_On : "";
+                              property.pLandlord.updatedBy = landlordObj.C_Updated_By ? landlordObj.C_Updated_By : "";
+                              property.pLandlord.updatedOn = landlordObj.C_Updated_On ? landlordObj.C_Updated_On : "";
+                              property.pLandlord.repairRequests = landlordObj.LR_Repair_Requests ? landlordObj.LR_Repair_Requests : "";
+                              property.pLandlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
+                              property.pLandlord.addressLine2 = landlordObj.L_Address_Line2 ? landlordObj.L_Address_Line2 : "";
+                              property.pLandlord.avgApproval = landlordObj.L_Approval_Rate ? landlordObj.L_Approval_Rate : "";
+                              property.pLandlord.avgRating = landlordObj.L_Avg_Rating ? landlordObj.L_Avg_Rating : "";
+                              property.pLandlord.city = landlordObj.L_City ? landlordObj.L_City : "";
+                              property.pLandlord.country = landlordObj.L_Country ? landlordObj.L_Country : "";
+                              property.pLandlord.county = landlordObj.L_County ? landlordObj.L_County : "";
+                              property.pLandlord.fullName = landlordObj.L_Full_Name ? landlordObj.L_Full_Name : "";
+                              property.pLandlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
+                              property.pLandlord.landlordProperties = landlordObj.L_Properties ? landlordObj.L_Properties : "";
+                              property.pLandlord.avgResponsiveness = landlordObj.L_Response_Rate ? landlordObj.L_Response_Rate : "";
+                              property.pLandlord.state = landlordObj.L_State ? landlordObj.L_State : "";
+                              property.pLandlord.zipCode = landlordObj.L_Zipcode ? landlordObj.L_Zipcode : "";
+                              property.pLandlord.landlordReviews = new LandlordReviewModel;
+                              if(landlordObj.Landlord_Reviews && landlordObj.Landlord_Reviews.length > 0){
+                                var lreviewsObj = landlordObj.Landlord_Reviews[0];
+                                property.pLandlord.landlordReviews.lrApproval = lreviewsObj.LR_Approval ? lreviewsObj.LR_Approval : "";
+                                property.pLandlord.landlordReviews.lrCreatedDate = lreviewsObj.LR_Created_Date ? lreviewsObj.LR_Created_Date : "";
+                                property.pLandlord.landlordReviews.lrRating = lreviewsObj.LR_Rating ? lreviewsObj.LR_Rating : "";
+                                property.pLandlord.landlordReviews.lrRepairRequests = lreviewsObj.LR_Repair_Requests ? lreviewsObj.LR_Repair_Requests : "";
+                                property.pLandlord.landlordReviews.lrResponsiveness = lreviewsObj.LR_Responsiveness ? lreviewsObj.LR_Responsiveness : "";
+                                property.pLandlord.landlordReviews.lrTitle = lreviewsObj.LR_Title ? lreviewsObj.LR_Title : "";
+                                property.pLandlord.landlordReviews.lrType = lreviewsObj.LR_Types ? lreviewsObj.LR_Types : "";
+                                property.pLandlord.landlordReviews.lrtCity = lreviewsObj.T_City ? lreviewsObj.T_City : "";
+                                property.pLandlord.landlordReviews.lrtState = lreviewsObj.T_State ? lreviewsObj.T_State : "";
+                              }
+
+                            complaintsObj = propertyObj.L_Complaints ? propertyObj.L_Complaints : "";  
+                            if(complaintsObj){
+                              for(var j=0; j< complaintsObj.length; j++){
+                                var complaints = new ComplaintsModel;
+                                complaints.cid = complaintsObj[j];
+                                property.pComplaints.push(complaints);
+                              }
+                            }
+                          }
+
+                    ReactGA.event({
+                            category: 'Navigation',
+                            action: 'Property',
+                        });
+                    sessionStorage.setItem('propertyObject', JSON.stringify(property));
+                    sessionStorage.setItem('propertyID', JSON.stringify(property.pid));
+
+                    this.props.history.push("/property");
+
+                    }
+                        self.setLoadingIndicator(false);
+                  } else {
+                    self.setLoadingIndicator(false);
+                    alert("No results found");
+                  }
+               }
+           })
+           .catch((err) => {
+            self.setLoadingIndicator(false);
+            console.log('There was an error:' + err);alert("Property error");})
+         } catch (e) {
+            console.log('There was an error:'+e); 
+            self.setLoadingIndicator(false);
+            alert("Property error");
+    }
+}
 
   retrievePropertyDetails = propertyId => {
     try{
@@ -518,7 +681,7 @@ export default class Landlord extends Component {
                           </div>;
                          }
                       })()}
-               <p class="mg-t-30 mg-b-0">Added: {item.lrCreatedDate} &nbsp;</p>
+               <p class="mg-t-30 mg-b-0">Added: {moment(item.lrCreatedDate).format('MMMM YYYY')}&nbsp;</p>
               </div>
 
       );
@@ -534,13 +697,13 @@ export default class Landlord extends Component {
                 var starArray = ['<i class="icon ion-star"></i>','<i class="icon ion-star"></i>',
                 '<i class="icon ion-star"></i>','<i class="icon ion-star"></i>',
                 '<i class="icon ion-star"></i>'];
-                for(var i=0; i<item.lrResponsiveness;i++){
+                for(var i=0; i<item.prRating;i++){
                    starArray[i] = '<i class="icon ion-star tx-primary"></i>';
                 }   
                 var str = starArray[0]+starArray[1]+starArray[2]+starArray[3]+starArray[4];
                       return <div dangerouslySetInnerHTML={{__html: str}}></div>
             })()}
-          <a href="" class="mg-l-5 tx-13">{item.pReviews.length} Reviews</a>
+          <a href="" class="mg-l-5 tx-13">{item.pRCount} Reviews</a>
         </div>
       </div>
       )
@@ -568,7 +731,7 @@ export default class Landlord extends Component {
     return (
       this.showMe ? 
   <div>
-
+    <div className={this.state.wrapperClass.join('' )}>
     <div class="headerpanel">
       <div class="container">
         <div class="headerpanel-left">
@@ -629,10 +792,10 @@ export default class Landlord extends Component {
                 <p class="mg-b-5">Responsiveness to Renters</p>
                 <div>
                   <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
-                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
-                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
-                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
-                  <span className={this.landlordResponsiveRatingArray[0].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[1].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[2].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[3].join('' )}></span>
+                  <span className={this.landlordResponsiveRatingArray[4].join('' )}></span>
                 </div>
               </div>
               <div class="col-md-4 mg-t-20 mg-md-t-0">
@@ -747,6 +910,15 @@ export default class Landlord extends Component {
       </div>
 
     </div>
+    </div>
+    <div className="overlay-indicator">
+      <div className="loading-indicator">
+          <ScaleLoader
+          color={'#8E54E9'} 
+          loading={this.state.loading}
+           />
+          </div>
+      </div>
     </div>
     : null
     );

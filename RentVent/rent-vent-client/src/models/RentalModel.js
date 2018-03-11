@@ -1,7 +1,7 @@
 export class RentalModel {
   constructor(rid,rPrice,rLeaseRequired,rStartDate,rEndDate,rLeaseDoc,rtid,rDepositRequired,rDepositAmount,rDepositReturnDate,
   	rDepositReturned,rAnnualIncrease,rApplicationFee,rIssues,rIssuesPhotos,rRentersInsurance,rUtilitiesCost,rProfitMargin,rCreatedBy,
-  	rUpdatedBy,rCreatedOn,rUpdatedOn) {
+  	rUpdatedBy,rCreatedOn,rUpdatedOn,prID,rTenants,rExpanded) {
     this.rid = rid;
     this.rPrice = rPrice;
     this.rLeaseRequired = rLeaseRequired;
@@ -24,5 +24,8 @@ export class RentalModel {
     this.rUpdatedBy = rUpdatedBy;
     this.rCreatedOn = rCreatedOn;
     this.rUpdatedOn = rUpdatedOn;
+    this.prID = prID;
+    this.rTenants = rTenants;
+    this.rExpanded = rExpanded;
   }
 }

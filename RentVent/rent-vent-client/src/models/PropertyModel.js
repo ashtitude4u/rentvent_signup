@@ -1,7 +1,7 @@
 export class PropertyModel {
   constructor(pid,pOwnerShipPeriod,pLat,pLong,pAdd1,pAdd2,pZip,pCity,pCounty,pState,pCountry,pTaxAmount,pMortgage,pWorkPermitsGranted,
-  	pMap,pYearBuilt,pSqft,pBedrooms,pBathrooms,pInsuranceCost,pAvailability,pcid,prid,pLandlords,pReviews,pPhotos,pAvgRating,pAvgApproval,pCreatedBy,pUpdatedBy,
-  	pCreatedOn,pUpdatedOn,pComplaints,pRentals,pZoning,pLandbaseYear,pRCount,prRating) {
+  	pMap,pYearBuilt,pSqft,pBedrooms,pBathrooms,pInsuranceCost,pAvailability,pcid,prid,pLandlord,pReviews,pPhotos,pAvgRating,pAvgApproval,pCreatedBy,pUpdatedBy,
+  	pCreatedOn,pUpdatedOn,pComplaints,pRentals,pZoning,pLandbaseYear,pRCount,prRating,prRecommend,pLastRentPrice,pLastRentDate) {
     this.pid = pid;
     this.pOwnerShipPeriod = pOwnerShipPeriod;
     this.pLat = pLat;
@@ -25,7 +25,7 @@ export class PropertyModel {
     this.pAvailability = pAvailability;
     this.pcid = pcid;
     this.prid = prid;
-    this.pLandlords = pLandlords;
+    this.pLandlord = pLandlord;
     this.pReviews = pReviews;
     this.pPhotos = pPhotos;
     this.pAvgRating = pAvgRating;
@@ -40,5 +40,8 @@ export class PropertyModel {
     this.pLandbaseYear = pLandbaseYear;
     this.pRCount = pRCount;
     this.prRating = prRating;
+    this.prRecommend = prRecommend;
+    this.pLastRentPrice = pLastRentPrice;
+    this.pLastRentDate = pLastRentDate;
   }
 }

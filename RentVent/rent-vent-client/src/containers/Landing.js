@@ -103,12 +103,8 @@ export default class Landing extends Component {
   }
 
   landlordResultsRowSelected = row =>{
-        var selectedLandlord = this.landlords[row.index];
-        if(this.landlordSearchCriteria == "Address"){
-          this.retrievelandlordIDDetails(selectedLandlord.pid);
-        } else {
-          this.retrievelandlordDetails(selectedLandlord.landlordId);
-        }
+      var selectedLandlord = this.landlords[row.index];
+      this.retrievelandlordDetails(selectedLandlord.landlordId);
   }
 
   retrievelandlordIDDetails = landlordId => {
@@ -179,67 +175,52 @@ export default class Landing extends Component {
                })
                .then((json) => {
                 var landlord;
-                 if(json && json.Items && json.Items.length > 0){
+                 if(json){
                   landlord = new LandlordModel;
-                  var landlordObj = json.Items[0];
+                  var landlordObj = json;
                           landlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
 
                           landlord.fullName = landlordObj.L_Full_Name ? landlordObj.L_Full_Name : "";;
                           landlord.addressLine1 = landlordObj.L_Address_Line1 ? landlordObj.L_Address_Line1 : "";
                           landlord.addressLine2 = landlordObj.L_Address_Line2 ? landlordObj.L_Address_Line2 : "";
-                          landlord.approval = landlordObj.L_Approval ? landlordObj.L_Approval : "";
-                          landlord.avgApproval = landlordObj.L_Avg_Approval ? landlordObj.L_Avg_Approval : "";
+                          landlord.approval = landlordObj.L_Approval_Rate ? landlordObj.L_Approval_Rate : "";
+                          landlord.avgApproval = landlordObj.L_Approval_Rate ? landlordObj.L_Approval_Rate : "";
                           landlord.avgRating = landlordObj.L_Avg_Rating ? landlordObj.L_Avg_Rating : "";
-                          landlord.avgResponsiveness = landlordObj.L_Avg_Responsiveness ? landlordObj.L_Avg_Responsiveness : "";
+                          landlord.avgResponsiveness = landlordObj.L_Response_Rate ? landlordObj.L_Response_Rate : "";
                           landlord.city = landlordObj.L_City ? landlordObj.L_City : "";
                           landlord.country = landlordObj.L_Country ? landlordObj.L_Country : "";
                           landlord.county = landlordObj.L_County ? landlordObj.L_County : "";
                           landlord.inquiries = landlordObj.L_Inquiries ? landlordObj.L_Inquiries : "";
                           landlord.phone = landlordObj.L_Phone ? landlordObj.L_Phone : "";
-                          landlord.rating = landlordObj.L_Rating ? landlordObj.L_Rating : "";
-                          landlord.recommend = landlordObj.L_Recommend ? landlordObj.L_Recommend : "";
+                          landlord.rating = landlordObj.L_Avg_Rating ? landlordObj.L_Avg_Rating : "";
+                          landlord.recommend = landlordObj.L_Approval_Rate ? parseInt(landlordObj.L_Approval_Rate * 100) : 0;
                           landlord.repair = landlordObj.L_Repair ? landlordObj.L_Repair : "";
-                          landlord.repairRequests = landlordObj.L_Repair_Requests ? landlordObj.L_Repair_Requests : "";
+                          landlord.repairRequests = landlordObj.LR_Repair_Requests ? landlordObj.LR_Repair_Requests : "";
                           landlord.state = landlordObj.L_State ? landlordObj.L_State : "";
                           landlord.title = landlordObj.L_Title ? landlordObj.L_Title : "";
                           landlord.zipCode = landlordObj.L_Zipcode ? landlordObj.L_Zipcode : "";
                           landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";
-                          landlord.createdBy = landlordObj.L_Created_By ? landlordObj.L_Created_By : "";
-                          landlord.createdOn = landlordObj.L_Created_On ? landlordObj.L_Created_On : "";
-                          landlord.updatedBy = landlordObj.L_Updated_By ? landlordObj.L_Updated_By : "";
-                          landlord.updatedOn = landlordObj.L_Updated_On ? landlordObj.L_Updated_On : "";
+                          landlord.createdBy = landlordObj.C_Created_By ? landlordObj.C_Created_By : "";
+                          landlord.createdOn = landlordObj.C_Created_On ? landlordObj.C_Created_On : "";
+                          landlord.updatedBy = landlordObj.C_Updated_By ? landlordObj.C_Updated_By : "";
+                          landlord.updatedOn = landlordObj.C_Updated_On ? landlordObj.C_Updated_On : "";
                           landlord.description = landlordObj.L_Description ? landlordObj.L_Description : "";
 
-                          var complaintsObj = landlordObj.L_Complaints ? landlordObj.L_Complaints : "";
-                            landlord.complaints = [];
-                          if(complaintsObj){
-                            for(var i=0; i< complaintsObj.length; i++){
-                              landlord.complaints[i] = new ComplaintsModel;
-                              landlord.complaints[i].cid = complaintsObj[i];
-                            }
-                          }
-
-                          var disputesObj = landlordObj.L_Disputes ? landlordObj.L_Disputes : "";
-                          if(disputesObj){
-                              landlord.disputes = [];
-                            for(var i=0; i< disputesObj.length; i++){
-                              landlord.disputes[i] = new DisputesModel;
-                            landlord.disputes[i].did = disputesObj[i];
-                          }
-                        }
-
+                         
+                          var complaintsObj;
+                          landlord.complaints = [];
                           var propertiesObj = landlordObj.L_Properties ? landlordObj.L_Properties : "";
                           if(propertiesObj){
                               landlord.landlordProperties = [];
                             for(var i=0; i< propertiesObj.length; i++){
                               landlord.landlordProperties[i] = new PropertyModel;
                               var propChildObj = propertiesObj[i];
-                              landlord.landlordProperties[i].pAdd1 = propChildObj.P_Address_Line1 ? propChildObj.P_Address_Line1 : "N/A";
-                              landlord.landlordProperties[i].pAdd2 = propChildObj.P_Address_Line2 ? propChildObj.P_Address_Line2 : "N/A";
-                              landlord.landlordProperties[i].pCity = propChildObj.P_City ? propChildObj.P_City : "N/A";
+                              landlord.landlordProperties[i].pAdd1 = propChildObj.P_Address_Line1 ? propChildObj.P_Address_Line1 : "";
+                              landlord.landlordProperties[i].pAdd2 = propChildObj.P_Address_Line2 ? propChildObj.P_Address_Line2 : "";
+                              landlord.landlordProperties[i].pCity = propChildObj.P_City ? propChildObj.P_City : "";
                               landlord.landlordProperties[i].pid = propChildObj.P_ID ? propChildObj.P_ID : "";
-                              landlord.landlordProperties[i].pState = propChildObj.P_State ? propChildObj.P_State : "N/A";
-                              landlord.landlordProperties[i].pZip = propChildObj.P_Zipcode ? propChildObj.P_Zipcode : "N/A";
+                              landlord.landlordProperties[i].pState = propChildObj.P_State ? propChildObj.P_State : "";
+                              landlord.landlordProperties[i].pZip = propChildObj.P_Zipcode ? propChildObj.P_Zipcode : "";
                               landlord.landlordProperties[i].pCounty = propChildObj.P_County ? propChildObj.P_County : "";
                               landlord.landlordProperties[i].pCreatedBy = propChildObj.P_Created_By ? propChildObj.P_Created_By : "";
                               landlord.landlordProperties[i].pCreatedOn = propChildObj.P_Created_On ? propChildObj.P_Created_On  : "";
@@ -249,8 +230,17 @@ export default class Landing extends Component {
                               landlord.landlordProperties[i].pReviews = propChildObj.P_Reviews ? propChildObj.P_Reviews : "";
                               landlord.landlordProperties[i].pUpdatedBy = propChildObj.P_Updated_By ? propChildObj.P_Updated_By : "";
                               landlord.landlordProperties[i].pUpdatedOn = propChildObj.P_Updated_On ? propChildObj.P_Updated_On : "";
-                              landlord.landlordProperties[i].pRCount = propChildObj.PR_Count ? propChildObj.PR_Count : "";
+                              landlord.landlordProperties[i].pRCount = propChildObj.PR_Count ? propChildObj.PR_Count : "0";
                               landlord.landlordProperties[i].prRating = propChildObj.PR_Rating ? propChildObj.PR_Rating : "";
+
+                            complaintsObj = propChildObj.P_Complaints ? propChildObj.P_Complaints : "";  
+                            if(complaintsObj){
+                              for(var j=0; j< complaintsObj.length; j++){
+                                var complaints = new ComplaintsModel;
+                                complaints.cid = complaintsObj[j].C_ID;
+                                landlord.complaints.push(complaints);
+                              }
+                            }
                             }
                           }
                           
@@ -340,7 +330,7 @@ export default class Landing extends Component {
       this.state.searchTableTitle = "Landlord Results";
       this.landlordSearchClicked();
     }else if(this.landlordSearchCriteria == "Address" && this.state.landingSearchField){
-      this.state.searchTableTitle = "Property Results";
+      this.state.searchTableTitle = "Landlord Results";
       this.landlordSearchAddressClicked();
     }
   }
@@ -357,9 +347,9 @@ export default class Landing extends Component {
     if(this.state.landingSearchField.includes(" ")){
       this.landlords = [];
       this.landlordsDataSource = [];
-      var landlordString = config.apis.PROPERTY_ADDRESS_GET+this.state.landingSearchField;
+      var landlordString = config.apis.LANDLORD_ADDRESS_GET+this.state.landingSearchField;
       landlordString = encodeURI(landlordString);
-      this.retrieveProperty(this,landlordString);
+      this.retrievelandlord(this,landlordString);
     } else {
       alert("Please enter more address information");
     }
@@ -384,17 +374,16 @@ export default class Landing extends Component {
                    // this.setState({ accessToken: json.done.json.access_token });
                    // this.search();
                    if(json){
-                    var jsonObj = json.resultlist;
-                      if(json && jsonObj && jsonObj.length > 0) {
+                      if(json && json.length > 0) {
                         var maxCount = 0;
-                        if(jsonObj.length > 25)
+                        if(json.length > 25)
                         {
                           maxCount = 25;
                         } else {
-                          maxCount = jsonObj.length;
+                          maxCount = json.length;
                         }
                           for(var i=0; i<maxCount; i++){
-                            var landlordObj = jsonObj[i];
+                            var landlordObj = json[i];
                           var landlord = new LandlordModel;
                           landlord.fullName = landlordObj.L_Full_Name ? landlordObj.L_Full_Name : "";;
                           landlord.landlordId = landlordObj.L_ID ? landlordObj.L_ID : "";

@@ -393,7 +393,7 @@ export default class Questionnaire2 extends Component {
               action: 'Logout',
           });
           alert("Thank you for your response");
-      this.handleLogout();
+      this.navigateToHomeScreen();
     }
   }
 
@@ -560,12 +560,23 @@ export default class Questionnaire2 extends Component {
            "landlordID":this.landlordObj.landlordId ? this.landlordObj.landlordId : "",
            "tenant_id":sessionStorage.getItem('tenantID'),
            "Q_Type":"L",
-           "LL_Q_Title":this.questionnaireObj.lpReviewTitle?this.questionnaireObj.lpReviewTitle:"",
-           "LL_Q_Advice":this.questionnaireObj.lAdvice?this.questionnaireObj.lAdvice:"",
+           "LR_Types":[  
+            {  
+               "LR_Type":"Advice",
+               "description":this.questionnaireObj.lAdvice?this.questionnaireObj.lAdvice:""
+            },
+            {  
+               "LR_Type":"Con",
+               "description":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:""
+            },
+            {  
+               "LR_Type":"Pro",
+               "description":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:""
+            }
+          ],
+           "Q_Title":this.questionnaireObj.lpReviewTitle?this.questionnaireObj.lpReviewTitle:"",
            "Q_Movein_Date":this.questionnaireObj.lpMoveInDate?this.questionnaireObj.lpMoveInDate:"",
            "Q_Moveout_Date":this.questionnaireObj.lpMoveOutDate?this.questionnaireObj.lpMoveOutDate:"",
-           "LL_Q_Con":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:"",
-           "LL_Q_Pro":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:"",
            "LL_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
            "LL_Q_Recommend_Landlord": this.questionnaireObj.lpRecommend?this.questionnaireObj.lpRecommend:"",
            "Q_LL_Response_Rate": this.questionnaireObj.lResponsive?this.questionnaireObj.lResponsive:"",
@@ -581,9 +592,17 @@ export default class Questionnaire2 extends Component {
           "tenant_id":sessionStorage.getItem('tenantID'),
            "propertyID":JSON.parse(sessionStorage.getItem('propertyID')),
             "Q_Type":"P",
+            "PR_Types":[  
+              {  
+                 "PR_Type":"Con",
+                 "description":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:""
+              },
+              {  
+                 "PR_Type":"Pro",
+                 "description":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:""
+              }
+            ],
            "Q_Title":this.questionnaireObj.lpReviewTitle?this.questionnaireObj.lpReviewTitle:"",
-           "P_Q_Con":this.questionnaireObj.lpCons?this.questionnaireObj.lpCons:"",
-           "P_Q_Pro":this.questionnaireObj.lpPros?this.questionnaireObj.lpPros:"",
            "P_Q_Overall_Experience":this.questionnaireObj.lpExperience?this.questionnaireObj.lpExperience:"",
            "Q_Movein_Date":this.questionnaireObj.lpMoveInDate?this.questionnaireObj.lpMoveInDate:"",
            "Q_Moveout_Date":this.questionnaireObj.lpMoveOutDate?this.questionnaireObj.lpMoveOutDate:"",
