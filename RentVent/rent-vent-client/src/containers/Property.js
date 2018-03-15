@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "jquery";
 
+import GoogleMapReact from 'google-map-react';
+
 import {
   HelpBlock,
   FormGroup,
@@ -23,6 +25,8 @@ import { ScaleLoader } from 'react-spinners';
 import {LandlordReviewModel} from '../models/LandlordReviewModel';
 import {RentalModel} from '../models/RentalModel';
 import moment from 'moment';
+
+const AnyReactComponent = ({ text }) => <div><div class='pin'>{text}</div><div class='pulse'></div></div>
 
 export default class Property extends Component {
    constructor(props) {
@@ -54,8 +58,24 @@ export default class Property extends Component {
       selectedInterestDropDownOption: "Renter",
       loading:false,
       wrapperClass: [],
-      rentalObj:[]
+      rentalObj:[],
+      center: {lat: this.propertyObject.pLat, lng: this.propertyObject.pLong},
+      zoom: 11,
+      greatPlaceCoords: {lat: this.propertyObject.pLat, lng: this.propertyObject.pLong}
     };
+
+    // this.defaultProps = {
+    //   center: {lat: this.propertyObject.pLat, lng: this.propertyObject.pLong},
+    //   zoom: 15,
+    //   greatPlaceCoords: {lat: this.propertyObject.pLat, lng: this.propertyObject.pLong}
+    // };
+
+    this.defaultProps = {
+      center: {lat: Number(this.propertyObject.pLat), lng: Number(this.propertyObject.pLong)},
+      zoom: 15,
+      greatPlaceCoords: {lat: Number(this.propertyObject.pLat), lng: Number(this.propertyObject.pLong)}
+    };
+
     this.propertyRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
     this.propertyLandlordRatingStarArray = [["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"],["icon ion-star"]];
     
@@ -694,7 +714,18 @@ claimProfileModalHideClicked = event => {
               <div class="mg-t-30"></div>
 
               <label class="d-block tx-medium tx-gray-800 mg-b-10">Map Location</label>
-              <a href=""><img src={this.houseImage6} class="img-fluid" alt="" /></a>
+              <section class="map-container">
+              <GoogleMapReact
+                  bootstrapURLKeys={{ key: ["AIzaSyAufNCqTp7ue45NmspL2A-FiXkiv2R-pUA"] }}
+                  defaultCenter={this.defaultProps.center}
+                  defaultZoom={this.defaultProps.zoom}
+              >
+                  <AnyReactComponent
+                    lat={this.propertyObject.pLat}
+                    lng={this.propertyObject.pLong}
+                  />
+              </GoogleMapReact>
+              </section>
 
             </div>
 

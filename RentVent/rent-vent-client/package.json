@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "amazon-cognito-identity-js": "^1.23.0",
+    "google-map-react": "^0.34.0",
     "jquery": "^3.2.1",
     "moment": "^2.20.1",
     "popper.js": "^1.12.9",

@@ -772,10 +772,6 @@ export default class Landlord extends Component {
                   </div>
               <a href="#" class="btn btn-primary landlord-section-review mg-t-20 mg-md-t-0" onClick={this.handleReview}><i class="icon ion-edit mg-r-10"></i>Write a Review</a>
             </div>
-            <div class="claimed-indicator">
-                  <div class="indicator"></div>
-                  <div class="indicator-text">Claimed Profile</div>
-                </div>
 
             <div class="row row-landlord-rating">
             <div class="col-sm-6 col-md-4">
