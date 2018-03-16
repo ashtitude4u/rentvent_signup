@@ -647,7 +647,7 @@ claimProfileModalHideClicked = event => {
 
               <label class="d-block tx-medium tx-gray-800 mg-b-5">Landlord Information</label>
               <div class="d-flex align-items-center mg-b-5">
-                <p class="tx-15 tx-medium mg-b-0 mg-r-10"><a href="">{this.propertyObject.pLandlord.fullName}</a></p>
+                <p class="tx-15 tx-medium mg-b-0 mg-r-10"><a href="#" onClick={this.navigateToLandlordScreen.bind(this)}>{this.propertyObject.pLandlord.fullName}</a></p>
                 <div class="landlord-rating-star lrs-sm">
                   <i className={this.propertyLandlordRatingStarArray[0].join('' )}></i>
                   <i className={this.propertyLandlordRatingStarArray[1].join('' )}></i>

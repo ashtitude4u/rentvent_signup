@@ -215,7 +215,7 @@
 }
 
 .landlord-rating.landlord-name-wrapper {
-  word-break: break-all;
+  word-break: keep-all;
   max-width: 240px;
 }
 
@@ -6952,6 +6952,7 @@ p {
   font-weight: 300;
   margin-bottom: 10px;
   line-height: 1;
+  font-size: 24px;
 }
 @media (min-width: 576px) {
   .landlord-rating .landlord-name {
