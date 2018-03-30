@@ -286,23 +286,23 @@ export default class Landlord extends Component {
                 })
                 .then((json) => {
                  var property;
-                  if(json && json.length > 0){
-                   var complaintObj = json[0];
+                  if(json && json.Items && json.Items.length > 0){
+                   var complaintObj = json.Items[0];
                    var complaint = new ComplaintsModel;
                    if(complaintObj){
-                      complaint.cAddressDirection = complaintObj.c_address_street_direction ? complaintObj.c_address_street_direction : "";
-                      complaint.cCreateOn = complaintObj.c_created_on ? complaintObj.c_created_on : "";
-                      complaint.cUpdatedBy = complaintObj.c_updated_by ? complaintObj.c_updated_by : "";
-                      complaint.cZip = complaintObj.c_address_zip ? complaintObj.c_address_zip : "";
-                      complaint.cid = complaintObj.c_id ? complaintObj.c_id : "";
-                      complaint.cAddressLine1 = complaintObj.c_address_line1 ? complaintObj.c_address_line1 : "";
-                      complaint.cUpdatedOn =  complaintObj.c_updated_on ? complaintObj.c_updated_on : "";
-                      complaint.cCaseGenerated =  complaintObj.c_case_generated ? complaintObj.c_case_generated : "";
-                      complaint.cpID =  complaintObj.p_id ? complaintObj.p_id : "";
-                      complaint.cCaseClosed =  complaintObj.c_case_closed ? complaintObj.c_case_closed : "";
-                      complaint.cCaseNumber =  complaintObj.c_case_number ? complaintObj.c_case_number : "";
-                      complaint.cCreatedBy =  complaintObj.c_created_by ? complaintObj.c_created_by : "";
-                      complaint.cResponseDays =  complaintObj.c_response_days ? complaintObj.c_response_days : "";
+                      complaint.cAddressDirection = complaintObj.C_Address_Street_Direction ? complaintObj.C_Address_Street_Direction : "";
+                      complaint.cCreateOn = complaintObj.C_Case_Generated ? complaintObj.C_Case_Generated : "";
+                      complaint.cUpdatedBy = complaintObj.C_Updated_By ? complaintObj.C_Updated_By : "";
+                      complaint.cZip = complaintObj.C_Address_Zip ? complaintObj.C_Address_Zip : "";
+                      complaint.cid = complaintObj.C_ID ? complaintObj.C_ID : "";
+                      complaint.cAddressLine1 = complaintObj.C_Address_Line1 ? complaintObj.C_Address_Line1 : "";
+                      complaint.cUpdatedOn =  complaintObj.C_Updated_On ? complaintObj.C_Updated_On : "";
+                      complaint.cCaseGenerated =  complaintObj.C_Case_Generated ? complaintObj.C_Case_Generated : "";
+                      complaint.cpID =  complaintObj.P_ID ? complaintObj.P_ID : "";
+                      complaint.cCaseClosed =  complaintObj.C_Case_Closed ? complaintObj.C_Case_Closed : "";
+                      complaint.cCaseNumber =  complaintObj.C_Case_Number ? complaintObj.C_Case_Number : "";
+                      complaint.cCreatedBy =  complaintObj.C_Created_By ? complaintObj.C_Created_By : "";
+                      complaint.cResponseDays =  complaintObj.C_Response_Days ? complaintObj.C_Response_Days : "";
                       self.complaintsObj.push(complaint);
                    }
                   }
@@ -430,11 +430,11 @@ export default class Landlord extends Component {
                                 property.pLandlord.landlordReviews.lrtState = lreviewsObj.T_State ? lreviewsObj.T_State : "";
                               }
 
-                            complaintsObj = propertyObj.L_Complaints ? propertyObj.L_Complaints : "";  
+                            complaintsObj = propertyObj.P_Complaints ? propertyObj.P_Complaints : "";  
                             if(complaintsObj){
                               for(var j=0; j< complaintsObj.length; j++){
                                 var complaints = new ComplaintsModel;
-                                complaints.cid = complaintsObj[j];
+                                complaints.cid = complaintsObj[j].C_ID;
                                 property.pComplaints.push(complaints);
                               }
                             }
