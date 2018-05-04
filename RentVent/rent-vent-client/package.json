@@ -3,25 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "amazon-cognito-identity-js": "^1.23.0",
+    "amazon-cognito-identity-js": "^1.31.0",
     "google-map-react": "^0.34.0",
-    "jquery": "^3.2.1",
-    "moment": "^2.20.1",
-    "popper.js": "^1.12.9",
-    "react": "^16.1.0",
+    "jquery": "^3.3.1",
+    "moment": "^2.22.1",
+    "popper.js": "^1.14.3",
+    "react": "^16.3.2",
     "react-bootstrap": "^0.31.5",
     "react-bootstrap-table": "^4.3.1",
     "react-datepicker": "^0.64.0",
-    "react-dom": "^16.1.0",
-    "react-dropdown": "^1.3.6",
+    "react-dom": "^16.3.2",
+    "react-dropdown": "^1.4.2",
     "react-easy-chart": "^1.0.0",
-    "react-ga": "^2.3.5",
+    "react-ga": "^2.5.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.17",
-    "react-select": "^2.0.0-alpha.1",
-    "react-social-login": "^3.4.1",
-    "react-spinners": "^0.2.5",
-    "uuid": "^3.1.0"
+    "react-scripts": "^1.0.17",
+    "react-select": "^2.0.0-beta.2",
+    "react-social-login": "^3.4.2",
+    "react-spinners": "^0.2.6",
+    "uuid": "^3.2.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,7 +32,7 @@
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
   "main": "handler.js",
   "devDependencies": {
-    "aws-sdk": "^2.161.0"
+    "aws-sdk": "^2.232.1"
   },
   "keywords": [],
   "author": "",
